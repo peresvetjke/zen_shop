@@ -1,0 +1,43 @@
+- if @order&.errors.present?
+  = render "shared/errors", resource: @order
+
+= form_with model: @order ||= Order.new, url: orders_path do |f|
+  
+  h3 Items
+
+  table.cart_items
+    thead
+      tr
+        td Title
+        td Amount
+        td Sum
+        td 
+    tbody
+      - @cart.cart_items.each do |cart_item|
+        tr.cart_item *{'data-item-id' => cart_item.id}
+          td.title = cart_item.item.title
+          td.amount.input-group.mt-3
+              span.input-group-btn
+                = link_to cart_item_path(id: cart_item.id, cart_item: {amount: -1 }), method: :patch, remote: true, class: "btn btn-danger btn-number-ajax minus", data: { 'item-id': cart_item.id }
+                  span class="glyphicon glyphicon-minus"
+              
+              input type="text" name="order[order_items_attributes][][quantity]" class="form-control input-number-ajax form-control-plaintext" readonly=true value=cart_item.amount min="1" max="100" data-item-id=cart_item.id
+
+              input type="hidden" name="order[order_items_attributes][][item_id]" value=cart_item.item.id
+              input type="hidden" name="order[order_items_attributes][][unit_price]" value=cart_item.item.price
+
+              span.input-group-btn
+                = link_to cart_item_path(id: cart_item.id, cart_item: {amount: 1 }), method: :patch, remote: true, class: "btn btn-success btn-number-ajax plus", data: { 'item-id': cart_item.id }
+                  span class="glyphicon glyphicon-plus"
+
+          td.sum = cart_item.item.price * cart_item.amount
+          td = link_to "Delete", cart_item_path(cart_item), method: :delete, remote: true, data: { confirm: "Are you sure?" }, class: "btn btn-danger remove_item"
+    
+    tr
+      td
+      td
+      td 
+        br
+        strong#total_sum = @cart.total_sum
+
+  = f.submit
