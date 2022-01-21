@@ -1,0 +1,5 @@
+= content_tag :div, class: "errors"
+  h2 = "Error".pluralize(resource.errors.count) + " ocurred:"
+  ul
+    - resource.errors.full_messages.each do |mes|
+      li = mes

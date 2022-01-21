@@ -36,6 +36,7 @@ gem 'thinking-sphinx', '~> 5.4'
 gem 'devise'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'oj'
+gem 'faraday'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

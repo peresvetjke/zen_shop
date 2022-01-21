@@ -25,7 +25,9 @@ class OrdersController < ApplicationController
   private
 
   def order_params
-    params.require(:order).permit(order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy])
+    params.require(:order).permit(order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
+                                  delivery_attributes: [:id, :delivery_type, :_destroy],
+                                  address_attributes: [:id, :country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat, :_destroy])
   end
 
   def load_cart

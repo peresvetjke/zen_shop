@@ -13,6 +13,7 @@ import "channels"
 import * as noUiSlider from 'nouislider';
 import 'nouislider/dist/nouislider.css';
 require("jquery")
+require("suggestions-jquery")
 
 Rails.start()
 Turbolinks.start()
