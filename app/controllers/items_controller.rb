@@ -7,7 +7,22 @@ class ItemsController < ApplicationController
   
   def show
   end
-  
+
+  def search
+    @result = Item.search(params[:query])
+
+    respond_to do |format|
+      # format.html { }
+      format.json { 
+                    render json: { 
+                                    "results" => @result, 
+                                    "meta"    => category_dict(@result)
+                                                  .merge(price_dict(@result)) 
+                                 } 
+                  }
+    end
+  end
+
   private
 
   def load_items
@@ -17,5 +32,26 @@ class ItemsController < ApplicationController
 
   def load_item
     @item = Item.find(params[:id])
+  end
+
+  def search_params
+    params.require(:search).permit(:category, :query, :page)
+  end
+
+  def category_dict(collection)
+    { 
+      "categories" => collection.group_by(&:category).map do |k,v| 
+                        { 'id' => k.id,'title' => k.title, 'results_count' => v.count }
+                      end
+    } 
+  end
+
+  def price_dict(collection)
+    { 
+      "prices" => {
+                    "min" => collection.map(&:price_cents).min,
+                    "max" => collection.map(&:price_cents).max
+                  }
+    } 
   end
 end

@@ -29,6 +29,10 @@ gem 'jbuilder', '~> 2.7'
 gem 'bootsnap', '>= 1.4.4', require: false
 gem 'slim-rails'
 gem 'money-rails', '~>1.12'
+gem 'bootstrap', '~> 5.1.3'
+gem 'jquery-rails'
+gem 'mysql2',          '~> 0.4',    :platform => :ruby
+gem 'thinking-sphinx', '~> 5.4'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

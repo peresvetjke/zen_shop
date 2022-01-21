@@ -9,9 +9,16 @@ html
       = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
       = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
 
-  body
-    = render "shared/menu"
+      link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
+      script src="//code.jquery.com/jquery-1.11.3.min.js"
+      script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"
 
-    p.notice = notice
-    p.alert = alert
-    = yield
+  body.container
+    .row.justify-content-md-center
+      = render "shared/menu"
+      = render "shared/search"
+
+    .row.justify-content-md-center
+      p.notice = notice
+      p.alert = alert
+      = yield

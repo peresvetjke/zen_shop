@@ -1,0 +1,5 @@
+.items_search = form_with url: search_items_path, method: :get, local: false, data: { type: :json } do |f|
+  = f.text_field :query
+  = f.submit "Search"
+
+.search_filter
