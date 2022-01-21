@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_21_103359) do
+ActiveRecord::Schema.define(version: 2022_01_21_125759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "country"
+    t.string "postal_code"
+    t.string "region_with_type"
+    t.string "city_with_type"
+    t.string "street_with_type"
+    t.string "house"
+    t.string "flat"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "cart_items", force: :cascade do |t|
     t.bigint "cart_id", null: false
@@ -36,6 +48,16 @@ ActiveRecord::Schema.define(version: 2022_01_21_103359) do
     t.string "title", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "deliveries", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.integer "delivery_type", null: false
+    t.bigint "address_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["address_id"], name: "index_deliveries_on_address_id"
+    t.index ["order_id"], name: "index_deliveries_on_order_id"
   end
 
   create_table "items", force: :cascade do |t|
@@ -84,6 +106,8 @@ ActiveRecord::Schema.define(version: 2022_01_21_103359) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "items"
   add_foreign_key "carts", "users"
+  add_foreign_key "deliveries", "addresses"
+  add_foreign_key "deliveries", "orders"
   add_foreign_key "items", "categories"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"

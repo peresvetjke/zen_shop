@@ -39,5 +39,27 @@
       td 
         br
         strong#total_sum = @cart.total_sum
+        #total_weight.hide = @cart.total_weight
+
+  h3 Delivery options
+
+  = f.fields_for :delivery_attributes, Delivery.new(order: @order) do |delivery|
+    = delivery.label "Delivery type"
+    br
+    = delivery.select :delivery_type, Delivery.delivery_types.keys.to_a, include_blank: "-select-"
+
+  br
+  br
+  .delivery_info
+    p
+      strong Address:
+    input id="address" name="address" type="text"
+    br
+    br
+
+    #delivery_address
+
+    #delivery_cost
+    #delivery_planned_date
 
   = f.submit

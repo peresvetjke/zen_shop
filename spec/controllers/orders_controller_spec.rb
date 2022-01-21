@@ -41,13 +41,14 @@ RSpec.describe OrdersController, :type => :controller do
 
   describe "POST create" do
     let(:params) { { order: 
-                    { order_items_attributes: [ {
-                                                item_id: create(:item).id, 
-                                                unit_price: Money.new(100_00, "RUB"),
-                                                quantity: 5 
-                                            } ] 
-                    } 
-         } }
+                            { order_items_attributes: [ {
+                                                        item_id: create(:item).id, 
+                                                        unit_price: Money.new(100_00, "RUB"),
+                                                        quantity: 5 
+                                                    } ],
+                              delivery_attributes: { delivery_type: "Self-pickup" }
+                            } 
+                 } }
          
     subject { post :create, params: params }
 
@@ -70,7 +71,8 @@ RSpec.describe OrdersController, :type => :controller do
                                                             item_id: rand(1..1000), 
                                                             unit_price: Money.new(100_00, "RUB"),
                                                             quantity: 5 
-                                                        } ] 
+                                                        } ],
+                                  delivery_attributes: { delivery_type: "Self-pickup" }
                                 } 
                      } }
 

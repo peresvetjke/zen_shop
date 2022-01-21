@@ -6391,6 +6391,11 @@ stylehacks@^4.0.0:
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
 
+suggestions-jquery@^21.12.0:
+  version "21.12.0"
+  resolved "https://registry.yarnpkg.com/suggestions-jquery/-/suggestions-jquery-21.12.0.tgz#244b52bcae5e6b448dfb77712ec7960c6e6e570a"
+  integrity sha512-l5QoVJaaNzWNDQuKzy6GeXLb2w0V5YQFfLjhJz6NApZTehOP3J/Znw0I3mH3GOYqWT1HK5Uh5yt8HC5sMkiy9Q==
+
 supports-color@^5.3.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-5.5.0.tgz#e2e69a44ac8772f78a1ec0b35b689df6530efc8f"
