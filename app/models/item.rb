@@ -7,4 +7,6 @@ class Item < ApplicationRecord
   validates :weight_gross_gr, numericality: { greater_than: 0, integer: true }
 
   monetize :price_cents, as: "price"
+
+  ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
 end
