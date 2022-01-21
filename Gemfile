@@ -33,6 +33,7 @@ gem 'bootstrap', '~> 5.1.3'
 gem 'jquery-rails'
 gem 'mysql2',          '~> 0.4',    :platform => :ruby
 gem 'thinking-sphinx', '~> 5.4'
+gem 'devise'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1585,3 +1585,391 @@ Processing by ItemsController#search as JSON
 Completed 200 OK in 31ms (Views: 1.4ms | ActiveRecord: 6.9ms | Allocations: 9655)
 
 
+  [1m[35m (0.3ms)[0m  [1m[34mSELECT pg_try_advisory_lock(2702011150974114315)[0m
+  [1m[35m (0.9ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to DeviseCreateUsers (20220121100750)
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mBEGIN[0m
+  [1m[35m (360.6ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "reset_password_token" character varying, "reset_password_sent_at" timestamp, "remember_created_at" timestamp, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (14.9ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email")[0m
+  [1m[35m (15.4ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.4ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ($1) RETURNING "version"[0m  [["version", "20220121100750"]]
+  [1m[36mTRANSACTION (45.8ms)[0m  [1m[35mCOMMIT[0m
+  [1m[36mActiveRecord::InternalMetadata Load (51.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 LIMIT $2[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[35m (0.5ms)[0m  [1m[34mSELECT pg_advisory_unlock(2702011150974114315)[0m
+  [1m[35m (0.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Started GET "/" for 127.0.0.1 at 2022-01-21 13:16:24 +0300
+  [1m[35m (1.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (1.9ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 5.3ms | Allocations: 2623)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 2.5ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 1.6ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 24.0ms | Allocations: 8463)
+  Rendered items/index.html.slim within layouts/application (Duration: 66.5ms | Allocations: 24010)
+[Webpacker] Compiling...
+[Webpacker] Compiled all packs in /home/i/Ruby/repo/zen_shop/public/packs
+[Webpacker] Hash: afbc8e67298e4397bee8
+Version: webpack 4.46.0
+Time: 2494ms
+Built at: 01/21/2022 1:16:32 PM
+                                     Asset       Size       Chunks                         Chunk Names
+    js/application-b29d38e1f9be9d20f3a0.js    616 KiB  application  [emitted] [immutable]  application
+js/application-b29d38e1f9be9d20f3a0.js.map    700 KiB  application  [emitted] [dev]        application
+                             manifest.json  364 bytes               [emitted]              
+Entrypoint application = js/application-b29d38e1f9be9d20f3a0.js js/application-b29d38e1f9be9d20f3a0.js.map
+[./app/assets/handlebars/helpers/moneyString.js] 339 bytes {application} [built]
+[./app/assets/handlebars/partials/item.hbs] 1.33 KiB {application} [built]
+[./app/assets/handlebars/partials/items.hbs] 1.37 KiB {application} [built]
+[./app/assets/handlebars/partials/search_filter/categories.hbs] 1.37 KiB {application} [built]
+[./app/assets/handlebars/partials/search_filter/category.hbs] 1.28 KiB {application} [built]
+[./app/assets/handlebars/partials/search_filter/price.hbs] 600 bytes {application} [built]
+[./app/assets/handlebars/partials/search_filter/search_filter.hbs] 889 bytes {application} [built]
+[./app/assets/javascripts sync recursive \.js$] ./app/assets/javascripts sync \.js$ 176 bytes {application} [built]
+[./app/assets/javascripts/search.js] 3.46 KiB {application} [optional] [built]
+[./app/javascript/channels sync recursive _channel\.js$] ./app/javascript/channels sync _channel\.js$ 160 bytes {application} [built]
+[./app/javascript/channels/index.js] 211 bytes {application} [built]
+[./app/javascript/packs/application.js] 779 bytes {application} [built]
+[./node_modules/webpack/buildin/global.js] (webpack)/buildin/global.js 863 bytes {application} [built]
+[./node_modules/webpack/buildin/module.js] (webpack)/buildin/module.js 552 bytes {application} [built]
+    + 31 hidden modules
+
+  [1m[36mCategory Load (1.8ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 17.1ms | Allocations: 5368)
+  Rendered shared/_search.html.slim (Duration: 4.6ms | Allocations: 2884)
+  Rendered layout layouts/application.html.slim (Duration: 8662.8ms | Allocations: 123612)
+Completed 200 OK in 8684ms (Views: 8647.9ms | ActiveRecord: 18.8ms | Allocations: 129252)
+
+
+Started GET "/categories/2/items" for 127.0.0.1 at 2022-01-21 13:16:35 +0300
+Processing by ItemsController#index as HTML
+  Parameters: {"category_id"=>"2"}
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (1.8ms)[0m  [1m[34mSELECT "items".* FROM "items" WHERE "items"."category_id" = $1[0m  [["category_id", 2]]
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 136)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 6.6ms | Allocations: 956)
+  Rendered items/index.html.slim within layouts/application (Duration: 16.8ms | Allocations: 2450)
+[Webpacker] Everything's up-to-date. Nothing to do
+  [1m[36mCategory Load (6.7ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 9.5ms | Allocations: 825)
+  Rendered shared/_search.html.slim (Duration: 1.2ms | Allocations: 603)
+  Rendered layout layouts/application.html.slim (Duration: 52.2ms | Allocations: 10423)
+Completed 200 OK in 57ms (Views: 43.0ms | ActiveRecord: 9.9ms | Allocations: 11348)
+
+
+Started GET "/categories/3/items" for 127.0.0.1 at 2022-01-21 13:16:36 +0300
+Processing by ItemsController#index as HTML
+  Parameters: {"category_id"=>"3"}
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (2.1ms)[0m  [1m[34mSELECT "items".* FROM "items" WHERE "items"."category_id" = $1[0m  [["category_id", 3]]
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.5ms | Allocations: 135)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 4.2ms | Allocations: 955)
+  Rendered items/index.html.slim within layouts/application (Duration: 9.6ms | Allocations: 1971)
+[Webpacker] Everything's up-to-date. Nothing to do
+  [1m[36mCategory Load (1.3ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 3.7ms | Allocations: 823)
+  Rendered shared/_search.html.slim (Duration: 0.6ms | Allocations: 603)
+  Rendered layout layouts/application.html.slim (Duration: 34.7ms | Allocations: 9998)
+Completed 200 OK in 37ms (Views: 31.9ms | ActiveRecord: 3.5ms | Allocations: 10478)
+
+
+Started GET "/items" for 127.0.0.1 at 2022-01-21 13:16:37 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (4.6ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 1.1ms | Allocations: 135)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.6ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.6ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.5ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.8ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.9ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.5ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.8ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 15.5ms | Allocations: 2765)
+  Rendered items/index.html.slim within layouts/application (Duration: 23.3ms | Allocations: 3882)
+[Webpacker] Everything's up-to-date. Nothing to do
+  [1m[36mCategory Load (1.9ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 3.4ms | Allocations: 823)
+  Rendered shared/_search.html.slim (Duration: 0.7ms | Allocations: 603)
+  Rendered layout layouts/application.html.slim (Duration: 53.9ms | Allocations: 11910)
+Completed 200 OK in 55ms (Views: 48.2ms | ActiveRecord: 6.5ms | Allocations: 12354)
+
+
+Started GET "/items" for 127.0.0.1 at 2022-01-21 13:19:03 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (2.4ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 6.6ms | Allocations: 2185)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 4.6ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.5ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 29.0ms | Allocations: 8018)
+  Rendered items/index.html.slim within layouts/application (Duration: 42.1ms | Allocations: 11404)
+[Webpacker] Everything's up-to-date. Nothing to do
+  Rendered shared/_nav.html.slim (Duration: 6.1ms | Allocations: 3625)
+  [1m[36mCategory Load (2.5ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 7.8ms | Allocations: 3249)
+  Rendered shared/_search.html.slim (Duration: 4.1ms | Allocations: 2744)
+  Rendered layout layouts/application.html.slim (Duration: 80.9ms | Allocations: 36310)
+Completed 200 OK in 85ms (Views: 78.1ms | ActiveRecord: 4.9ms | Allocations: 37550)
+
+
+Started GET "/items" for 127.0.0.1 at 2022-01-21 13:19:05 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (1.4ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.5ms | Allocations: 136)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 9.7ms | Allocations: 2766)
+  Rendered items/index.html.slim within layouts/application (Duration: 14.7ms | Allocations: 3874)
+[Webpacker] Everything's up-to-date. Nothing to do
+  Rendered shared/_nav.html.slim (Duration: 0.4ms | Allocations: 169)
+  [1m[36mCategory Load (1.2ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 2.5ms | Allocations: 824)
+  Rendered shared/_search.html.slim (Duration: 0.5ms | Allocations: 603)
+  Rendered layout layouts/application.html.slim (Duration: 32.1ms | Allocations: 12129)
+Completed 200 OK in 33ms (Views: 30.0ms | ActiveRecord: 2.6ms | Allocations: 12563)
+
+
+Started GET "/items" for 127.0.0.1 at 2022-01-21 13:19:06 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (1.2ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 135)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 12.2ms | Allocations: 2787)
+  Rendered items/index.html.slim within layouts/application (Duration: 16.3ms | Allocations: 3895)
+[Webpacker] Everything's up-to-date. Nothing to do
+  Rendered shared/_nav.html.slim (Duration: 0.4ms | Allocations: 165)
+  [1m[36mCategory Load (4.3ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 5.6ms | Allocations: 823)
+  Rendered shared/_search.html.slim (Duration: 0.5ms | Allocations: 603)
+  Rendered layout layouts/application.html.slim (Duration: 42.4ms | Allocations: 12149)
+Completed 200 OK in 44ms (Views: 37.5ms | ActiveRecord: 5.5ms | Allocations: 12582)
+
+
+Started GET "/users/sign_up" for 127.0.0.1 at 2022-01-21 13:19:07 +0300
+Processing by Devise::RegistrationsController#new as HTML
+  Parameters: {"authenticity_token"=>"[FILTERED]"}
+  Rendering layout layouts/application.html.slim
+  Rendering /home/i/.rvm/gems/ruby-2.7.4/gems/devise-4.8.1/app/views/devise/registrations/new.html.erb within layouts/application
+  Rendered /home/i/.rvm/gems/ruby-2.7.4/gems/devise-4.8.1/app/views/devise/shared/_error_messages.html.erb (Duration: 0.8ms | Allocations: 223)
+  Rendered /home/i/.rvm/gems/ruby-2.7.4/gems/devise-4.8.1/app/views/devise/shared/_links.html.erb (Duration: 1.2ms | Allocations: 526)
+  Rendered /home/i/.rvm/gems/ruby-2.7.4/gems/devise-4.8.1/app/views/devise/registrations/new.html.erb within layouts/application (Duration: 32.7ms | Allocations: 6316)
+[Webpacker] Everything's up-to-date. Nothing to do
+  Rendered shared/_nav.html.slim (Duration: 0.5ms | Allocations: 147)
+  [1m[36mCategory Load (1.2ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 2.5ms | Allocations: 834)
+  Rendered shared/_search.html.slim (Duration: 0.6ms | Allocations: 620)
+  Rendered layout layouts/application.html.slim (Duration: 49.6ms | Allocations: 14640)
+Completed 200 OK in 71ms (Views: 51.6ms | ActiveRecord: 7.4ms | Allocations: 20320)
+
+
+Started POST "/users" for 127.0.0.1 at 2022-01-21 13:19:13 +0300
+Processing by Devise::RegistrationsController#create as HTML
+  Parameters: {"authenticity_token"=>"[FILTERED]", "user"=>{"email"=>"user@example.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}, "commit"=>"Sign up"}
+  [1m[36mTRANSACTION (1.3ms)[0m  [1m[35mBEGIN[0m
+  [1m[36mUser Exists? (2.1ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = $1 LIMIT $2[0m  [["email", "user@example.com"], ["LIMIT", 1]]
+  [1m[36mUser Create (1.8ms)[0m  [1m[32mINSERT INTO "users" ("email", "encrypted_password", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["email", "user@example.com"], ["encrypted_password", "$2a$12$PrnHNH.wir2AeKOsNNqX8erNBfZ5pCe/Wyp0etboxYG379rFcXo5G"], ["created_at", "2022-01-21 10:19:13.529084"], ["updated_at", "2022-01-21 10:19:13.529084"]]
+  [1m[36mTRANSACTION (19.4ms)[0m  [1m[35mCOMMIT[0m
+Redirected to http://localhost:3000/
+Completed 302 Found in 309ms (ActiveRecord: 24.7ms | Allocations: 8825)
+
+
+Started GET "/" for 127.0.0.1 at 2022-01-21 13:19:13 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (1.6ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.5ms | Allocations: 140)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 7.2ms | Allocations: 2770)
+  Rendered items/index.html.slim within layouts/application (Duration: 11.8ms | Allocations: 3877)
+[Webpacker] Everything's up-to-date. Nothing to do
+  [1m[36mUser Load (1.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = $1 ORDER BY "users"."id" ASC LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/views/shared/_nav.html.slim:5
+  Rendered shared/_nav.html.slim (Duration: 5.3ms | Allocations: 1081)
+  [1m[36mCategory Load (1.3ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 8.4ms | Allocations: 824)
+  Rendered shared/_search.html.slim (Duration: 1.0ms | Allocations: 604)
+  Rendered layout layouts/application.html.slim (Duration: 40.1ms | Allocations: 13050)
+Completed 200 OK in 42ms (Views: 36.5ms | ActiveRecord: 4.4ms | Allocations: 13495)
+
+
+Started GET "/items" for 127.0.0.1 at 2022-01-21 13:19:16 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (1.4ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 135)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 8.5ms | Allocations: 2765)
+  Rendered items/index.html.slim within layouts/application (Duration: 13.5ms | Allocations: 3873)
+[Webpacker] Everything's up-to-date. Nothing to do
+  [1m[36mUser Load (1.5ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = $1 ORDER BY "users"."id" ASC LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/views/shared/_nav.html.slim:5
+  Rendered shared/_nav.html.slim (Duration: 3.9ms | Allocations: 1003)
+  [1m[36mCategory Load (1.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 3.4ms | Allocations: 823)
+  Rendered shared/_search.html.slim (Duration: 0.6ms | Allocations: 604)
+  Rendered layout layouts/application.html.slim (Duration: 34.1ms | Allocations: 13054)
+Completed 200 OK in 41ms (Views: 35.7ms | ActiveRecord: 4.3ms | Allocations: 13493)
+
+
+Started DELETE "/users/sign_out" for 127.0.0.1 at 2022-01-21 13:19:17 +0300
+Processing by Devise::SessionsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"[FILTERED]"}
+  [1m[36mUser Load (1.2ms)[0m  [1m[34mSELECT "users".* FROM "users" WHERE "users"."id" = $1 ORDER BY "users"."id" ASC LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+Redirected to http://localhost:3000/
+Completed 302 Found in 9ms (ActiveRecord: 1.2ms | Allocations: 2457)
+
+
+Started GET "/" for 127.0.0.1 at 2022-01-21 13:19:17 +0300
+Processing by ItemsController#index as HTML
+  Rendering layout layouts/application.html.slim
+  Rendering items/index.html.slim within layouts/application
+  [1m[36mItem Load (3.6ms)[0m  [1m[34mSELECT "items".* FROM "items"[0m
+  ↳ app/views/items/index.html.slim:3
+  Rendered items/_item.html.slim (Duration: 0.4ms | Allocations: 135)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.2ms | Allocations: 124)
+  Rendered items/_item.html.slim (Duration: 0.3ms | Allocations: 124)
+  Rendered items/_items.html.slim (Duration: 6.4ms | Allocations: 2765)
+  Rendered items/index.html.slim within layouts/application (Duration: 14.7ms | Allocations: 3874)
+[Webpacker] Everything's up-to-date. Nothing to do
+  Rendered shared/_nav.html.slim (Duration: 0.5ms | Allocations: 167)
+  [1m[36mCategory Load (1.4ms)[0m  [1m[34mSELECT "categories".* FROM "categories"[0m
+  ↳ app/views/shared/_menu.html.slim:3
+  Rendered shared/_menu.html.slim (Duration: 3.1ms | Allocations: 823)
+  Rendered shared/_search.html.slim (Duration: 0.6ms | Allocations: 604)
+  Rendered layout layouts/application.html.slim (Duration: 32.1ms | Allocations: 12227)
+Completed 200 OK in 33ms (Views: 27.6ms | ActiveRecord: 5.0ms | Allocations: 12665)
+
+
