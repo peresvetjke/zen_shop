@@ -1,0 +1,6 @@
+h2 Items
+
+- if @items.present?
+  = render partial: "items", locals: { items: @items }
+- else
+  p No items at the moment.
