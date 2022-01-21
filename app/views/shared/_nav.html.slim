@@ -1,0 +1,9 @@
+.navbar-nav.navbar.navbar-collapse
+  ul.breadcrumb
+    li.breadcrumb-item = link_to "Items", items_path
+
+    - if user_signed_in?
+      li.breadcrumb-item = link_to current_user.email + " (Sign out)", destroy_user_session_path, method: :delete
+    - else
+      li.breadcrumb-item = link_to "Sign up", new_user_registration_path, method: :get
+      li.breadcrumb-item = link_to "Sign in", new_user_session_path, method: :get
