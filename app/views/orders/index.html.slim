@@ -1,0 +1,6 @@
+h2 Orders
+
+- if @orders.present?
+  = render partial: "orders", locals: { orders: @orders }
+- else
+  p No orders at the moment.

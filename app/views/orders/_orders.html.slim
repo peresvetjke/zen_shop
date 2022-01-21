@@ -1,0 +1,10 @@
+.orders
+  table
+    thead
+      tr
+        td Title
+        td Price
+        td Date
+    tbody
+      - orders.each do |order|
+        = render "orders/order", order: order

@@ -1,0 +1,6 @@
+h2.mt-5 Checkout
+
+- if @cart.cart_items.present?
+  = render "orders/form"
+- else
+  p No items in cart yet.

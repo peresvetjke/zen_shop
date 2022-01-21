@@ -18,3 +18,17 @@
     )
   end
 end
+
+customer = User.create!(email: "user@example.com", password: "xxxxxx")
+
+5.times do
+  order_items = (1..5).to_a.map do 
+    item = Item.all.sample
+    {
+      item_id: item.id, 
+      unit_price: item.price, 
+      quantity: rand(1..5)
+    }
+  end
+  customer.orders.create!(order_items_attributes: order_items)
+end

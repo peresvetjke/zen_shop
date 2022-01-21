@@ -10,4 +10,9 @@ Rails.application.routes.draw do
   resources :items do
     get :search, on: :collection
   end
+
+  resources :cart_items, only: %i[create update destroy]
+
+  resources :orders, only: %i[create show index]
+  get :cart, to: 'orders#new'
 end

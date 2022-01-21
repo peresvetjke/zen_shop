@@ -1,0 +1,4 @@
+tr.order
+  td = link_to "Order ##{order.id}", order_path(order)
+  td = order.total_sum
+  td = order.created_at

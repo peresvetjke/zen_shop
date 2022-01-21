@@ -30,4 +30,11 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  cart_items:
+    create:
+      message: "Item has been succesfully added to cart."
+    destroy:
+      message: "Item has been removed from cart."
+  orders:
+    create:
+      message: "Order has been succesfully created."
