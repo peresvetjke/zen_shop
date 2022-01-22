@@ -30,5 +30,8 @@ customer = User.create!(email: "user@example.com", password: "xxxxxx")
       quantity: rand(1..5)
     }
   end
-  customer.orders.create!(order_items_attributes: order_items)
+  customer.orders.create!(
+    order_items_attributes: order_items, 
+    delivery_attributes: { delivery_type: 0}
+  )
 end

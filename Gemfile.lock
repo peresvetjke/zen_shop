@@ -154,6 +154,8 @@ GEM
       monetize (~> 1.9)
       money (~> 6.13)
       railties (>= 3.0)
+    money-tree (0.10.0)
+      ffi
     msgpack (1.4.3)
     mysql2 (0.5.3)
     nio4r (2.5.8)
@@ -324,6 +326,7 @@ DEPENDENCIES
   launchy
   listen (~> 3.3)
   money-rails (~> 1.12)
+  money-tree
   mysql2 (~> 0.4)
   oj
   pg (~> 1.1)

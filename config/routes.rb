@@ -15,4 +15,6 @@ Rails.application.routes.draw do
 
   resources :orders, only: %i[create show index]
   get :cart, to: 'orders#new'
+
+  get :account, to: 'users#show'
 end
