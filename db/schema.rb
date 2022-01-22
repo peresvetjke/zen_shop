@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_21_125759) do
+ActiveRecord::Schema.define(version: 2022_01_22_020716) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,28 @@ ActiveRecord::Schema.define(version: 2022_01_21_125759) do
     t.string "flat"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "bitcoin_purchases", force: :cascade do |t|
+    t.bigint "bitcoin_wallet_id", null: false
+    t.bigint "order_id", null: false
+    t.integer "amount_btc_cents", default: 0, null: false
+    t.string "amount_btc_currency", default: "BTC", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["bitcoin_wallet_id"], name: "index_bitcoin_purchases_on_bitcoin_wallet_id"
+    t.index ["order_id"], name: "index_bitcoin_purchases_on_order_id"
+  end
+
+  create_table "bitcoin_wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "balance_btc_cents", default: 0, null: false
+    t.string "balance_btc_currency", default: "BTC", null: false
+    t.integer "available_btc_cents", default: 0, null: false
+    t.string "available_btc_currency", default: "BTC", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_bitcoin_wallets_on_user_id"
   end
 
   create_table "cart_items", force: :cascade do |t|
@@ -103,6 +125,9 @@ ActiveRecord::Schema.define(version: 2022_01_21_125759) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "bitcoin_purchases", "bitcoin_wallets"
+  add_foreign_key "bitcoin_purchases", "orders"
+  add_foreign_key "bitcoin_wallets", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "items"
   add_foreign_key "carts", "users"

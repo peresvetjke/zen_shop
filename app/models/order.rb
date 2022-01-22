@@ -1,4 +1,6 @@
 class Order < ApplicationRecord
+  MINIMUM_SUM = Money.new(1_00, "RUB")
+
   belongs_to :user
   has_one :delivery, dependent: :destroy
   has_one :address, through: :delivery
@@ -7,8 +9,11 @@ class Order < ApplicationRecord
   accepts_nested_attributes_for :delivery, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :address, reject_if: :all_blank, allow_destroy: true
 
-  validate :at_least_one_delivery
-  validate :at_least_one_order_item
+  validate :validate_at_least_one_order_item
+  validate :validate_at_least_one_delivery
+  validate :validate_minimum_sum, if:-> { delivery && delivery.delivery_type != "Self-pickup" }
+  validate :validate_address_exists, if:-> { delivery && delivery.delivery_type != "Self-pickup" }
+  validate :validate_enough_money, if: -> { delivery && has_minimum_sum? }
 
   def total_sum
     order_items.map { |order_item| order_item.unit_price * order_item.quantity }.sum
@@ -28,14 +33,29 @@ class Order < ApplicationRecord
 
   private
 
-  def at_least_one_delivery
-    errors.add :base, "Must have at least one Delivery." unless delivery.present?
+  def has_minimum_sum?
+    total_sum >= MINIMUM_SUM
+  end
 
-    # when updating an existing contact: Making sure that at least one team would exist
-    # return errors.add :base, "Must have at least one Delivery." if contacts_teams.reject{|contacts_team| contacts_team._destroy == true}.empty?
+  def validate_at_least_one_delivery
+    errors.add :base, "Must have at least one Delivery." unless delivery.present?
   end
   
-  def at_least_one_order_item
+  def validate_at_least_one_order_item
     errors.add :base, "Must have at least one line item." unless order_items.present?
+  end
+
+  def validate_enough_money
+    liability = delivery.delivery_type == "Self-pickup" ? total_sum + delivery.cost_rub : total_sum
+    insufficient = user.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: liability)
+    errors.add :base, "Not enough BTC for an order. Please replenish your wallet for #{insufficient}." if insufficient > 0
+  end
+
+  def validate_minimum_sum
+    errors.add :base, "Declared value can't be less than 1 RUB" unless has_minimum_sum?
+  end
+  
+  def validate_address_exists
+    errors.add :base, "Must have address." if address.nil?
   end
 end
