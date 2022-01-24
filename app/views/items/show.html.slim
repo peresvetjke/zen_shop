@@ -19,8 +19,13 @@
             span class="input-group-btn"
               button type="button" class="btn btn-success btn-number" data-type="plus" data-field="cart_item[amount]"
                 span class="glyphicon glyphicon-plus"
-
+            
+          span.available = "Available: #{@item.available_amount}"
+          
           = f.hidden_field :item_id, value: @item.id
+
+          br
+          
           = f.submit "Add to cart"
 
       - else

@@ -3,12 +3,16 @@ class CartItemsController < ApplicationController
   before_action :load_cart_item, only: %i[update destroy]
 
   def create
-    current_user.cart.cart_items.create(cart_item_params)
-    redirect_to cart_path, notice: t(".message")
+    @cart_item = current_user.cart.cart_items.new(cart_item_params)
+    if @cart_item.save 
+      redirect_to cart_path, notice: t(".message")
+    else
+      redirect_to item_path(@cart_item.item), notice: @cart_item.errors.full_messages.join("; ")
+    end
   end
 
   def update
-    if @cart_item.update(amount: @cart_item.amount + params[:cart_item][:amount].to_i)
+    if @cart_item.change_amount_by!(params[:cart_item][:amount].to_i)
       render json: @cart_item, serializer: CartItemSerializer, root: "cart_item"
     else
       render json: { message: @cart_item.errors.full_messages.join("; ") }, status: :unprocessable_entity

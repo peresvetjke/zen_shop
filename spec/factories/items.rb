@@ -5,5 +5,10 @@ FactoryBot.define do
     association :category, factory: :category
     price { Money.from_cents(10000, "RUB") }
     weight_gross_gr { 1000 }
+
+    after(:create) do |item|
+      item.stock.update(storage_amount: 100)
+      item.stock.save
+    end
   end
 end

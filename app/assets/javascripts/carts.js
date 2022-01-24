@@ -28,9 +28,11 @@ function ready() {
         var itemId      = e.originalEvent.detail[0].cart_item.id
         var amount      = e.originalEvent.detail[0].cart_item.amount
         var price       = e.originalEvent.detail[0].cart_item.price.cents
+        var available   = e.originalEvent.detail[0].cart_item.available
         var totalSum    = moneyString(e.originalEvent.detail[0].cart_item.cart.total_sum)
         var totalWeight = e.originalEvent.detail[0].cart_item.cart.total_weight
 
+        var availableField   = $(`tr[data-item-id='${itemId}'] span.available`)[0]
         var amountField      = $(`input[data-item-id='${itemId}']`)[0]
         var sumField         = $(`tr[data-item-id='${itemId}'] td.sum`)[0]
         var totalSumField    = $("#total_sum")[0]
@@ -40,6 +42,7 @@ function ready() {
         sumField.textContent         = moneyString(amount * price)
         totalSumField.textContent    = totalSum
         totalWeightField.textContent = totalWeight
+        availableField.textContent   = `Available: ${available}`
 
       }) .on('ajax:error', function(e) {
         var message = e.originalEvent.detail[0].message
