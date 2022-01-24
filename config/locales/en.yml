@@ -35,6 +35,8 @@ en:
       message: "Item has been succesfully added to cart."
     destroy:
       message: "Item has been removed from cart."
+    errors:
+      not_available: "Item is not available at the moment."
   orders:
     create:
       message: "Order has been succesfully created."

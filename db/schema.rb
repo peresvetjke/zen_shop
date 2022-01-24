@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_22_020716) do
+ActiveRecord::Schema.define(version: 2022_01_22_042827) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +113,14 @@ ActiveRecord::Schema.define(version: 2022_01_22_020716) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "stocks", force: :cascade do |t|
+    t.bigint "item_id", null: false
+    t.integer "storage_amount", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_id"], name: "index_stocks_on_item_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -137,4 +145,5 @@ ActiveRecord::Schema.define(version: 2022_01_22_020716) do
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "users"
+  add_foreign_key "stocks", "items"
 end

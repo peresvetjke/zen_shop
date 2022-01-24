@@ -21,6 +21,25 @@ feature 'User as client adds an item to cart', %q{
       click_button("Add to cart")
       expect(page).to have_content I18n.t("cart_items.create.message")
     end
+
+    feature "stocks" do
+      background { 
+        item.stock.storage_amount = 2
+        item.stock.save
+        visit item_path(item)
+      }
+
+      scenario "displays available amount" do
+        expect(item.available_amount).to eq 2
+        expect(page).to have_content "Available: 2"
+      end
+
+      scenario "doesn't allow to add an item in cart without available amount" do
+        fill_in "cart_item[amount]", with: "5"
+        click_button("Add to cart")
+        expect(page).to have_content I18n.t("cart_items.errors.not_available")
+      end
+    end
   end
 
   feature "being a guest" do

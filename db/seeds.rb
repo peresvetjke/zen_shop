@@ -20,6 +20,8 @@
 end
 
 customer = User.create!(email: "user@example.com", password: "xxxxxx")
+customer.bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))
+customer.bitcoin_wallet.save
 
 5.times do
   order_items = (1..5).to_a.map do 
@@ -34,4 +36,9 @@ customer = User.create!(email: "user@example.com", password: "xxxxxx")
     order_items_attributes: order_items, 
     delivery_attributes: { delivery_type: 0}
   )
+end
+
+Item.all.each do |item|
+  item.stock.update(storage_amount: 100)
+  item.stock.save
 end
