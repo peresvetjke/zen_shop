@@ -16,6 +16,6 @@ class CartItem < ApplicationRecord
   private
 
   def validate_available_amount(amount = self.amount)
-    errors.add :base, I18n.t("cart_items.errors.not_available") if item.available_amount <= amount
+    errors.add :base, I18n.t("cart_items.errors.not_available") if item.available_amount < amount
   end
 end

@@ -12,13 +12,13 @@ feature 'User as client updates a cart item', %q{
     sign_in(user)
   }
 
-  feature "adds item to cart", js: true do
+  feature "adds item to cart" do
     background { 
       visit cart_path
       find("a.plus").click 
     }
 
-    it "increases the amount", js: true do
+    it "increases the amount" do
       expect(find("td .amount")).to have_field(input_field_name, with: '3')
     end
 
@@ -68,6 +68,7 @@ feature 'User as client updates a cart item', %q{
     end
 
     scenario "doesn't allow to add an item in cart without available amount" do
+      find("a.plus").click
       find("a.plus").click
       find("a.plus").click
       find("a.plus").click
