@@ -1,0 +1,14 @@
+h1 New arrivals
+
+p = Hi, dear user!
+p = We've got some new arrivals you were interested in. 
+p = Please check!
+
+table
+  thead
+    tr
+      td Title
+  tbody
+    - @arrived_items.each do |item|
+      tr
+        td = link_to item_title, item_path(item)

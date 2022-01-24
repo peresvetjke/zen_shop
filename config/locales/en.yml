@@ -30,6 +30,9 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  items:
+    subscribed: "You were succesfully subscribed for item arrival notifications."
+    unsubscribed: "You were succesfully unsubscribed from notifications."
   cart_items:
     create:
       message: "Item has been succesfully added to cart."

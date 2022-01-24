@@ -4,8 +4,9 @@ feature 'User as client can view item', %q{
   In order to get familiar with its details and purchase.
 } do
 
-  given(:user) { create(:user) }
-  given(:item) { create(:item) }
+  given(:user)          { create(:user) }
+  given(:item)          { create(:item) }
+  given(:subscription)  { create(:subscription, item: item, user: user) }
 
   background { 
     sign_in(user)
@@ -22,6 +23,60 @@ feature 'User as client can view item', %q{
     scenario "displays available amount" do
       expect(item.available_amount).to eq 100
       expect(page).to have_content "Available: 100"
+    end
+  end
+
+  feature "subscriptions", js: true do
+    feature "when unsubscribed" do
+      feature "with available stock" do
+        scenario "does not display subscribe link" do
+          expect(page).to have_no_link("Subscribe")
+        end
+      end
+
+      feature "no stock available" do
+        background { 
+          item.stock.update(storage_amount: 0)
+          visit item_path(item) 
+        }
+
+        scenario "subscribes for a notification about item arrival" do
+          expect(page).to have_no_button("Add to cart")
+          click_link("Subscribe")
+          msg = accept_confirm { }
+          expect(msg).to have_content I18n.t("items.subscribed")
+        end
+      end
+    end
+
+    feature "when subscribed" do
+      background { subscription }
+
+      feature "with available stock" do
+        feature "unsubscribes from notifications" do
+          scenario "unsubscribes from notifications" do
+            visit item_path(item)
+            expect(page).to have_no_button("Subscribe")
+            click_link("Unsubscribe")
+            msg = accept_confirm { }
+            expect(msg).to have_content I18n.t("items.unsubscribed")
+          end
+        end
+      end
+      
+      feature "no stock available" do
+        background { item.stock.update(storage_amount: 0) }
+
+        feature "unsubscribes from notifications" do
+          scenario "unsubscribes from notifications" do
+            visit item_path(item)
+            expect(page).to have_no_button("Subscribe")
+            click_link("Unsubscribe")
+            msg = accept_confirm { }
+            expect(msg).to have_content I18n.t("items.unsubscribed")
+          end
+        end
+      end
     end
   end
 end

@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   belongs_to :category
   has_one    :stock
+  has_many :subscriptions, dependent: :destroy
 
   validates :title, presence: true
   validates :title, uniqueness: true
@@ -12,6 +13,9 @@ class Item < ApplicationRecord
   after_create :create_stock
 
   ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
+
+  scope :arrived_items_for_follower, ->(follower) { Item.joins(:stock, :subscriptions).
+                                                      where("stocks.storage_amount > ? AND subscriptions.user_id = ?", 0, follower.id) }
 
   def available_amount
     reserved = CartItem.where(item: self).pluck(:amount).sum

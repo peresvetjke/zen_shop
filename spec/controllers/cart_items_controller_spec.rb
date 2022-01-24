@@ -35,7 +35,7 @@ RSpec.describe CartItemsController, :type => :controller do
   end
 
   describe "PATCH update" do
-    subject { patch :update, params: update_params }
+    subject { patch :update, params: update_params, format: :json }
     
     shared_examples "guest" do
       it "keeps cart item unchanged" do
@@ -67,7 +67,7 @@ RSpec.describe CartItemsController, :type => :controller do
   end
 
   describe "DELETE destroy" do
-    subject { delete :destroy, params: destroy_params }
+    subject { delete :destroy, params: destroy_params, format: :json }
 
     shared_examples "guest" do
       it "keeps count unchanged" do

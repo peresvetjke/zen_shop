@@ -10,23 +10,30 @@
       = @item.price
 
       - if current_user
-        = form_with model: CartItem do |f|
-          .amount.input-group.mt-3
-            span.input-group-btn
-              button type="button" class="btn btn-danger btn-number" data-type="minus" data-field="cart_item[amount]"
-                span class="glyphicon glyphicon-minus"
-            input type="text" name="cart_item[amount]" class="form-control input-number" value="1" min="1" max="100"
-            span class="input-group-btn"
-              button type="button" class="btn btn-success btn-number" data-type="plus" data-field="cart_item[amount]"
-                span class="glyphicon glyphicon-plus"
+        - if @item.available_amount > 0
+          = form_with model: CartItem do |f|
+            .amount.input-group.mt-3
+              span.input-group-btn
+                button type="button" class="btn btn-danger btn-number" data-type="minus" data-field="cart_item[amount]"
+                  span class="glyphicon glyphicon-minus"
+              input type="text" name="cart_item[amount]" class="form-control input-number" value="1" min="1" max="100"
+              span class="input-group-btn"
+                button type="button" class="btn btn-success btn-number" data-type="plus" data-field="cart_item[amount]"
+                  span class="glyphicon glyphicon-plus"
+              
+            span.available = "Available: #{@item.available_amount}"
             
-          span.available = "Available: #{@item.available_amount}"
-          
-          = f.hidden_field :item_id, value: @item.id
+            = f.hidden_field :item_id, value: @item.id
 
-          br
-          
-          = f.submit "Add to cart"
+            br
+            
+            = f.submit "Add to cart"
+
+        - if @item.available_amount == 0 && !current_user.subscribed?(item: @item)
+          .subscription = link_to "Subscribe", subscribe_item_path(@item), remote: true, method: :post, data: {type: :json}
+
+        - if current_user.subscribed?(item: @item)
+          .subscription = link_to "Unsubscribe", subscribe_item_path(@item), remote: true, method: :post, data: {type: :json}
 
       - else
         p 

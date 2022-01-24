@@ -1,6 +1,7 @@
 class ItemsController < ApplicationController
+  before_action :authenticate_user!, only: :subscribe
   before_action :load_items, only: :index
-  before_action :load_item, only: :show
+  before_action :load_item, only: %i[show subscribe]
 
   def index
   end
@@ -12,7 +13,6 @@ class ItemsController < ApplicationController
     @result = Item.search(params[:query])
 
     respond_to do |format|
-      # format.html { }
       format.json { 
                     render json: { 
                                     "results" => @result, 
@@ -20,6 +20,12 @@ class ItemsController < ApplicationController
                                                   .merge(price_dict(@result)) 
                                  } 
                   }
+    end
+  end
+
+  def subscribe
+    respond_to do |format|
+      format.json { render json: { message: current_user.subscribe!(item: @item) } }
     end
   end
 

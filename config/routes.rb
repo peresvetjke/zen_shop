@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   resources :items do
     get :search, on: :collection
+    post :subscribe, on: :member
   end
 
   resources :cart_items, only: %i[create update destroy]
