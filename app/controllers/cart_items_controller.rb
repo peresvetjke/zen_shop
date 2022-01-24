@@ -12,8 +12,6 @@ class CartItemsController < ApplicationController
   end
 
   def update
-    # byebug
-    # if @cart_item.update(amount: @cart_item.amount + params[:cart_item][:amount].to_i)
     if @cart_item.change_amount_by!(params[:cart_item][:amount].to_i)
       render json: @cart_item, serializer: CartItemSerializer, root: "cart_item"
     else
