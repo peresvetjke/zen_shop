@@ -3,9 +3,12 @@ class OrdersController < ApplicationController
   before_action :load_cart, only: %i[new create]
 
   def new
+    authorize Order
   end
 
   def create
+    authorize Order
+
     @order = current_user.orders.new(order_params)
     if @order.save
       redirect_to @order, notice: t(".message")
@@ -15,11 +18,11 @@ class OrdersController < ApplicationController
   end
 
   def show
-    @order = Order.find(params[:id])
+    @order = authorize Order.find(params[:id])
   end
 
   def index
-    @orders = current_user.orders
+    @orders = policy_scope(Order)
   end
 
   private

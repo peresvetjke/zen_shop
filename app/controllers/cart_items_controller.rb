@@ -3,6 +3,8 @@ class CartItemsController < ApplicationController
   before_action :load_cart_item, only: %i[update destroy]
 
   def create
+    authorize CartItem
+
     respond_to do |format|
       format.html do
         amount  = params[:cart_item][:amount].to_i
@@ -42,7 +44,7 @@ class CartItemsController < ApplicationController
   private
 
   def load_cart_item
-    @cart_item = CartItem.find(params[:id])
+    @cart_item = authorize CartItem.find(params[:id])
   end
 
   def cart_item_params
