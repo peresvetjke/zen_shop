@@ -150,7 +150,7 @@ RSpec.describe OrdersController, :type => :controller do
       end
     end
 
-    shared_examples "authenticated" do
+    shared_examples "author of order" do
       it "renders show template" do
         expect(response).to render_template :show
       end
@@ -160,17 +160,31 @@ RSpec.describe OrdersController, :type => :controller do
       end
     end
 
+    shared_examples "another user" do
+      it "redirects to root path" do
+        expect(response).to redirect_to root_path
+      end
+    end
+
     context "being a guest" do
       before { subject }
       it_behaves_like "guest"
     end
 
-    context "being authenticated" do
+    context "being an another user" do
       before {
         sign_in(user)
         subject
       }
-      it_behaves_like "authenticated"
+      it_behaves_like "another user"
+    end
+
+    context "being an author of order" do
+      before {
+        sign_in(order.user)
+        subject
+      }
+      it_behaves_like "author of order"
     end
   end
 end

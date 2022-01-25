@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_cart, only: %i[new create]
+  before_action -> { authorize Order }, only: %i[new create]
 
   def new
   end
@@ -15,11 +16,11 @@ class OrdersController < ApplicationController
   end
 
   def show
-    @order = Order.find(params[:id])
+    @order = authorize Order.find(params[:id])
   end
 
   def index
-    @orders = current_user.orders
+    @orders = policy_scope(Order)
   end
 
   private

@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   let(:user)          { create(:user) }
+  let(:other_user)    { create(:user) }
+  let(:order)         { create(:order, user: user) }    
   let(:item)          { create(:item) }
   let(:subscription)  { create(:subscription, user: user, item: item) }
 
@@ -27,6 +29,35 @@ RSpec.describe User, type: :model do
       it "deletes subscription" do
         subscription
         expect{subject}.to change(Subscription, :count).by(-1)
+      end
+    end
+  end
+
+  describe "#subscribed?" do
+    context "when subscribed" do
+      it "returns true" do
+        subscription
+        expect(user.subscribed?(item: item)).to eq true
+      end
+    end
+
+    context "when not subscribed" do
+      it "returns false" do
+        expect(user.subscribed?(item: item)).to eq false
+      end
+    end
+  end
+
+  describe "#owner_of?" do
+    context "when owner" do
+      it "returns true" do
+        expect(user.owner_of?(order)).to eq true
+      end
+    end
+
+    context "when not owner" do
+      it "returns false" do
+        expect(other_user.owner_of?(order)).to eq false
       end
     end
   end

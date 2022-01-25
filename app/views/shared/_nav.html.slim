@@ -6,7 +6,7 @@
       li.breadcrumb-item = link_to "My cart", cart_path, id: "cart"
       li.breadcrumb-item = link_to "My orders", orders_path
       li.breadcrumb-item = link_to "My account", account_path
-      li.breadcrumb-item = link_to current_user.email + " (Sign out)", destroy_user_session_path, method: :delete
+      li.breadcrumb-item = link_to current_user.email + " (Sign out)", destroy_user_session_path
     - else
-      li.breadcrumb-item = link_to "Sign up", new_user_registration_path, method: :get
-      li.breadcrumb-item = link_to "Sign in", new_user_session_path, method: :get
+      li.breadcrumb-item = link_to "Sign up", new_user_registration_path
+      li.breadcrumb-item = link_to "Sign in", new_user_session_path

@@ -14,6 +14,10 @@ class User < ApplicationRecord
   after_create :create_cart
   after_create :create_bitcoin_wallet
 
+  def owner_of?(object)
+    object.user_id == id
+  end
+
   def subscribe!(item:)
     subscription = Subscription.find_or_initialize_by(user: self, item: item)
     if subscription.persisted?
