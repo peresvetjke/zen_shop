@@ -2,18 +2,16 @@ class ItemsController < ApplicationController
   before_action :authenticate_user!, only: :subscribe
   before_action :load_items, only: :index
   before_action :load_item, only: %i[show subscribe]
+  before_action -> { authorize Item }, except: :index
 
   def index
     skip_policy_scope
   end
   
   def show
-    authorize Item
   end
 
   def search
-    authorize Item
-    
     @result = Item.search(params[:query])
 
     respond_to do |format|
@@ -28,8 +26,6 @@ class ItemsController < ApplicationController
   end
 
   def subscribe
-    authorize Item
-    
     respond_to do |format|
       format.json { render json: { message: current_user.subscribe!(item: @item) } }
     end

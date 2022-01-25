@@ -1,14 +1,12 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_cart, only: %i[new create]
+  before_action -> { authorize Order }, only: %i[new create]
 
   def new
-    authorize Order
   end
 
   def create
-    authorize Order
-
     @order = current_user.orders.new(order_params)
     if @order.save
       redirect_to @order, notice: t(".message")
