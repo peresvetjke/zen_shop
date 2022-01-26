@@ -6,6 +6,10 @@ Develop an online-shop.
 
 A system, which allows customers to browse catalogue, choose goods and purchase it.
 
+
+### When
+18.01.22 - current time
+
 ### User roles
 - customer
 - admin
