@@ -11,10 +11,12 @@ class ApplicationController < ActionController::Base
   
   def user_not_authorized(exception)
     policy_name = exception.policy.class.to_s.underscore
+    message = t "#{policy_name}.#{exception.query}", scope: "pundit", default: :default
+    
     respond_to do |format|
-      format.json { render json: { message: "#{policy_name}.#{exception.query}", status: :forbidden } }
+      format.json { render json: { message: message, status: :forbidden } }
       format.html { 
-        flash[:error] = "#{policy_name}.#{exception.query}"
+        flash[:notice] = message
         redirect_to(request.referrer || root_path)
       }
     end
@@ -22,5 +24,13 @@ class ApplicationController < ActionController::Base
 
   def load_categories
     @categories = Category.all
+  end
+
+  def after_sign_in_path_for(resource)
+    if resource.type == "Admin"
+      admin_categories_path
+    else
+      super
+    end
   end
 end

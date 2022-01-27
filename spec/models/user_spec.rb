@@ -61,4 +61,20 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#admin?" do
+    let(:admin) { create(:user, type: "Admin") }
+
+    context "when admin" do
+      it "returns true" do
+        expect(admin.admin?).to eq true
+      end
+    end
+
+    context "when not admin" do
+      it "returns false" do
+        expect(user.admin?).to eq false
+      end
+    end
+  end
 end

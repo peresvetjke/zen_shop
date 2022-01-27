@@ -1,0 +1,6 @@
+- url = @category&.persisted? ? admin_category_path(@category) : admin_categories_path
+
+= form_with model: @category || Category.new, url: url do |f|
+  = f.label :title
+  = f.text_field :title
+  = f.submit

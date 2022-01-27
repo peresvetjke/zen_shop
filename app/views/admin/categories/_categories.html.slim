@@ -1,0 +1,9 @@
+.categories
+  table.table
+    thead
+      tr
+        td Title
+        td 
+    tbody
+      - @categories.each do |category|
+        = render "admin/categories/category", category: category

@@ -12,7 +12,12 @@ class Delivery < ApplicationRecord
     when "Self-pickup"
       0
     when "Russian Post"
-      RussianPost::DeliveryCostRetriever.new(from: FROM, to: self.address.postal_code, sumoc: order.total_sum, weight: order.total_weight).call
+      RussianPost::DeliveryCostRetriever.new(
+        from: FROM, 
+        to: self.address.postal_code, 
+        sumoc: order.total_sum, 
+        weight: order.total_weight)
+          .call
     end
   end
 
@@ -21,7 +26,12 @@ class Delivery < ApplicationRecord
     when "Self-pickup"
       Date.today
     when "Russian Post"
-      RussianPost::DeliveryDeadlineRetriever.new(from: FROM, to: self.address.postal_code, sumoc: order.total_sum, weight: order.total_weight).call
+      RussianPost::DeliveryDeadlineRetriever.new(
+        from: FROM, 
+        to: self.address.postal_code, 
+        sumoc: order.total_sum, 
+        weight: order.total_weight)
+          .call
     end
   end
 end

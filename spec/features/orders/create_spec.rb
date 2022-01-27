@@ -31,9 +31,9 @@ feature 'User as customer can post order', %q{
       scenario "hides delivery cost when self-pickup chosen" do
         select "Russian Post", from: delivery_type_select
         fill_in 'address', with: "Покровка 16"
+        sleep(1)
         expect(page).to have_content "ул Покровка, д 15/16"
         page.first("span.suggestions-nowrap", text: "д 15/16").click
-        sleep(1)
         select "Self-pickup", from: delivery_type_select
         expect(page).to have_no_content "Address:"
         expect(page).to have_no_content "Delivery cost:"
@@ -51,9 +51,9 @@ feature 'User as customer can post order', %q{
       scenario "displays suggestions for address input" do
         select "Russian Post", from: delivery_type_select
         fill_in 'address', with: "Покровка 16"
+        sleep(1)
         expect(page).to have_content "ул Покровка, д 15/16"
         page.first("span.suggestions-nowrap", text: "д 15/16").click
-        sleep(1)
         click_button("Create Order")
         expect(page).to have_content I18n.t("orders.create.message")
       end
@@ -61,8 +61,8 @@ feature 'User as customer can post order', %q{
       scenario "displays delivery cost and planned date" do
         select "Russian Post", from: delivery_type_select
         fill_in 'address', with: "Покровка 16"
-        page.first("span.suggestions-nowrap", text: "д 15/16").click
         sleep(1)
+        page.first("span.suggestions-nowrap", text: "д 15/16").click
         expect(page).to have_content "Delivery cost: #{delivery_cost} RUB"
         expect(page).to have_content(/Deadline\: \d\d\-\d\d\-\d\d\d\d/)
         click_button("Create Order")
