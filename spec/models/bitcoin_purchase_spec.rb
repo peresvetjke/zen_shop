@@ -8,7 +8,7 @@ RSpec.describe BitcoinPurchase, type: :model do
     it { should belong_to(:order) }
 
     it "belongs to user" do
-      expect(subject.user).to be_instance_of User
+      expect(subject.user.class).to be < User
     end
   end
 end

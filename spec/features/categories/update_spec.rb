@@ -1,40 +1,44 @@
 require "rails_helper"
 
-feature 'User as admin can create category', %q{
-  In order to enhance items classification.
+feature 'User as admin can update a category', %q{
+  In order to correct or actualize it.
 } do
 
+  let!(:category) { create(:category) }
+
+  subject { visit edit_admin_category_path(category) }
+
   shared_examples "guest" do
-    scenario "tries to create a new category" do
-      visit new_admin_category_path
+    scenario "tries to edit category" do
+      subject
       expect(page).to have_content I18n.t("devise.failure.unauthenticated")
     end
   end
 
   shared_examples "customer" do
-    scenario "tries to create a new category" do
-      visit new_admin_category_path
-      expect(page).to have_content I18n.t("pundit.category_policy.new?")
+    scenario "tries to edit category" do
+      subject
+      expect(page).to have_content I18n.t("pundit.category_policy.edit?")
     end
   end  
 
   shared_examples "admin" do
     context "with invalid params" do
       scenario "displays errors" do
-        visit new_admin_category_path
+        subject
         fill_in "Title", with: ""
-        click_button "Create Category"
+        click_button "Update Category"
         expect(page).to have_content I18n.t("errors.messages.blank")
       end
     end
 
     context "with valid params" do
       scenario "creates new category" do
-        visit new_admin_category_path
+        subject
         fill_in "Title", with: "New title"
-        click_button "Create Category"
+        click_button "Update Category"
         expect(page).to have_content "New title"
-        expect(page).to have_content I18n.t("categories.create.message")
+        expect(page).to have_content I18n.t("categories.update.message")
       end
     end
   end

@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title ZenShop
+    meta content="width=device-width,initial-scale=1" name="viewport"
+      = csrf_meta_tags
+      = csp_meta_tag
+    
+      = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+      = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+
+      link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
+      script src="//code.jquery.com/jquery-1.11.3.min.js"
+      script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"
+
+  body.container
+    .row.justify-content-md-center
+      = render "shared/admin_nav"
+
+    .row.justify-content-md-center
+      p.notice = notice
+      p.alert = alert
+      = yield

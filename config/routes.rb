@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  namespace :admin do
+    root "categories#index"
+    resources :categories
+  end
+
   root to: "items#index"
 
   resources :categories, only: [] do

@@ -1,0 +1,6 @@
+h2 New category
+
+- if @category&.errors.present?
+  = render "shared/errors", resource: @category
+
+= render "form"

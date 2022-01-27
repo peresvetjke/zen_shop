@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :user do
     email { generate(:email) }
     password { "xxxxxx" }
+    type { "Customer" }
 
     after(:create) do |user|
       user.bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))

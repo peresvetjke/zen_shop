@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  enum type: { "Admin" => 0, "Customer" => 1 }
+
   has_one :cart, dependent: :destroy
   has_many :cart_items, through: :cart
   has_many :orders, dependent: :destroy
@@ -31,5 +33,9 @@ class User < ApplicationRecord
 
   def subscribed?(item:)
     Subscription.where(user: self, item: item).present?
+  end
+
+  def admin?
+    type == "Admin"
   end
 end
