@@ -114,6 +114,7 @@ GEM
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (2.0.1)
     ffi (1.15.5)
+    foreman (0.87.2)
     globalid (1.0.0)
       activesupport (>= 5.0)
     i18n (1.8.11)
@@ -329,6 +330,7 @@ DEPENDENCIES
   devise
   factory_bot_rails
   faraday
+  foreman
   jbuilder (~> 2.7)
   jquery-rails
   launchy
