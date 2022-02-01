@@ -25,10 +25,11 @@ function importAll(r) {
   r.keys().forEach(r);
 }
 
+// Vue js
 import TurbolinksAdapter from 'vue-turbolinks'
 import Vue from 'vue/dist/vue.esm'
-import CategoriesList from '../categories-list.vue'
-import Category from '../category.vue'
+import CategoriesList from '../components/categories-list.vue'
+import Category from '../components/category.vue'
 
 Vue.use(TurbolinksAdapter)
 
