@@ -27,14 +27,17 @@ function importAll(r) {
 
 import TurbolinksAdapter from 'vue-turbolinks'
 import Vue from 'vue/dist/vue.esm'
-import App from '../app.vue'
+import CategoriesList from '../categories-list.vue'
+import Category from '../category.vue'
 
 Vue.use(TurbolinksAdapter)
 
-Vue.component('app', App)
+Vue.component('categories-list', CategoriesList)
+Vue.component('category', Category)
 
 document.addEventListener('turbolinks:load', () => {
   const app = new Vue({
     el: `[data-behavior='vue']`,
+    components: { Category, CategoriesList }
   })
 })
