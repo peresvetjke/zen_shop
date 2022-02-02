@@ -10,28 +10,28 @@ class Admin::CategoriesController < Admin::BaseController
   def show
   end
 
-  def new
-  end
-
   def create
     @category = Category.new(category_params)
     
-    if @category.save
-      redirect_to admin_category_path(@category), notice: I18n.t("categories.create.message")
-    else
-      render :new
-    end
-  end
-
-  def edit
+    format.json {
+      if @category.save
+        render json: { category: @category.to_json }
+      else
+        render json: { message: @category.errors.full_messages }
+      end
+    }
   end
 
   def update
-    if @category.update(category_params)
-      redirect_to admin_category_path(@category), notice: I18n.t("categories.update.message")
-    else
-      render :edit
-    end    
+    respond_to do |format|
+      format.json {
+        if @category.update(category_params)
+          render json: { category: @category.to_json }
+        else
+          render json: { message: @category.errors.full_messages }
+        end
+      }
+    end
   end
 
   def destroy
