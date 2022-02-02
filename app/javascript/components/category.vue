@@ -20,7 +20,7 @@
         <input type="hidden" name="authenticity_token" :value="csrfToken">
 
         <div class="field is-grouped">
-          <input class="input control is-expanded" type="text" v-model="category.title" name="category[title]" id="category_title">
+          <input class="input control is-expanded" type="text" v-model="title" name="category[title]" id="category_title">
           
           <input v-show="false" class="button is-rounded is-small control" type="submit" name="commit" value="Save" data-disable-with="Update Category">
 
@@ -36,13 +36,43 @@
 </template>
 
 <script>
+class Errors {
+  constructor() {
+    this.errors = {};
+  }
+
+  get(field) {
+    if (this.errors[field]) {
+      return this.errors[field][0];
+    }
+  }
+
+  record(errors) {
+    this.errors = errors;
+  }
+
+  clear(field) {
+    delete this.errors[field];
+  }
+
+  has(field) {
+    return this.errors.hasOwnProperty(field);
+  }
+
+  any() {
+    return Object.keys(this.errors).length;
+  }
+}
+
 export default {
   data: function () {
     return {
-      isEditable: false
+      isEditable: false,
+      title: this.category.title,
+      errors: new Errors
     }
   },
-  props: ['category'],
+  props: [ 'category' ],
   computed: {
     categoryHref()    { return `/admin/categories/` + this.category.id },
     csrfToken()       { return $('meta[name="csrf-token"]')[0].content }
@@ -50,17 +80,34 @@ export default {
   methods: {
     toggleEdit()      { this.isEditable = this.isEditable ? false : true },
     updateCategory(category)  {
-      console.log("im alive here!")
-      console.log(`category.title IS ${category.title}`)
-      $.ajax({
-        method: "PATCH",
-        url: this.categoryHref,
-        data: { category: { title: `${category.title}22222` } },
-        ajaxComplete: function(data) {
-          console.log('AJAX done!')
-          console.log( "Data Saved: " + msg );
+      var self = this;
+      const axios = require('axios');
+
+      let patchData = {
+        category: { 
+          title: `${this.title}` 
         }
+      };
+
+      let axiosConfig = {
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Accept': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+            'X-CSRF-Token': this.csrfToken,
+        },
+        data: {},
+      };
+
+      axios.patch(this.categoryHref, patchData, axiosConfig)
+      .then(function (response) {
+        category.title = JSON.parse(response.data.category).title
+        self.toggleEdit()
       })
+      .catch(function (error) {
+        console.log(error.response)
+        this.errors.record(error.response.data)
+      });
         
         
     }

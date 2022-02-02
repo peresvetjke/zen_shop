@@ -17,7 +17,7 @@ class Admin::CategoriesController < Admin::BaseController
       if @category.save
         render json: { category: @category.to_json }
       else
-        render json: { message: @category.errors.full_messages }
+        render json: { errors: @category.errors }
       end
     }
   end
@@ -28,7 +28,7 @@ class Admin::CategoriesController < Admin::BaseController
         if @category.update(category_params)
           render json: { category: @category.to_json }
         else
-          render json: { message: @category.errors.full_messages }
+          render json: { errors: @category.errors.full_messages }, status: :unprocessable_entity
         end
       }
     end

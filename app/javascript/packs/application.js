@@ -28,6 +28,7 @@ function importAll(r) {
 // Vue js
 import TurbolinksAdapter from 'vue-turbolinks'
 import Vue from 'vue/dist/vue.esm'
+import Errors from './errors.js'
 import CategoriesList from '../components/categories-list.vue'
 import Category from '../components/category.vue'
 
