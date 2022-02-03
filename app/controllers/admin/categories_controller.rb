@@ -11,22 +11,25 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   def create
+    # byebug
     @category = Category.new(category_params)
     
-    format.json {
-      if @category.save
-        render json: { category: @category.to_json }
-      else
-        render json: { errors: @category.errors }
-      end
-    }
+    respond_to do |format|
+      format.json {
+        if @category.save
+          render json: { category: @category.to_json, message: t('.message') }
+        else
+          render json: { errors: @category.errors.full_messages }, status: :unprocessable_entity
+        end
+      }
+    end
   end
 
   def update
     respond_to do |format|
       format.json {
         if @category.update(category_params)
-          render json: { category: @category.to_json }
+          render json: { category: @category.to_json, message: t('.message') }
         else
           render json: { errors: @category.errors.full_messages }, status: :unprocessable_entity
         end
@@ -35,8 +38,11 @@ class Admin::CategoriesController < Admin::BaseController
   end
 
   def destroy
-    @category.destroy
-    redirect_to admin_categories_path, notice: I18n.t("categories.destroy.message")
+    respond_to do |format|
+      format.json { 
+        render json: { category: @category.destroy, message: t('.message') }
+      }
+    end
   end
 
   private
