@@ -30,6 +30,15 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  admin:
+    categories:
+      create:
+        message: "Category has been succesfully created."
+      update:
+        message: "Category has been succesfully updated."
+      destroy:
+        message: "Category has been succesfully deleted."
+      no_records: "No categories yet."
   items:
     subscribed: "You were succesfully subscribed for item arrival notifications."
     unsubscribed: "You were succesfully unsubscribed from notifications."
@@ -40,14 +49,6 @@ en:
       message: "Item has been removed from cart."
     errors:
       not_available: "Item is not available at the moment."
-  categories:
-    create:
-      message: "Category has been succesfully created."
-    update:
-      message: "Category has been succesfully updated."
-    destroy:
-      message: "Category has been succesfully deleted."
-    no_records: "No categories yet."
   shared:
     are_you_sure?: "Are you sure?"
 
