@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature 'User as admin can index categories', %q{
   In order to observe its list or choose one for change.
-} do
+}, js: true do
 
   let!(:categories) { create_list(:category, 5) }
 
@@ -13,7 +13,7 @@ feature 'User as admin can index categories', %q{
     end
   end
 
-  shared_examples "customer", js: true do
+  shared_examples "customer" do
     scenario "tries to index categories" do
       visit admin_categories_path
       expect(page).to have_content I18n.t("pundit.category_policy.index?")

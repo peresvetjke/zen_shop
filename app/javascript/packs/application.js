@@ -32,6 +32,12 @@ import CategoriesList from '../components/categories-list.vue'
 import Category from '../components/category.vue'
 import Errors from '../components/errors.vue'
 import Message from '../components/message.vue'
+import ItemsList from '../components/items-list.vue'
+import Item from '../components/item.vue'
+import SearchFilter from '../components/search-filter.vue'
+import SearchFilterCategoriesList from '../components/search-filter/search-filter-categories-list.vue'
+import SearchFilterCategory from '../components/search-filter/search-filter-category.vue'
+import SearchFilterPrice from '../components/search-filter/search-filter-price.vue'
 
 Vue.use(TurbolinksAdapter)
 
@@ -39,10 +45,19 @@ Vue.component('categories-list', CategoriesList)
 Vue.component('category', Category)
 Vue.component('errors', Errors)
 Vue.component('message', Message)
+Vue.component('items', ItemsList)
+Vue.component('item', Item)
+Vue.component('search-filter', SearchFilter)
+Vue.component('search-filter-categories', SearchFilterCategoriesList)
+Vue.component('search-filter-category', SearchFilterCategory)
+Vue.component('search-filter-price', SearchFilterPrice)
 
 document.addEventListener('turbolinks:load', () => {
   const app = new Vue({
     el: `[data-behavior='vue']`,
-    components: { Category, CategoriesList, Errors, Message }
+    components: { 
+      Category, CategoriesList, ItemsList, Item, Errors, Message,
+      SearchFilter, SearchFilterCategoriesList, SearchFilterCategory, SearchFilterPrice
+    }
   })
 })
