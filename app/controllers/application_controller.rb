@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
     message = t "#{policy_name}.#{exception.query}", scope: "pundit", default: :default
     
     respond_to do |format|
-      format.json { render json: { message: message, status: :forbidden } }
+      format.json { render json: { message: message }, status: :forbidden }
       format.html { 
         flash[:notice] = message
         redirect_to(request.referrer || root_path)

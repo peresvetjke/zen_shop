@@ -7,11 +7,7 @@ class Admin::CategoriesController < Admin::BaseController
     skip_policy_scope
   end
 
-  def show
-  end
-
   def create
-    # byebug
     @category = Category.new(category_params)
     
     respond_to do |format|

@@ -6,6 +6,27 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
   let(:category)    { categories.first }
 
     shared_examples "guest" do
+      it "returns unauthorized status" do
+        subject
+        expect(response).to have_http_status 401
+      end
+    end  
+
+    shared_examples "customer" do
+      # it "redirects to root path" do
+      #   subject
+      #   expect(response).to redirect_to root_path
+      # end
+      it "returns forbidden status" do
+        subject
+        expect(response).to have_http_status 403
+      end
+    end
+
+  describe "GET index" do
+    subject { get :index }
+
+    shared_examples "guest" do
       it "redirects to sign_in path" do
         subject
         expect(response).to redirect_to new_user_session_path
@@ -18,9 +39,6 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
         expect(response).to redirect_to root_path
       end
     end
-
-  describe "GET index" do
-    subject { get :index }
 
     shared_examples "admin" do
       before { subject }
@@ -44,82 +62,8 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
     end
   end
 
-  describe "GET show" do
-    subject { get :show, params: { id: category } }
-
-    shared_examples "admin" do
-      before { subject }
-      
-      it { expect(response).to render_template :show }
-      it { expect(assigns(:category)).to eq category }
-    end
-
-    context "being a guest" do
-      it_behaves_like "guest"
-    end
-
-    context "being a customer" do
-      before { sign_in(create(:user, type: "Customer")) }
-      it_behaves_like "customer"
-    end
-
-    context "being an admin" do
-      before { sign_in(create(:user, type: "Admin")) }
-      it_behaves_like "admin"
-    end
-  end
-
-  describe "GET new" do
-    subject { get :new }
-
-    shared_examples "admin" do
-      before { subject }
-      
-      it { expect(response).to render_template :new }
-    end
-
-    context "being a guest" do
-      it_behaves_like "guest"
-    end
-
-    context "being a customer" do
-      before { sign_in(create(:user, type: "Customer")) }
-      it_behaves_like "customer"
-    end
-
-    context "being an admin" do
-      before { sign_in(create(:user, type: "Admin")) }
-      it_behaves_like "admin"
-    end
-  end
-
-  describe "GET edit" do
-    subject { get :edit, params: { id: category } }
-
-    shared_examples "admin" do
-      before { subject }
-      
-      it { expect(response).to render_template :edit }
-      it { expect(assigns(:category)).to eq category }
-    end
-
-    context "being a guest" do
-      it_behaves_like "guest"
-    end
-
-    context "being a customer" do
-      before { sign_in(create(:user, type: "Customer")) }
-      it_behaves_like "customer"
-    end
-
-    context "being an admin" do
-      before { sign_in(create(:user, type: "Admin")) }
-      it_behaves_like "admin"
-    end
-  end
-
   describe "PATCH update" do
-    let(:params)  { { id: category, category: { title: "Title" } } }
+    let(:params)  { { id: category, category: { title: "Title" }, format: :json } }
 
     subject { patch :update, params: params }
 
@@ -130,16 +74,16 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
       end
 
       context "invalid params" do
-        let(:params)  { { id: category, category: { title: "" } } }
+        let(:params)  { { id: category, category: { title: "" }, format: :json } }
 
         it "does not update category in db" do
           subject
           expect(category.reload).to eq category
         end
 
-        it "renders edit template" do
+        it "returns errors messages" do
           subject
-          expect(response).to render_template :edit
+          expect(response.body).to have_content 'errors'
         end
       end
 
@@ -149,9 +93,9 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
           expect(category.reload.title).to eq "Title"
         end
 
-        it "redirects to updated category" do
+        it "returns successful status" do
           subject
-          expect(response).to redirect_to admin_category_path(category)
+          expect(response).to be_successful
         end
       end
     end
@@ -172,21 +116,21 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
   end
 
   describe "POST create" do
-    let(:params)  { { category: { title: "Title" } } }
+    let(:params)  { { category: { title: "Title" }, format: :json } }
 
     subject { post :create, params: params }
 
     shared_examples "admin" do
       context "invalid params" do
-        let(:params)  { { category: { title: "" } } }
+        let(:params)  { { category: { title: "" }, format: :json } }
 
         it "does not create a new category in db" do
           expect{subject}.not_to change(Category, :count)
         end
 
-        it "renders new template" do
+        it "returns errors messages" do
           subject
-          expect(response).to render_template :new
+          expect(response.body).to have_content 'errors'
         end
       end
 
@@ -195,9 +139,9 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
           expect{subject}.to change(Category, :count).by(1)
         end
 
-        it "redirects to new category" do
+        it "returns successful status" do
           subject
-          expect(response).to redirect_to admin_category_path(Category.last)
+          expect(response).to be_successful
         end
       end
     end
@@ -218,7 +162,7 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
   end
 
   describe "DELETE destroy" do
-    subject { delete :destroy, params: { id: category } }
+    subject { delete :destroy, params: { id: category }, format: :json }
 
     shared_examples "admin" do
       it "assigns category" do 
@@ -230,11 +174,10 @@ RSpec.describe Admin::CategoriesController, :type => :controller do
         expect{subject}.to change(Category, :count).by(-1)
       end
 
-      it "redirects to index" do
+      it "returns successful status" do
         subject
-        expect(response).to redirect_to admin_categories_path
+        expect(response).to be_successful
       end
-      
     end
 
     context "being a guest" do
