@@ -15,9 +15,11 @@ class Delivery < ApplicationRecord
       RussianPost::DeliveryCostRetriever.new(
         from: FROM, 
         to: self.address.postal_code, 
-        sumoc: order.total_sum, 
-        weight: order.total_weight)
+        sumoc: order.total_sum_rub, 
+        weight: order.total_gross_weight_gr)
           .call
+    else
+      0
     end
   end
 
@@ -30,7 +32,7 @@ class Delivery < ApplicationRecord
         from: FROM, 
         to: self.address.postal_code, 
         sumoc: order.total_sum, 
-        weight: order.total_weight)
+        weight: order.total_gross_weight_gr)
           .call
     end
   end

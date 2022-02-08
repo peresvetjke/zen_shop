@@ -11,4 +11,11 @@ class NotificationsMailer < ApplicationMailer
 
     mail to: user.email
   end
+
+  def order_update(order:)
+    @user = order.user
+    @order = order
+
+    mail to: user.email
+  end
 end

@@ -14,11 +14,9 @@ html
 
   body
     .container data-behavior='vue'
-      .row.justify-content-md-center
         = render "shared/nav"
         = render "shared/menu"
 
-      .row.justify-content-md-center
         p.notice = notice
         p.alert = alert
         = yield

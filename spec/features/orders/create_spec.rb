@@ -4,25 +4,29 @@ feature 'User as customer can post order', %q{
   In order to purchase items.
 }, js: true do
 
-  given(:user)                 { create(:user) }
-  given!(:user_cart_item_1)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
-  given!(:user_cart_item_2)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
-  given(:delivery_type_select) { "order[delivery_attributes][delivery_type]" }
-  given(:delivery_cost)        { Money.new(499_94, "RUB") } # https://tariff.pochta.ru/v1/calculate/tariff?json&from=141206&to=101000&sumoc=150000&weight=1500&object=27020&pack=20
+  given!(:user)                 { create(:user) }
+  given!(:user_cart_item_1)     { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
+  given!(:user_cart_item_2)     { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
+  # given(:delivery_type_select) { "order[delivery_attributes][delivery_type]" }
+  given!(:delivery_type_select) { "#delivery-type" }
+  given!(:delivery_cost)        { Money.new(499_94, "RUB") } # https://tariff.pochta.ru/v1/calculate/tariff?json&from=141206&to=101000&sumoc=150000&weight=1500&object=27020&pack=20
 
-  given(:user_no_money)        { create(:user, :no_money) }
-  given!(:user_no_money_ci_1)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
-  given!(:user_no_money_ci_2)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
-  given(:insufficient_sum)     { user_no_money.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(1500_00, "RUB")) }
+  given!(:user_no_money)        { create(:user, :no_money) }
+  given!(:user_no_money_ci_1)   { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
+  given!(:user_no_money_ci_2)   { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
+  given!(:insufficient_sum)     { user_no_money.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(1500_00, "RUB")) }
 
   feature "deliveries" do
     background { 
-      sign_in(user) 
-      visit cart_path
+      
     }
 
     feature "self-pickup (no delivery)" do
       scenario "creates order" do
+        binding.pry
+        sign_in(user) 
+        visit cart_path
+        save_and_open_page
         select "Self-pickup", from: delivery_type_select
         click_button("Create Order")
         expect(page).to have_content I18n.t("orders.create.message")

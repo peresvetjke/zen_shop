@@ -1,4 +1,12 @@
 class OrderPolicy < ApplicationPolicy
+  def edit?
+    user&.admin?
+  end
+
+  def update?
+    user&.admin?
+  end
+
   def new?
     create?
   end
@@ -8,6 +16,6 @@ class OrderPolicy < ApplicationPolicy
   end
 
   def show?
-    user&.owner_of?(record)
+    user&.owner_of?(record) || user&.admin?
   end
 end

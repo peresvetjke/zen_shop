@@ -1,0 +1,7 @@
+h2.title = "Order #{@order.id}"
+
+p
+  strong Status: 
+  = @order.status
+
+= link_to "Edit", edit_admin_order_path(@order)

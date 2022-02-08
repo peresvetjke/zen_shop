@@ -1,40 +1,62 @@
 class Order < ApplicationRecord
   MINIMUM_SUM = Money.new(1_00, "RUB")
 
+  enum status:  { 
+                  "New"                   => 0,
+                  "Processing"            => 1,
+                  "Wait for self-pickup"  => 2,
+                  "On delivery"           => 3,
+                  "Delivered"             => 4
+                }
+
   belongs_to :user
   has_one :delivery, dependent: :destroy
   has_one :address, through: :delivery
+  has_one :bitcoin_purchase, dependent: :destroy
   has_many :order_items, dependent: :destroy
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :delivery, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :address, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :delivery,    reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :address,     reject_if: :all_blank, allow_destroy: true
 
   validate :validate_at_least_one_order_item
   validate :validate_at_least_one_delivery
-  validate :validate_minimum_sum, if:-> { delivery && delivery.delivery_type != "Self-pickup" }
-  validate :validate_address_exists, if:-> { delivery && delivery.delivery_type != "Self-pickup" }
-  validate :validate_enough_money, if: -> { delivery && has_minimum_sum? }
+  validate :validate_minimum_sum,     if: -> { delivery && delivery.delivery_type != "Self-pickup" }
+  validate :validate_address_exists,  if: -> { delivery && delivery.delivery_type != "Self-pickup" }
+  validate :validate_enough_money,    if: -> { delivery && address && has_minimum_sum? }
 
-  def total_sum
-    order_items.map { |order_item| order_item.unit_price * order_item.quantity }.sum
+  after_create :place_order
+  after_commit :send_note
+
+  def total_sum_rub
+    order_items.inject(0) { |sum, order_item| sum + order_item.unit_price * order_item.quantity }
   end
 
-  def total_cost
-    total_sum + delivery.cost_rub
+  def payment_amount_rub
+    total_sum_rub + delivery.cost_rub
   end
 
-  def total_weight
-    order_items.map { |order_item| order_item.item.weight_gross_gr * order_item.quantity }.sum
+  def total_gross_weight_gr
+    order_items.inject(0) { |sum, order_item| order_item.item.weight_gross_gr * order_item.quantity }
   end
 
   def build_address(params)
     self.address = Address.new(params)
-  end  
-
+  end
+  
   private
 
+  def place_order
+    to_be_charged = BitcoinWallet.rub_to_btc(money_rub: payment_amount_rub)
+    create_bitcoin_purchase!(bitcoin_wallet: user.bitcoin_wallet, amount_btc: to_be_charged)
+    user.cart.empty!
+  end
+
+  def send_note
+    NotificationSender.new.send_order_update_newsletter(order: self)
+  end
+
   def has_minimum_sum?
-    total_sum >= MINIMUM_SUM
+    total_sum_rub >= MINIMUM_SUM
   end
 
   def validate_at_least_one_delivery
@@ -46,8 +68,8 @@ class Order < ApplicationRecord
   end
 
   def validate_enough_money
-    liability = delivery.delivery_type == "Self-pickup" ? total_sum + delivery.cost_rub : total_sum
-    insufficient = user.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: liability)
+    to_be_charged = BitcoinWallet.rub_to_btc(money_rub: payment_amount_rub)
+    insufficient = to_be_charged - user.bitcoin_wallet.available_btc
     errors.add :base, "Not enough BTC for an order. Please replenish your wallet for #{insufficient}." if insufficient > 0
   end
 

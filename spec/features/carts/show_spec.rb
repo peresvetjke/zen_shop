@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature 'User as client add an item to cart', %q{
   In order to get prepared for checkout.
-} do
+}, js: true do
 
   given!(:user) { create(:user) }
   
@@ -19,13 +19,15 @@ feature 'User as client add an item to cart', %q{
     feature "views cart" do
       feature "with no items" do
         it "renders empty cart" do
-          visit items_path
-          find("#cart").click
+          # visit items_path
+          visit cart_path
+          # find("#cart").click
+          save_and_open_page
           expect(page).to have_content("No items in cart yet.")
         end
       end
 
-      feature "with few items" do
+      feature "with few items", js: true do
         given!(:cart_item)          { create(:cart_item, cart: user.cart, item: create(:item), amount: 2) }
         given!(:another_cart_item)  { create(:cart_item, cart: user.cart, item: create(:item), amount: 5) }
 

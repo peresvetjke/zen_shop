@@ -4,7 +4,8 @@ RSpec.describe CartItemsController, :type => :controller do
 
   let!(:user)          { create(:user) }
   let!(:item)          { create(:item) }
-  let!(:cart_item)     { create(:cart_item, cart: user.cart, amount: 5) }
+  let!(:cart_items)    { create_list(:cart_item, 5, cart: user.cart) }
+  let!(:cart_item)     { cart_items.first }
   let(:update_params)  { {id: cart_item.id, cart_item: {amount: 1} } }
   let(:create_params)  { {cart_item: {item_id: item.id, amount: 5} } }
   let(:destroy_params) { {id: cart_item.id} }

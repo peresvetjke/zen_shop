@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe OrdersController, :type => :controller do
 
   let(:user)    { create(:user) }
-  let(:orders)  { create_list(:order, 5) }
+  let(:orders)  { create_list(:order, 5, :valid) }
   let(:order)   { orders.first }
 
   describe "GET new" do
