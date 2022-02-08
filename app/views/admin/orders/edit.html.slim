@@ -1,0 +1,5 @@
+= form_with model: @order, url: admin_order_path(@order), method: :patch do |f|
+  .select
+    = f.select :status, Order.statuses.collect { |name, key| [name, key] }, :prompt => 'Select'
+  br
+  = f.submit

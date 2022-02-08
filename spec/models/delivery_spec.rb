@@ -38,8 +38,8 @@ RSpec.describe Delivery, type: :model do
         expect(RussianPost::DeliveryCostRetriever).to receive(:new).with(
           from: Delivery::FROM, 
           to: order.address.postal_code, 
-          weight: order.total_weight, 
-          sumoc: order.total_sum
+          weight: order.total_gross_weight_gr, 
+          sumoc: order.total_sum_rub
         ).and_return(service_cost)
         expect(service_cost).to receive(:call)
         order.delivery.cost_rub
@@ -60,8 +60,8 @@ RSpec.describe Delivery, type: :model do
         expect(RussianPost::DeliveryDeadlineRetriever).to receive(:new).with(
           from: Delivery::FROM, 
           to: order.address.postal_code, 
-          weight: order.total_weight, 
-          sumoc: order.total_sum
+          weight: order.total_gross_weight_gr, 
+          sumoc: order.total_sum_rub
         ).and_return(service_time)
         expect(service_time).to receive(:call)
         order.delivery.planned_date

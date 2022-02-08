@@ -18,30 +18,4 @@ RSpec.describe BitcoinWallet, type: :model do
       BitcoinWallet.update_balances
     end
   end
-
-  describe "#calculate_insufficient_btc_amount" do
-    subject { user.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(10000_00, "RUB")) }
-
-    context "when sufficient" do
-      before {
-        user.bitcoin_wallet.update(available_btc: Money.new(100000000, "BTC"))
-        user.bitcoin_wallet.save
-      }
-
-      it "returns zero value" do
-        expect(subject).to eq 0
-      end
-    end
-
-    context "when insufficient" do
-      before {
-        user.bitcoin_wallet.update(available_btc: Money.new(000000001, "BTC"))
-        user.bitcoin_wallet.save
-      }
-
-      it "returns difference to replenish" do
-        expect(subject).to be > 0
-      end
-    end
-  end
 end

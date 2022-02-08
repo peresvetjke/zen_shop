@@ -1,12 +1,6 @@
 class CartItemSerializer < ActiveModel::Serializer
-  attributes :id, :amount, :price, :available
+  attributes :id, :amount
+
   belongs_to :cart
-
-  def price
-    object.item.price
-  end
-
-  def available
-    object.item.available_amount
-  end
+  belongs_to :item
 end

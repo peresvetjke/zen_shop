@@ -2,6 +2,21 @@ class CartItemsController < ApplicationController
   before_action :authenticate_user!
   before_action :load_cart_item, only: %i[update destroy]
 
+  # def index
+  #   byebug
+
+  #   authorize CartItem
+  #   skip_policy_scope
+
+  #   @cart_items = current_user.cart.cart_items
+
+  #   respond_to do |format|
+  #     format.json do
+  #       render json: @cart_items, each_serializer: CartItemSerializer, root: "cart_items"
+  #     end
+  #   end
+  # end
+
   def create
     authorize CartItem
 
@@ -36,7 +51,7 @@ class CartItemsController < ApplicationController
   def destroy
     respond_to do |format|
       format.json do
-        render json: @cart_item.destroy, serializer: CartItemSerializer, root: "cart_item"
+        render json: @cart_item.destroy, serializer: CartItemSerializer, root: "cart_item", meta: { message: t('.message') }
       end
     end
   end

@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_cart, only: %i[new create]
+  before_action :load_cart_items, only: :new
   before_action -> { authorize Order }, only: %i[new create]
 
   def new
@@ -8,10 +9,15 @@ class OrdersController < ApplicationController
 
   def create
     @order = current_user.orders.new(order_params)
-    if @order.save
-      redirect_to @order, notice: t(".message")
-    else
-      render :new
+
+    respond_to do |format|
+      format.json {
+        if @order.save
+          render json: { order: @order.as_json, message: t(".message") }
+        else
+          render json: { message: t(".message") }, status: :unprocessable_entity
+        end
+      }
     end
   end
 
@@ -33,5 +39,12 @@ class OrdersController < ApplicationController
 
   def load_cart
     @cart = current_user.cart
+  end
+
+  def load_cart_items
+    cart_items = current_user.cart.cart_items
+    options = { each_serializer: CartItemSerializer, root: "cart_items" }
+    serializable_resource = ActiveModelSerializers::SerializableResource.new(cart_items, options)
+    @cart_items = serializable_resource.as_json
   end
 end

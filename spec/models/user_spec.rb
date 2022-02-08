@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
   let(:user)          { create(:user) }
   let(:other_user)    { create(:user) }
-  let(:order)         { create(:order, user: user) }    
+  let(:order)         { create(:order, :valid, user: user) }    
   let(:item)          { create(:item) }
   let(:subscription)  { create(:subscription, user: user, item: item) }
 

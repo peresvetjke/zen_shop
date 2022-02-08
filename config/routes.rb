@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "categories#index"
     resources :categories
+    resources :orders, only: %i[show edit update]
   end
 
   root to: "items#index"
@@ -18,7 +19,7 @@ Rails.application.routes.draw do
     post :subscribe, on: :member
   end
 
-  resources :cart_items, only: %i[create update destroy]
+  resources :cart_items, only: %i[create update destroy index]
 
   resources :orders, only: %i[new create show index]
   get :cart, to: 'orders#new'
