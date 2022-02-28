@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_24_100033) do
+ActiveRecord::Schema.define(version: 2022_02_28_064343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +113,16 @@ ActiveRecord::Schema.define(version: 2022_01_24_100033) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.integer "author_id"
+    t.bigint "item_id", null: false
+    t.text "body", null: false
+    t.integer "rating", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["item_id"], name: "index_reviews_on_item_id"
+  end
+
   create_table "stocks", force: :cascade do |t|
     t.bigint "item_id", null: false
     t.integer "storage_amount", default: 0
@@ -155,6 +165,7 @@ ActiveRecord::Schema.define(version: 2022_01_24_100033) do
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "users"
+  add_foreign_key "reviews", "items"
   add_foreign_key "stocks", "items"
   add_foreign_key "subscriptions", "items"
   add_foreign_key "subscriptions", "users"
