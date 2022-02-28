@@ -2,6 +2,7 @@ class ItemsController < ApplicationController
   before_action :authenticate_user!, only: :subscribe
   before_action :load_items, only: :index
   before_action :load_item, only: %i[show subscribe]
+  before_action :load_reviews, only: :show
   before_action -> { authorize Item }, except: :index
 
   def index
@@ -40,6 +41,10 @@ class ItemsController < ApplicationController
 
   def load_item
     @item = Item.find(params[:id])
+  end
+
+  def load_reviews
+    @reviews = Review.where(item: @item)
   end
 
   def search_params

@@ -49,6 +49,9 @@ en:
       message: "Item has been removed from cart."
     errors:
       not_available: "Item is not available at the moment."
+  reviews:
+    errors:
+      duplicated: "has been already rated."
   shared:
     are_you_sure?: "Are you sure?"
 

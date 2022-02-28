@@ -46,3 +46,6 @@ document.addEventListener('turbolinks:load', () => {
     components: { Category, CategoriesList, Errors, Message }
   })
 })
+
+require("trix")
+require("@rails/actiontext")
