@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   enum type: { "Admin" => 0, "Customer" => 1 }
 
+  has_one :default_address, dependent: :destroy
   has_one :cart, dependent: :destroy
   has_many :cart_items, through: :cart
   has_many :orders, dependent: :destroy

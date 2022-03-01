@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_28_093213) do
+ActiveRecord::Schema.define(version: 2022_03_01_083626) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,15 @@ ActiveRecord::Schema.define(version: 2022_02_28_093213) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "default_addresses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "address_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["address_id"], name: "index_default_addresses_on_address_id"
+    t.index ["user_id"], name: "index_default_addresses_on_user_id"
+  end
+
   create_table "deliveries", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.integer "delivery_type", null: false
@@ -198,6 +207,8 @@ ActiveRecord::Schema.define(version: 2022_02_28_093213) do
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "items"
   add_foreign_key "carts", "users"
+  add_foreign_key "default_addresses", "addresses"
+  add_foreign_key "default_addresses", "users"
   add_foreign_key "deliveries", "addresses"
   add_foreign_key "deliveries", "orders"
   add_foreign_key "items", "categories"
