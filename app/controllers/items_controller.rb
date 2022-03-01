@@ -44,7 +44,7 @@ class ItemsController < ApplicationController
   end
 
   def load_reviews
-    @reviews = Review.where(item: @item)
+    @reviews = @item.reviews
   end
 
   def search_params

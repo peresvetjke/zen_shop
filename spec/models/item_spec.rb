@@ -26,6 +26,7 @@ RSpec.describe Item, type: :model do
     it { should belong_to(:category) }
     it { should have_one(:stock) }
     it { should have_many(:subscriptions).dependent(:destroy) }
+    it { should have_many(:reviews).dependent(:destroy) }
   end
 
   describe "#available_amount" do
