@@ -1,7 +1,8 @@
 class Item < ApplicationRecord
   belongs_to :category
   has_one    :stock
-  has_many :subscriptions, dependent: :destroy
+  has_many   :subscriptions, dependent: :destroy
+  has_many   :reviews, dependent: :destroy
 
   validates :title, presence: true
   validates :title, uniqueness: true

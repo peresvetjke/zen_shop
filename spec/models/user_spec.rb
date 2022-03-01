@@ -14,6 +14,7 @@ RSpec.describe User, type: :model do
     it { should have_many(:cart_items).through(:cart) }
     it { should have_many(:orders).dependent(:destroy) }
     it { should have_many(:subscriptions).dependent(:destroy) }
+    it { should have_many(:reviews).dependent(:destroy) }
   end
 
   describe "#subscribe!" do

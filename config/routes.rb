@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   end
 
   resources :items do
+    resources :reviews, on: :member
     get :search, on: :collection
     post :subscribe, on: :member
   end

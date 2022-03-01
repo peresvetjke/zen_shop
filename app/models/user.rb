@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_one :bitcoin_wallet, dependent: :destroy
   has_many :bitcoin_purchases, through: :bitcoin_wallet, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
+  has_many :reviews, dependent: :destroy, foreign_key: "author_id"
 
   after_create :create_cart
   after_create :create_bitcoin_wallet
