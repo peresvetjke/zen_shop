@@ -55,4 +55,4 @@ A system, which allows customers to browse catalogue, choose goods and purchase 
     payments list
 
 ### ER Diagram
-![alt text](https://github.com/peresvetjke/zen_shop/blob/main/zen_shop%20v1.0.png?raw=true)
+![alt text](https://github.com/peresvetjke/zen_shop/blob/main/zen_shop%20v1.7.png?raw=true)
