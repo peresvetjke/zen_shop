@@ -1,6 +1,8 @@
-tr.category
-  td = link_to category.title, admin_category_path(category)
-  td
-    = link_to "Edit", edit_admin_category_path(category)
-    span = " "
-    = link_to "Delete", admin_category_path(category), method: :delete, data: { confirm: t("shared.are_you_sure?") }
+= turbo_frame_tag dom_id(category)
+  .level
+    = category.title
+    .field.is-grouped.is-grouped-right
+      .control 
+        = link_to "Edit", edit_admin_category_path(category), class: "button is-small"
+      .control
+        = link_to "Delete", admin_category_path(category), method: :delete, data: { confirm: t("shared.are_you_sure?") }, class: "button is-small"

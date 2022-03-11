@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature 'User as admin can index categories', %q{
   In order to observe its list or choose one for change.
-} do
+}, js: true do
 
   let!(:categories) { create_list(:category, 5) }
 
