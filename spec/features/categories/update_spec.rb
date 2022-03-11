@@ -2,22 +2,20 @@ require "rails_helper"
 
 feature 'User as admin can update a category', %q{
   In order to correct or actualize it.
-} do
+}, js: true do
 
   let!(:category) { create(:category) }
 
-  subject { visit edit_admin_category_path(category) }
-
   shared_examples "guest" do
     scenario "tries to edit category" do
-      subject
+      visit admin_categories_path
       expect(page).to have_content I18n.t("devise.failure.unauthenticated")
     end
   end
 
   shared_examples "customer" do
     scenario "tries to edit category" do
-      subject
+      visit admin_categories_path
       expect(page).to have_content I18n.t("pundit.category_policy.edit?")
     end
   end  
@@ -25,20 +23,28 @@ feature 'User as admin can update a category', %q{
   shared_examples "admin" do
     context "with invalid params" do
       scenario "displays errors" do
-        subject
-        fill_in "Title", with: ""
-        click_button "Update Category"
+        visit admin_categories_path
+        within "##{dom_id(category)}" do
+          click_link "Edit"
+          sleep(0.5)
+          fill_in "category_title", with: ""
+          click_button "Save"
+        end
         expect(page).to have_content I18n.t("errors.messages.blank")
       end
     end
 
     context "with valid params" do
       scenario "creates new category" do
-        subject
-        fill_in "Title", with: "New title"
-        click_button "Update Category"
+        visit admin_categories_path
+        within "##{dom_id(category)}" do
+          click_link "Edit"
+          sleep(0.5)
+          fill_in "category_title", with: "New title"
+          click_button "Save"
+        end
         expect(page).to have_content "New title"
-        expect(page).to have_content I18n.t("categories.update.message")
+        expect(page).to have_content I18n.t("admin.categories.update.message")
       end
     end
   end

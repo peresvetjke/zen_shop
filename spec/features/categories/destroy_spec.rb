@@ -2,31 +2,31 @@ require "rails_helper"
 
 feature 'User as an admin can delete category', %q{
   In order to actualize items classification.
-} do
+}, js: true do
 
   let!(:category) { create(:category) }
 
   shared_examples "guest" do
     scenario "tries to delete a category" do
-      visit admin_category_path(category)
+      visit admin_categories_path
       expect(page).to have_content I18n.t("devise.failure.unauthenticated")
     end
   end
 
   shared_examples "customer" do
     scenario "tries to delete a category" do
-      visit admin_category_path(category)
+      visit admin_categories_path
       expect(page).to have_content I18n.t("pundit.category_policy.destroy?")
     end
   end  
 
   shared_examples "admin" do
     scenario "deletes a category" do
-      visit admin_category_path(category)
+      visit admin_categories_path
       expect(page).to have_content category.title
-      click_link "Delete"
+      accept_confirm { click_link "Delete" }
       expect(page).to have_no_content category.title
-      expect(page).to have_content I18n.t("categories.destroy.message")
+      expect(page).to have_content I18n.t("admin.categories.destroy.message")
     end
   end
 

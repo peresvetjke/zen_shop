@@ -1,6 +1,7 @@
 h2 Edit category
 
-- if @category&.errors.present?
-  = render "shared/errors", resource: @category
+= turbo_frame_tag dom_id(@category)
+  - if @category&.errors.present?
+    = render "shared/errors", resource: @category
 
-= render "form"
+  = render partial: "form", locals: { category: @category }

@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 2022_03_01_083626) do
     t.text "description"
     t.bigint "category_id", null: false
     t.integer "price_cents", default: 0, null: false
-    t.string "price_currency", default: "USD", null: false
+    t.string "price_currency", default: "RUB", null: false
     t.integer "weight_gross_gr"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
