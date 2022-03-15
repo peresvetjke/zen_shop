@@ -15,16 +15,17 @@ import * as noUiSlider from 'nouislider';
 import 'nouislider/dist/nouislider.css';
 require("jquery")
 require("suggestions-jquery")
+import "controllers"
 
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
 
-importAll(require.context("../../assets/javascripts/", true, /\.js$/))
+// importAll(require.context("../../assets/javascripts/", true, /\.js$/))
 
-function importAll(r) {
-  r.keys().forEach(r);
-}
+// function importAll(r) {
+//   r.keys().forEach(r);
+// }
 
 // Vue js
 // import TurbolinksAdapter from 'vue-turbolinks'

@@ -3,6 +3,10 @@ class Cart < ApplicationRecord
   has_many :cart_items, dependent: :destroy
   has_many :items, through: :cart_items
 
+  def empty!
+    cart_items.destroy_all
+  end
+  
   def total_sum
     cart_items.map { |cart_item| cart_item.item.price * cart_item.amount }.sum
   end

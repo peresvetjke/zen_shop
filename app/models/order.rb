@@ -1,10 +1,14 @@
 class Order < ApplicationRecord
   MINIMUM_SUM = Money.new(1_00, "RUB")
 
+  before_validation :copy_cart
+  after_create :confirm_order
+
   belongs_to :user
   has_one :delivery, dependent: :destroy
   has_one :address, through: :delivery
   has_many :order_items, dependent: :destroy
+
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :delivery, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :address, reject_if: :all_blank, allow_destroy: true
@@ -32,6 +36,19 @@ class Order < ApplicationRecord
   end  
 
   private
+
+  def copy_cart
+    user.cart.cart_items.each do |cart_item|
+      order_items.new(item: cart_item.item,
+                      unit_price: cart_item.item.price,
+                      quantity: cart_item.amount
+      )
+    end
+  end
+
+  def confirm_order
+    user.cart.empty!
+  end
 
   def has_minimum_sum?
     total_sum >= MINIMUM_SUM

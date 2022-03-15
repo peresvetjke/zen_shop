@@ -13,13 +13,13 @@ html
       script src="//code.jquery.com/jquery-1.11.3.min.js"
 
   body
-    .container
-      .row.justify-content-md-center
+    .container.column.is-two-thirds.is-align-content-center
+      .row
         = render "shared/nav"
         = render "shared/menu"
         = render "shared/search"
 
-      .row.justify-content-md-center
+      .row
         = render "shared/notice"
         p.alert = alert
         = yield

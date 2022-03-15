@@ -1,0 +1,28 @@
+= turbo_frame_tag "cart_total"
+  .row
+    
+    .mt-4.is-size-7
+      .level
+        .level-left
+          = "Total weight: "
+        .level-right
+          p 
+            span#total_weight = cart.total_weight
+            span = " gr"
+
+    .column
+      .is-size-6
+        .level
+          .level-left
+            = "Total: "
+          .level-right
+            p 
+              span#total_sum = cart.total_sum
+              span = " RUB"
+
+        / span
+      / strong 
+        / = "Total: "
+        / span data-action="cartItemChanged@window->carts#updateTotalSum" data-carts-target="totalSum" = cart.total_sum
+        / = " RUB"
+

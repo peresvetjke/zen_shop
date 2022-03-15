@@ -9,14 +9,14 @@ function ready() {
     var deliveryAddress = $("#delivery_address")
 
     $(deliveryType).on('change', function() {
-      switch (deliveryType[0].value) {
-        case "Self-pickup":
-          deliveryInfo.hide()
-          break;
-        case "Russian Post":
-          deliveryInfo.show()
-          break;
-      }
+      // switch (deliveryType[0].value) {
+      //   case "Self-pickup":
+      //     deliveryInfo.hide()
+      //     break;
+      //   case "Russian Post":
+      //     deliveryInfo.show()
+      //     break;
+      // }
     })
 
     dadataInput.suggestions({
