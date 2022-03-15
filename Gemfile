@@ -40,8 +40,8 @@ gem 'faraday'
 gem 'money-tree'
 gem 'sidekiq'
 gem 'pundit'
-# gem 'foreman'
 gem 'turbo-rails'
+gem 'stimulus-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

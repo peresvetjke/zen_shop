@@ -2,6 +2,7 @@
   "name": "zen-shop",
   "private": true,
   "dependencies": {
+    "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.1.1",
     "@rails/actioncable": "^6.0.0",
     "@rails/actiontext": "^6.1.4-4",

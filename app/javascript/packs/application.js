@@ -15,38 +15,17 @@ import * as noUiSlider from 'nouislider';
 import 'nouislider/dist/nouislider.css';
 require("jquery")
 require("suggestions-jquery")
+import "controllers"
 
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
 
-importAll(require.context("../../assets/javascripts/", true, /\.js$/))
+// importAll(require.context("../../assets/javascripts/", true, /\.js$/))
 
-function importAll(r) {
-  r.keys().forEach(r);
-}
-
-// Vue js
-// import TurbolinksAdapter from 'vue-turbolinks'
-// import Vue from 'vue/dist/vue.esm'
-// import CategoriesList from '../components/categories-list.vue'
-// import Category from '../components/category.vue'
-// import Errors from '../components/errors.vue'
-// import Message from '../components/message.vue'
-
-// Vue.use(TurbolinksAdapter)
-
-// Vue.component('categories-list', CategoriesList)
-// Vue.component('category', Category)
-// Vue.component('errors', Errors)
-// Vue.component('message', Message)
-
-// document.addEventListener('turbolinks:load', () => {
-//   const app = new Vue({
-//     el: `[data-behavior='vue']`,
-//     components: { Category, CategoriesList, Errors, Message }
-//   })
-// })
+// function importAll(r) {
+//   r.keys().forEach(r);
+// }
 
 require("trix")
 require("@rails/actiontext")

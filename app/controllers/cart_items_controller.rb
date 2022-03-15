@@ -24,9 +24,7 @@ class CartItemsController < ApplicationController
   def update
     respond_to do |format|
       format.json do
-        if @cart_item.change_amount_by!(params[:cart_item][:amount].to_i)
-          render json: @cart_item, serializer: CartItemSerializer, root: "cart_item"
-        else
+        unless @cart_item.update(amount: params[:cart_item][:amount].to_i)
           render json: { message: @cart_item.errors.full_messages.join("; ") }, status: :unprocessable_entity
         end
       end
@@ -35,9 +33,7 @@ class CartItemsController < ApplicationController
 
   def destroy
     respond_to do |format|
-      format.json do
-        render json: @cart_item.destroy, serializer: CartItemSerializer, root: "cart_item"
-      end
+      format.json { @cart_item.destroy }
     end
   end
 

@@ -24,7 +24,7 @@ feature 'User as customer can post order', %q{
     feature "self-pickup (no delivery)" do
       scenario "creates order" do
         select "Self-pickup", from: delivery_type_select
-        click_button("Create Order")
+        click_button("Checkout")
         expect(page).to have_content I18n.t("orders.create.message")
       end
 
@@ -42,19 +42,21 @@ feature 'User as customer can post order', %q{
     end
 
     feature "russian post delivery" do
-      scenario "tries to create order without address" do
+      scenario "tries to create order without address", js: true do
         select "Russian Post", from: delivery_type_select
-        click_button("Create Order")
+        click_button("Checkout")
         expect(page).to have_content "Must have address"
       end
 
-      scenario "displays suggestions for address input" do
+      scenario "displays suggestions for address input", js: true do
         select "Russian Post", from: delivery_type_select
         fill_in 'address', with: "Покровка 16"
         sleep(1)
         expect(page).to have_content "ул Покровка, д 15/16"
         page.first("span.suggestions-nowrap", text: "д 15/16").click
-        click_button("Create Order")
+        sleep(1)
+        click_button("Checkout")
+        sleep(1)
         expect(page).to have_content I18n.t("orders.create.message")
       end
 
@@ -63,9 +65,10 @@ feature 'User as customer can post order', %q{
         fill_in 'address', with: "Покровка 16"
         sleep(1)
         page.first("span.suggestions-nowrap", text: "д 15/16").click
-        expect(page).to have_content "Delivery cost: #{delivery_cost} RUB"
-        expect(page).to have_content(/Deadline\: \d\d\-\d\d\-\d\d\d\d/)
-        click_button("Create Order")
+        sleep(1)
+        expect(page).to have_content "Delivery cost:\n#{delivery_cost} RUB"
+        expect(page).to have_content(/Deadline\:\n\d\d\-\d\d\-\d\d\d\d/)
+        click_button("Checkout")
       end
     end
   end
@@ -76,17 +79,17 @@ feature 'User as customer can post order', %q{
         sign_in(user_no_money) 
         visit cart_path
         select "Self-pickup", from: delivery_type_select
-        click_button("Create Order")
+        click_button("Checkout")
         expect(page).to have_content "Please replenish your wallet for #{insufficient_sum}"
       end
     end
-    
+
     feature "with sufficient wallet balance" do
       scenario "allows to create order " do
         sign_in(user) 
         visit cart_path
         select "Self-pickup", from: delivery_type_select
-        click_button("Create Order")
+        click_button("Checkout")
         expect(page).to have_content I18n.t("orders.create.message")
       end
     end

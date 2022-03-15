@@ -1,0 +1,14 @@
+= turbo_frame_tag dom_id(cart_item)
+  div data-controller="cart-items" data-cart-items-url-value="#{cart_item_path(cart_item)}"
+    .level.cart_item
+      .level-left 
+        = cart_item.item.title  
+      .level-right
+        = link_to "Delete", cart_item_path(cart_item), method: :delete, remote: true, class: "delete", data: {"cart-items-target": "amountDelete", action: "cart-items#delete"}
+
+    .level
+      = select_tag :amount, options_for_select(1..10, cart_item.amount), {class: "select is-small level-left", data: {"cart-items-target": "amountSelect", action: "cart-items#update"}}
+      .level-right 
+        div
+          span.sum data-target="cart-items.itemSum carts.itemSum" = "#{cart_item.item.price * cart_item.amount}"
+          = " RUB"

@@ -1,0 +1,52 @@
+- if @order&.errors.present?
+  = render "shared/errors", resource: @order
+
+div data-controller="carts"
+  = form_with model: @order ||= Order.new, url: orders_path, data: {turbo: "false"} do |f|
+    .columns
+      .column        
+        p.title.is-4 = "Info"
+        p.title.is-6 Delivery
+
+        = f.fields_for :delivery_attributes, Delivery.new(order: @order) do |delivery|
+          = delivery.label "Type", class: "control label is-small"
+          = delivery.select :delivery_type, Delivery.delivery_types.keys.to_a, {include_blank: "Please choose", selected: "Self-pickup"}, {data: {"carts-target": "deliveryTypeSelect", action: "carts#updateDeliveryType"}, class: "select is-small"}
+
+        .mt-4.delivery_info data-carts-target="deliveryInfo" style="display:none"
+          p.label.is-small = "Address:"
+          input id="address" name="address" type="text"
+
+          input type="hidden" name="order[address_attributes][country]"
+          input type="hidden" name="order[address_attributes][postal_code]"
+          input type="hidden" name="order[address_attributes][region_with_type]"
+          input type="hidden" name="order[address_attributes][city_with_type]"
+          input type="hidden" name="order[address_attributes][street_with_type]"
+          input type="hidden" name="order[address_attributes][house]"
+          input type="hidden" name="order[address_attributes][flat]"
+
+          #delivery_address 
+          #delivery_cost data-carts-target="deliveryCostInfo"
+            p.mt-4
+              strong.label.is-small = "Delivery cost:"
+              span data-carts-target="deliveryCost" = "0.00"
+              span = " RUB"
+          #delivery_planned_date data-carts-target="deliveryPlannedDateInfo"
+            p.mt-4
+              strong.label.is-small = "Deadline:"
+              span data-carts-target="deliveryPlannedDate" = ""
+
+        = turbo_stream_from "cart_total"
+        = render "carts/total", cart: @cart
+                
+        .row
+          .column
+            = f.submit "Checkout", class: "button is-success"
+
+      .column
+        p.title.is-4 Cart
+
+        .cart_items
+          = turbo_stream_from "cart_items"
+          = turbo_frame_tag "cart_items"
+            = render @cart.cart_items
+          
