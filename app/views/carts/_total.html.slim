@@ -19,10 +19,3 @@
             p 
               span#total_sum = cart.total_sum
               span = " RUB"
-
-        / span
-      / strong 
-        / = "Total: "
-        / span data-action="cartItemChanged@window->carts#updateTotalSum" data-carts-target="totalSum" = cart.total_sum
-        / = " RUB"
-

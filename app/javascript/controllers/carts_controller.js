@@ -5,13 +5,7 @@ export default class extends Controller {
                     "itemSum", "totalSum", "deliveryTypeSelect", 
                     "deliveryInfo", "deliveryCostInfo", "deliveryPlannedDateInfo",
                     "deliveryCost", "deliveryPlannedDate",
-                    // "country", "postal_code", "region_with_type", "city_with_type", 
-                    // "street_with_type", "house", "flat"
                    ]
-
-  // static values = [
-                  //   ,
-                  // ]
 
   connect() {
     let self = this
@@ -63,7 +57,6 @@ export default class extends Controller {
       url: tariffEndPoint + query
     }).done(function(data) {
       var costRub = data.paynds / 100
-      // self.displayDeliveryCost(costRub)
       self.deliveryCostTarget.textContent = costRub
     });
 
@@ -71,35 +64,11 @@ export default class extends Controller {
     $.ajax({
       url: plannedDateEndPoint + query
     }).done(function(data) {
-      // console.log(data)
-      //
-      //
-
       var plannedDate = self.parseDate(data.delivery.deadline)
-      // self.displayDeliveryPlannedDate(plannedDate)
       self.deliveryPlannedDateTarget.textContent = plannedDate
     });
   }
 
-  // displayDeliveryPlannedDate(date) {
-    // var plannedDate = $("#delivery_planned_date")
-    // var content = `<p class="mt-4"><strong class="label is-small">Deadline:</strong> ${date}</p>`
-
-    // plannedDate.empty()
-    // $(plannedDate).append(content)
-
-    // this.deliveryPlannedDateTarget.textContent = date
-  // }
-
-  // displayDeliveryCost(costRub) {
-    // var deliveryCost = $("#delivery_cost")
-    // var content = `<p class="mt-4"><strong class="label is-small">Delivery cost:</strong> ${costRub} RUB</p>`
-
-    // deliveryCost.empty()
-    // $(deliveryCost).append(content)
-
-    // this.deliveryCostTarget.textContent = costRub
-  // }
 
   updateDeliveryType() {
     if (this.deliveryTypeSelectTarget.value != "Russian Post") {
@@ -110,12 +79,7 @@ export default class extends Controller {
   }
 
   updateTotalSum() {this.sleep(1000).then(() => {
-      if (this.itemSumTargets.length == 0) {
-        Turbo.visit('/cart')
-      } 
-      // else {
-      //   this.totalSumTarget.textContent = this.calculateTotalSum().toString() + '.00'  
-      // }
+      if (this.itemSumTargets.length == 0) { Turbo.visit('/cart') }
     })
   }
 
@@ -126,6 +90,7 @@ export default class extends Controller {
 
     return `${day}-${month}-${year}`
   }
+
   // calculateTotalSum() {
   //   return this.itemSumTargets.reduce((n, {textContent}) => n + parseInt(textContent), 0)
   // }

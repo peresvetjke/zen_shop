@@ -35,11 +35,6 @@ class CartItemsController < ApplicationController
     respond_to do |format|
       format.json { @cart_item.destroy }
     end
-    # respond_to do |format|
-    #   format.json do
-    #     render json: @cart_item.destroy, serializer: CartItemSerializer, root: "cart_item"
-    #   end
-    # end
   end
 
   private

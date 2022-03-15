@@ -66,7 +66,6 @@ feature 'User as customer can post order', %q{
         sleep(1)
         page.first("span.suggestions-nowrap", text: "д 15/16").click
         sleep(1)
-        save_and_open_page
         expect(page).to have_content "Delivery cost:\n#{delivery_cost} RUB"
         expect(page).to have_content(/Deadline\:\n\d\d\-\d\d\-\d\d\d\d/)
         click_button("Checkout")
