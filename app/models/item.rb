@@ -18,10 +18,6 @@ class Item < ApplicationRecord
   scope :arrived_items_for_follower, ->(follower) { Item.joins(:stock, :subscriptions).
                                                       where("stocks.storage_amount > ? AND subscriptions.user_id = ?", 0, follower.id) }
 
-  def purchased_by?(user)
-    user.cart.cart_items.find_by(item_id: id).present?
-  end
-
   def available_amount
     reserved = CartItem.where(item: self).pluck(:amount).sum
     stock.storage_amount - reserved

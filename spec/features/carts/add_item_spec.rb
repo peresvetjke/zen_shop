@@ -18,23 +18,11 @@ feature 'User as client adds an item to cart', %q{
     scenario "adds item to cart", js: true do
       visit items_path
       click_button("Add to cart")
-      sleep(1)
       within "#add_to_cart_#{item.id}" do
         expect(page).to have_no_button("Add to cart")
         expect(page).to have_field("amount", with: '1', disabled: true)
       end
     end
-
-    # scenario "does not duplicate cart items" do
-    #   visit item_path(item)
-    #   # fill_in "cart_item[amount]", with: "5"
-    #   click_button("Add to cart")
-    #   visit item_path(item)
-    #   fill_in "cart_item[amount]", with: "5"
-    #   click_button("Add to cart")
-    #   expect(page).to have_content I18n.t("cart_items.create.message")
-    #   expect(page).to have_selector('tr.cart_item', count: 1)
-    # end
 
     feature "stocks" do
       background { 

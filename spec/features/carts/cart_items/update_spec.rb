@@ -4,10 +4,6 @@ feature 'User as client updates a cart item', %q{
   In order to correct purchase amount.
 }, js: true do
 
-  # RSpec.configure do |config|
-  #   Capybara.javascript_driver = :selenium_chrome
-  # end
-
   given!(:user)        { create(:user) }
   given!(:cart_item_1) { create(:cart_item, cart: user.cart, item: create(:item, price: 100), amount: 2) }
   given!(:cart_item_2) { create(:cart_item, cart: user.cart, item: create(:item, price: 200), amount: 5) }

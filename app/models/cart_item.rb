@@ -20,14 +20,6 @@ class CartItem < ApplicationRecord
 
   validates :amount, numericality: { greater_than_or_equal_to: 1,  only_integer: true }
   validate :validate_available_amount, on: [:create, :update], if:-> { item }
-  # validate :validate_available_amount, on: :update, if:-> { item }
-
-  # def change_amount_by!(difference)
-  #   validate_available_amount(difference)
-  #   return false if self.errors.present?
-    
-  #   self.update(amount: self.amount + difference)
-  # end
 
   private
 

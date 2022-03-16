@@ -29,20 +29,6 @@ RSpec.describe Item, type: :model do
     it { should have_many(:reviews).dependent(:destroy) }
   end
 
-  describe "#purchased_by?" do
-    context "when cart item exists" do
-      it "returns true" do
-        expect(item_1.purchased_by?(user_A)).to eq true
-      end
-    end
-
-    context "when cart item does not exist" do
-      it "returns false" do
-        expect(item_1.purchased_by?(create(:user))).to eq false
-      end
-    end
-  end
-
   describe "#available_amount" do
     before {
       item_1.stock.update(storage_amount: 10)

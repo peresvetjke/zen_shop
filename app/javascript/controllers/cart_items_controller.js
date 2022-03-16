@@ -2,8 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 import Rails from "@rails/ujs";
 
 export default class extends Controller {
-  static targets = ["amountSelect", "itemSum"] // "amountDelete", 
-  static values = {url: String, itemid: Number} //, amount: Number
+  static targets = ["amountSelect", "itemSum"]
+  static values = {url: String, itemid: Number}
 
   create() {
     let params = {
