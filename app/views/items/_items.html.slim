@@ -1,9 +1,3 @@
-.items
-  table
-    thead
-      tr
-        td Title
-        td Price
-    tbody
-      - items.each do |item|
-        = render "items/item", item: item
+.items.columns.is-multiline
+  - items.each do |item|
+    = render "items/item", item: item

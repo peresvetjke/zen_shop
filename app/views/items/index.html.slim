@@ -1,6 +1,11 @@
-h2 Items
+- if current_user
+  - if @items.present?
+    = render partial: "items", locals: { items: @items }
+  - else
+    p No items at the moment.
 
-- if @items.present?
-  = render partial: "items", locals: { items: @items }
 - else
-  p No items at the moment.
+  p 
+    span Please 
+    span = link_to "sign in", new_user_session_path 
+    span  to continue.

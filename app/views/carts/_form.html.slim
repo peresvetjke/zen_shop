@@ -1,7 +1,7 @@
 - if @order&.errors.present?
   = render "shared/errors", resource: @order
 
-div data-controller="carts"
+div data-controller="carts" data-action="cartItemDeleted@window->carts#updateCart"
   = form_with model: @order ||= Order.new, url: orders_path, data: {turbo: "false"} do |f|
     .columns
       .column        

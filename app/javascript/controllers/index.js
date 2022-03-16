@@ -8,7 +8,7 @@ import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
 import CartItemsController from "./cart_items_controller"
-application.register("cart-items", CartItemsController)
+application.register("cartitems", CartItemsController)
 
 import CartsController from "./carts_controller"
 application.register("carts", CartsController)

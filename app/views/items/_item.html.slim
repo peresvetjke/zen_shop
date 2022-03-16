@@ -1,3 +1,8 @@
-tr.item
-  td = link_to item.title, item_path(item)
-  td = item.price
+.item.box.column.is-one-quarter.m-5
+  .row
+    = link_to item.title, item_path(item)
+    .is-align-content-center
+      = "#{item.price} RUB"
+    
+    = turbo_stream_from "add_to_cart_#{item.id}"
+    = render "add_to_cart", item: item, user: current_user

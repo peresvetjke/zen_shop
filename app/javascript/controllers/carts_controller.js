@@ -78,7 +78,8 @@ export default class extends Controller {
     }
   }
 
-  updateTotalSum() {this.sleep(1000).then(() => {
+  updateCart() {
+    this.sleep(1000).then(() => {
       if (this.itemSumTargets.length == 0) { Turbo.visit('/cart') }
     })
   }
