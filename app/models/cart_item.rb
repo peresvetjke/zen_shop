@@ -1,14 +1,17 @@
 class CartItem < ApplicationRecord
   after_create_commit { 
     broadcast_append_to "cart_items" 
+    broadcast_replace_to "add_to_cart_#{item.id}", target: "add_to_cart_#{item.id}", partial: "items/add_to_cart", locals: {item: item, user: cart.user}
     broadcast_replace_to "cart_total", target: "cart_total", partial: "carts/total", locals: {cart: self.cart}
   }
   after_update_commit { 
     broadcast_replace_to "cart_items"
+    broadcast_replace_to "add_to_cart_#{item.id}", target: "add_to_cart_#{item.id}", partial: "items/add_to_cart", locals: {item: item, user: cart.user}
     broadcast_replace_to "cart_total", target: "cart_total", partial: "carts/total", locals: {cart: self.cart}
   }
   after_destroy_commit { 
-    broadcast_remove_to "cart_items" 
+    broadcast_remove_to "cart_items"
+    broadcast_replace_to "add_to_cart_#{item.id}", target: "add_to_cart_#{item.id}", partial: "items/add_to_cart", locals: {item: item, user: cart.user}
     broadcast_replace_to "cart_total", target: "cart_total", partial: "carts/total", locals: {cart: self.cart}
   }
 
@@ -16,18 +19,22 @@ class CartItem < ApplicationRecord
   belongs_to :item
 
   validates :amount, numericality: { greater_than_or_equal_to: 1,  only_integer: true }
-  validate :validate_available_amount, on: :create, if:-> { item }
+  validate :validate_available_amount, on: [:create, :update], if:-> { item }
+  # validate :validate_available_amount, on: :update, if:-> { item }
 
-  def change_amount_by!(difference)
-    validate_available_amount(difference)
-    return false if self.errors.present?
+  # def change_amount_by!(difference)
+  #   validate_available_amount(difference)
+  #   return false if self.errors.present?
     
-    self.update(amount: self.amount + difference)
-  end
+  #   self.update(amount: self.amount + difference)
+  # end
 
   private
 
-  def validate_available_amount(amount = self.amount)
-    errors.add :base, I18n.t("cart_items.errors.not_available") if item.available_amount < amount
+  def validate_available_amount
+    updated = self.amount
+    current = self.persisted? ? self.reload.amount : 0
+    errors.add :base, I18n.t("cart_items.errors.not_available") if item.available_amount < updated - current
+    self.amount = updated
   end
 end
