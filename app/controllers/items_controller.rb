@@ -1,9 +1,7 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!, only: :subscribe
-  # before_action :load_items, only: :index
   before_action :load_item, only: %i[show subscribe]
   before_action :load_reviews, only: :show
-  # before_action :set_meta, only: :index
   before_action -> { authorize Item }, except: :index
 
   def index
@@ -17,7 +15,6 @@ class ItemsController < ApplicationController
       @heading = "#{Category.find(params[:category_id]).title}"
     else
       @items = Item.all
-      # @heading = "Catalogue"
     end
 
     @meta = category_dict(@items).merge(price_dict(@items))
@@ -29,18 +26,6 @@ class ItemsController < ApplicationController
   def search
     @items = Item.search(params[:query])
     @meta = category_dict(@items).merge(price_dict(@items))
-
-    # @result = Item.search(params[:query])
-
-    # respond_to do |format|
-    #   format.json { 
-    #                 render json: { 
-    #                                 "results" => @result, 
-    #                                 "meta"    => category_dict(@result)
-    #                                               .merge(price_dict(@result)) 
-    #                              } 
-    #               }
-    # end
   end
 
   def subscribe
@@ -83,10 +68,5 @@ class ItemsController < ApplicationController
                     "max" => collection.map(&:price_cents).max
                   }
     } 
-  end
-
-  def set_meta
-    # result = Category.all
-    @meta = category_dict(@items).merge(price_dict(@items))
   end
 end
