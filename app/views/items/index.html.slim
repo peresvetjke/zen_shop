@@ -1,11 +1,21 @@
-- if current_user
-  - if @items.present?
-    = render partial: "items", locals: { items: @items }
-  - else
-    p No items at the moment.
+div data-controller='search' data-search-min-price-value="#{@meta["prices"]["min"]}" data-search-max-price-value="#{@meta["prices"]["max"]}" data-search-price-from-value="#{@meta["prices"]["min"]}" data-search-price-to-value="#{@meta["prices"]["max"]}"
 
-- else
-  p 
-    span Please 
-    span = link_to "sign in", new_user_session_path 
-    span  to continue.
+  = render partial: "items/search_filter", locals: { meta: @meta }
+
+  p.ml-5
+    = link_to "Catalogue", items_path, class: "is-underlined"
+    - if @heading
+      = " / "
+      = @heading
+
+  - if current_user
+    - if @items.present?
+      = render partial: "items", locals: { items: @items }
+    - else
+      p.ml-5 No items at the moment.
+
+  - else
+    p.ml-5 
+      span Please 
+      span = link_to "sign in", new_user_session_path 
+      span  to continue.

@@ -11,12 +11,18 @@ feature 'User as a client can perform search of goods item', %q{
   given!(:item_three)   { create(:item, title: "Item #3", category: category_two, price: Money.new(200_00, "RUB")) }
   given!(:item_four)    { create(:item, title: "Item #4", category: category_two, price: Money.new(400_00, "RUB")) }
 
+  background { 
+    sign_in(create(:user))
+  }
+
   feature "search by title" do
     it "returns items with relevant title" do
       visit items_path
+      # save_and_open_page
+      # binding.pry
       fill_in "query", with: "toy"
       click_button("Search")
-      expect(page.all('tr.item').count).to eq 2
+      expect(page.all('div.item').count).to eq 2
       expect(page).to have_content "Item #1 toy"
       expect(page).to have_content "Item #2 toy"
     end
@@ -31,19 +37,19 @@ feature 'User as a client can perform search of goods item', %q{
 
     feature "filter search by category" do
       it "returns items with relevant category" do
-        expect(page.all('tr.item').count).to eq 2
+        expect(page.all('.box.item').count).to eq 2
         page.check("Category #2")
-        expect(page.all('tr.item').count).to eq 1
+        expect(page.all('.box.item').count).to eq 1
         expect(page).to have_content "Item #2 toy"
       end
     end
 
     feature "filter search by price" do
       it "returns items with relevant price" do
-        expect(page.all('tr.item').count).to eq 2
+        expect(page.all('.box.item').count).to eq 2
         fill_in "input-format-from", with: "120"
         fill_in "input-format-to", with: "150"
-        expect(page.all('tr.item').count).to eq 1
+        expect(page.all('.box.item').count).to eq 1
         expect(page).to have_content "Item #2 toy"
       end
     end

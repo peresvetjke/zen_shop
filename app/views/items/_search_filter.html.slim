@@ -1,0 +1,32 @@
+div.search_filter.m-4.box
+  
+  = form_with url: items_path, method: :get, data: { turbo: false } do |f|
+    .field.has-addons
+      .control
+        = f.text_field :query, class: "input is-small is-rounded"
+      .control
+        = f.submit "Search", class: "button is-small is-info is-rounded"
+
+  p.title.is-size-6.mt-5 = "Category"
+
+  div.category.form-check
+    - meta["categories"].each do |category|
+      label.checkbox for="category_#{category['id']}" 
+        input type="checkbox" value="" id="category_#{category['id']}" data-category-id="#{category['id']}" data-action="search#filterSearchResults" = "#{category["title"]} - #{category["results_count"]}"
+      br
+
+  p.title.is-size-6.mt-5 = "Price"
+
+  .price
+    .field.is-grouped
+      .control
+        label.label.is-small 
+          = "From:"
+      .control
+        input.input.is-small title="Formatted number" id="input-format-from" data-search-target="priceFrom" data-action="search#filterSearchResults"
+    
+      .control
+        label.label.is-small
+          = "To:"
+      .control
+        input.input.is-small title="Formatted number" id="input-format-to" data-search-target="priceTo" data-action="search#filterSearchResults"

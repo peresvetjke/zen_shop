@@ -1,6 +1,0 @@
-ul.categories.list-group.list-group-horizontal
-  
-  - @categories.each do |category|
-    li.list-group-item = link_to category.title, category_items_path(category)
-  
-  li.list-group-item = link_to "All goods", items_path

@@ -1,12 +1,30 @@
-.navbar-nav.navbar.navbar-collapse
-  ul.breadcrumb
-    li.breadcrumb-item = link_to "Items", items_path
+nav.navbar.is-flex-mobile.is-flex-tablet role="navigation" aria-label="main navigation"
+  .navbar-menu
+    .navbar-start
+      .navbar-item.has-dropdown.is-hoverable
+          .navbar-link
+            span.icon
+              i.fa-solid.fa-list-ul
+            span = link_to "Catalogue", items_path, class: "ms-1"
 
-    - if user_signed_in?
-      li.breadcrumb-item = link_to "My cart", cart_path, id: "cart"
-      li.breadcrumb-item = link_to "My orders", orders_path
-      li.breadcrumb-item = link_to "My account", account_path
-      li.breadcrumb-item = link_to current_user.email + " (Sign out)", destroy_user_session_path
-    - else
-      li.breadcrumb-item = link_to "Sign up", new_user_registration_path
-      li.breadcrumb-item = link_to "Sign in", new_user_session_path
+          .navbar-dropdown
+            - @categories.each do |category|
+              = link_to category.title, category_items_path(category), class: "navbar-item"
+            
+            = link_to "All goods", items_path, class: "navbar-item"
+
+      - if user_signed_in?
+        .navbar-item
+          span.icon
+            i.fa-solid.fa-cart-shopping
+          span = link_to "My cart", cart_path, id: "cart", class: "ms-1"
+
+        .navbar-item.has-dropdown.is-hoverable
+          .navbar-link
+            span.icon
+              i.fa-solid.fa-user
+            span.ms-1 = link_to current_user.email, account_path
+
+          .navbar-dropdown
+            = link_to "My account", account_path, class: "navbar-item"
+            = link_to "Sign out", destroy_user_session_path, class: "navbar-item"
