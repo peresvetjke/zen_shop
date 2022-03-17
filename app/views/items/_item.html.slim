@@ -1,8 +1,9 @@
-.item.box.column.is-one-quarter.m-5
+.item.box.column.is-one-quarter.m-5 data-category-id="#{item.category.id}" data-search-target="item"
   .row
     = link_to item.title, item_path(item)
     .is-align-content-center
-      = "#{item.price} RUB"
+      .price = "#{item.price}"
+      = " RUB"
     
     = turbo_stream_from "add_to_cart_#{item.id}"
     = render "add_to_cart", item: item, user: current_user

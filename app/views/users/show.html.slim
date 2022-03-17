@@ -1,13 +1,16 @@
-h2 Welcome to your account!
-
 .btc_wallet
-  h4 Wallet info (BTC)
-  p
-    strong Your balance:
-    span#balance = " " + current_user.bitcoin_wallet.available_btc.to_s
+  p.title.is-4 = "Wallet info (BTC)"
 
-  p
-    strong Your BTC address:
-    span#btc_wallet_address = " " + current_user.bitcoin_wallet.public_address
+  .label Your balance:
+  span#balance = " " + current_user.bitcoin_wallet.available_btc.to_s
 
-  p Replenish your wallet with sending to your personal btc address.
+  div data-controller="clipboard"
+    .mt-4.label Your BTC address:
+    .field.has-addons
+      .control
+        input.input#btc_wallet_address readonly="true" data-clipboard-target="source" type="text" value="#{current_user.bitcoin_wallet.public_address}"
+      .control
+        button.button data-action="clipboard#copy" 
+          i.fa-regular.fa-copy
+
+    p.is-size-7 Replenish your wallet with sending to your personal btc address.

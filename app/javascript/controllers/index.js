@@ -12,3 +12,9 @@ application.register("cartitems", CartItemsController)
 
 import CartsController from "./carts_controller"
 application.register("carts", CartsController)
+
+import ClipboardController from "./clipboard_controller"
+application.register("clipboard", ClipboardController)
+
+import SearchController from "./search_controller"
+application.register("search", SearchController)
