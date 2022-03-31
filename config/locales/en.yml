@@ -58,6 +58,10 @@ en:
   orders:
     create:
       message: "Order has been succesfully created."
+  default_addresses:
+    update:
+      message: "Default address has been succesfully updated."
+
   pundit:
     aliases:
       &not_admin

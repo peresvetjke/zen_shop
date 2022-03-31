@@ -40,7 +40,7 @@ feature 'User as client can view item', %q{
           visit item_path(item) 
         }
 
-        scenario "subscribes for a notification about item arrival" do
+        scenario "subscribes for a notification about item arrival", js: true do
           expect(page).to have_no_button("Add to cart")
           click_link("Subscribe")
           msg = accept_confirm { }

@@ -1,6 +1,8 @@
 class OrdersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_cart, only: %i[new create]
+  before_action :load_previous_address, only: :new
+  before_action :load_default_address, only: :new
   before_action -> { authorize Order }, only: %i[new create]
 
   def new
@@ -33,5 +35,13 @@ class OrdersController < ApplicationController
 
   def load_cart
     @cart = current_user.cart
+  end
+
+  def load_previous_address
+    @previous_address = current_user.orders&.last&.address
+  end
+
+  def load_default_address
+    @default_address = current_user.address
   end
 end

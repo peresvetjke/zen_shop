@@ -1,11 +1,11 @@
 .btc_wallet
   p.title.is-4 = "Wallet info (BTC)"
 
-  .label Your balance:
+  .label.is-small Your balance:
   span#balance = " " + current_user.bitcoin_wallet.available_btc.to_s
 
   div data-controller="clipboard"
-    .mt-4.label Your BTC address:
+    .mt-4.label.is-small Your BTC address:
     .field.has-addons
       .control
         input.input#btc_wallet_address readonly="true" data-clipboard-target="source" type="text" value="#{current_user.bitcoin_wallet.public_address}"
@@ -14,3 +14,32 @@
           i.fa-regular.fa-copy
 
     p.is-size-7 Replenish your wallet with sending to your personal btc address.
+
+  p.title.is-4.mt-5 = "Default address:"
+
+  div data-controller="address" data-address-country-value="#{@default_address&.country}" data-address-postal-value="#{@default_address&.postal_code}" data-address-region-value="#{@default_address&.region_with_type}" data-address-city-value="#{@default_address&.city_with_type}" data-address-street-value="#{@default_address&.street_with_type}" data-address-house-value="#{@default_address&.house}" data-address-flat-value="#{@default_address&.flat}" data-address-address-is-present-value="#{@default_address.present?}"
+    - if @address&.errors.present?
+      = render "shared/errors", resource: @address
+
+    - if @default_address&.errors.present?
+      = render "shared/errors", resource: @default_address
+    
+    = form_with model: DefaultAddress.new || @default_address, url: default_address_index_path, data: {turbo: "false"} do |f|
+      div data-address-target="addressInput"
+        p.is-size-7 = "Enter your address:" 
+        input.input.mb-3 id="address" name="address" type="text"
+              
+      div data-address-target="addressFields"
+        / p.title.is-size-6 = "Current address:"
+        - {"Country" => "country", "Postal code" => "postal_code", "Region" => "region_with_type", "City" => "city_with_type", "Street" => "street_with_type", "House" => "house", "Flat" => "flat"}.each do |label, field_name|
+            .field.is-horizontal
+              .field-label.is-normal
+                label for="search_#{field_name}"
+                  p.is-size-7 = "#{label}"
+              .field-body
+                .field
+                  input.input.is-small name="default_address[#{field_name}]" id="#{field_name}" readonly="true"
+      = f.submit "Save", class: "button is-success", data: { "address-target" => "saveAddressButton" }
+
+    a.button.is-info.mt-4 data-action="address#changeDefaultAddress" data-address-target="changeAddressButton"
+      = "Change"
