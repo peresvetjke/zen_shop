@@ -16,8 +16,6 @@ feature 'User as customer can update default address', js: true do
     sleep(1)
     page.first("span.suggestions-nowrap", text: "д 10").click
     sleep(1)
-    # save_and_open_page
-    # binding.pry
     click_button "Save"
     expect(page).to have_field('house', with: '10')
     expect(page).to have_content('Default address has been succesfully updated.')

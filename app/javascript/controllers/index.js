@@ -4,9 +4,6 @@
 
 import { application } from "./application"
 
-import CartTotalController from "./cart_total_controller"
-application.register("carttotal", CartTotalController)
-
 import AddressController from "./address_controller"
 application.register("address", AddressController)
 

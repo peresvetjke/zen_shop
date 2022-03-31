@@ -24,15 +24,7 @@
     - if @default_address&.errors.present?
       = render "shared/errors", resource: @default_address
     
-    - if @default_address.present?
-      - default_address_model = DefaultAddress.new
-      - default_address_path = default_address_path(@default_address)
-      - default_address_method = :patch
-    - else
-      - default_address_model = @default_address
-      - default_address_path = default_address_index_path
-      - default_address_method = :post
-    = form_with model: default_address_model, url: default_address_path, method: default_address_method, data: {turbo: "false"} do |f|
+    = form_with model: DefaultAddress.new || @default_address, url: default_address_index_path, data: {turbo: "false"} do |f|
       div data-address-target="addressInput"
         p.is-size-7 = "Enter your address:" 
         input.input.mb-3 id="address" name="address" type="text"

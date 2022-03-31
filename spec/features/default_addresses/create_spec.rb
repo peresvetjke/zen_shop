@@ -4,10 +4,6 @@ feature 'User as customer can save default address', %q{
   In order to use it in further order placement.
 }, js: true do
 
-  # RSpec.configure do
-  #   Capybara.javascript_driver = :selenium_chrome
-  # end
-
   given(:user) { create(:user) }
   
   background { 

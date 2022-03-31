@@ -8,7 +8,7 @@ export default class extends Controller {
                     "deliveryPlannedDateInfo", "deliveryCost", "deliveryPlannedDate",
                     "addressFields"
                    ]
-  // static values = { country: String, postal: String, region: String, city: String, street: String, house: String, flat: String, previousAddressIsPresent: Boolean }
+
   static values = { previousCountry: String, previousPostal: String, previousRegion: String, previousCity: String, previousStreet: String, previousHouse: String, previousFlat: String,
                     defaultCountry: String, defaultPostal: String, defaultRegion: String, defaultCity: String, defaultStreet: String, defaultHouse: String, defaultFlat: String,
                     previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean }
@@ -95,8 +95,6 @@ export default class extends Controller {
     let targets = [ this.addressInputTarget ]
     let targetsAfterChoice = [ this.displayAddressInputButtonTarget, this.addressFieldsTarget ] 
 
-    // this.showDeliveryCostInfo(displayBoolean)
-
     if (displayBoolean) {
       targets.forEach(el => { $(el).removeClass("hide") } )
       if (this.previousAddressIsPresentValue) { $(this.previousAddressTarget).removeClass("hide") }
@@ -147,7 +145,6 @@ export default class extends Controller {
     const tariffEndPoint = "https://tariff.pochta.ru/v1/calculate/tariff?json&"
     const plannedDateEndPoint = "https://tariff.pochta.ru/v1/calculate/delivery?json&"
     var to     = $("input[name='order[address_attributes][postal_code]']")[0].value
-    // var sum    = this.totalSumTarget.textContent
     var sum    = $("#total_price")[0].textContent
     var sumoc  = parseInt(sum) * 100
     var weight = $("#total_weight")[0].textContent
