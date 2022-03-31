@@ -1,6 +1,5 @@
 = turbo_frame_tag "cart_total"
-  .row
-    
+  .row  
     .mt-4.is-size-7
       .level
         .level-left
@@ -9,13 +8,21 @@
           p 
             span#total_weight = cart.total_weight
             span = " gr"
+      .level
+        .level-left
+          = "Total price: "
+        .level-right
+          p 
+            span#total_price = cart.total_sum
+            span = " RUB"
 
-    .column
-      .is-size-6
-        .level
-          .level-left
-            = "Total: "
-          .level-right
-            p 
-              span#total_sum = cart.total_sum
-              span = " RUB"
+  .mt-4.is-size-5
+    .level
+      .level-left
+        = "Total: "
+      .level-right
+        p 
+          span.mr-1
+            i.fa.fa-spinner.fa-spin#total_loading
+          span#total_sum
+          span = " RUB"

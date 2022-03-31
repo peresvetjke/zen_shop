@@ -67,6 +67,8 @@ export default class extends Controller {
         alert(error.message)
       }
     })
+
+    window.dispatchEvent(new CustomEvent("cartItemsChanged"));
   }
 
   delete() {
@@ -79,6 +81,7 @@ export default class extends Controller {
       }
     })
 
+    window.dispatchEvent(new CustomEvent("cartItemsChanged"));
     window.dispatchEvent(new CustomEvent("cartItemDeleted"));
   }
 }

@@ -25,7 +25,7 @@ RSpec.describe CartItem, type: :model do
       context "existing one" do
         it "doesn't allow to update item with no sufficient amount available" do
           cart_item = user.cart.cart_items.create(item: item, amount: 5)
-          cart_item.change_amount_by!(10)
+          cart_item.update(amount: 20)
           expect(cart_item.reload.amount).to eq 5
         end
       end

@@ -1,7 +1,8 @@
 - if @order&.errors.present?
   = render "shared/errors", resource: @order
 
-div data-controller="carts" data-action="cartItemDeleted@window->carts#updateCart"
+div data-controller="carts" data-action="cartItemDeleted@window->carts#updateCart cartItemsChanged@window->carts#updateTotal" data-carts-previous-country-value="#{@previous_address&.country}" data-carts-previous-postal-value="#{@previous_address&.postal_code}" data-carts-previous-region-value="#{@previous_address&.region_with_type}" data-carts-previous-city-value="#{@previous_address&.city_with_type}" data-carts-previous-street-value="#{@previous_address&.street_with_type}" data-carts-previous-house-value="#{@previous_address&.house}" data-carts-previous-flat-value="#{@previous_address&.flat}" data-carts-default-country-value="#{@default_address&.country}" data-carts-default-postal-value="#{@default_address&.postal_code}" data-carts-default-region-value="#{@default_address&.region_with_type}" data-carts-default-city-value="#{@default_address&.city_with_type}" data-carts-default-street-value="#{@default_address&.street_with_type}" data-carts-default-house-value="#{@default_address&.house}" data-carts-flat-value="#{@default_address&.flat}" data-carts-default-address-is-present-value="#{@default_address.present?}" data-carts-previous-address-is-present-value="#{@previous_address.present?}"
+
   = form_with model: @order ||= Order.new, url: orders_path, data: {turbo: "false"} do |f|
     .columns
       .column        
@@ -10,32 +11,59 @@ div data-controller="carts" data-action="cartItemDeleted@window->carts#updateCar
 
         = f.fields_for :delivery_attributes, Delivery.new(order: @order) do |delivery|
           = delivery.label "Type", class: "control label is-small"
-          = delivery.select :delivery_type, Delivery.delivery_types.keys.to_a, {include_blank: "Please choose", selected: "Self-pickup"}, {data: {"carts-target": "deliveryTypeSelect", action: "carts#updateDeliveryType"}, class: "select is-small"}
+          = delivery.select :delivery_type, Delivery.delivery_types.keys.to_a, {include_blank: "Please choose", selected: "Self-pickup"}, {data: {"carts-target": "deliveryTypeSelect", action: "carts#updateDeliveryType"}, class: "select"}
+        
+        .mt-4.delivery_info data-carts-target="deliveryInfo"
 
-        .mt-4.delivery_info data-carts-target="deliveryInfo" style="display:none"
-          p.label.is-small = "Address:"
-          input id="address" name="address" type="text"
+          div data-carts-target="addressInput"
+            p.label.is-small = "Address:"
+            p.is-size-7 = "Enter your address:" 
+            input.input.mb-3 id="address" name="address" type="text"
 
-          input type="hidden" name="order[address_attributes][country]"
-          input type="hidden" name="order[address_attributes][postal_code]"
-          input type="hidden" name="order[address_attributes][region_with_type]"
-          input type="hidden" name="order[address_attributes][city_with_type]"
-          input type="hidden" name="order[address_attributes][street_with_type]"
-          input type="hidden" name="order[address_attributes][house]"
-          input type="hidden" name="order[address_attributes][flat]"
+          .box#default_address data-carts-target="defaultAddress"
+            .columns
+              .column
+                strong.is-size-7 = "Choose default address?"
+                .is-size-7 data-carts-target="defaultAddressText"
+              .column
+                a.button.is-small.is-info.is-rounded.mb-3.mt-3.is-pulled-right data-action="carts#copyDefaultAddress"
+                  = "Choose"
+
+          .box#previous_address data-carts-target="previousAddress"
+            .columns
+              .column
+                strong.is-size-7 = "Choose previous address?"
+                .is-size-7 data-carts-target="previousAddressText"
+              .column
+                a.button.is-small.is-info.is-rounded.mb-3.mt-3.is-pulled-right data-action="carts#copyPreviousAddress"
+                  = "Choose"
+                  
+          div data-carts-target="addressFields"
+            - {"Country" => "country", "Postal code" => "postal_code", "Region" => "region_with_type", "City" => "city_with_type", "Street" => "street_with_type", "House" => "house", "Flat" => "flat"}.each do |label, field_name|
+                .field.is-horizontal
+                  .field-label.is-normal
+                    label for="search_#{field_name}"
+                      p.is-size-7 = "#{label}"
+                  .field-body
+                    .field
+                      input.input.is-small name="order[address_attributes][#{field_name}]" id="#{field_name}" readonly="true"
 
           #delivery_address 
-          #delivery_cost data-carts-target="deliveryCostInfo"
+          div data-carts-target="deliveryCostInfo"
             p.mt-4
               strong.label.is-small = "Delivery cost:"
-              span data-carts-target="deliveryCost" = "0.00"
+              span#delivery_cost data-carts-target="deliveryCost" = "0.00"
               span = " RUB"
           #delivery_planned_date data-carts-target="deliveryPlannedDateInfo"
             p.mt-4
               strong.label.is-small = "Deadline:"
               span data-carts-target="deliveryPlannedDate" = ""
 
+        a.button.is-small.is-info.is-rounded.mb-3.mt-3 data-action="carts#displayAddressInput" data-carts-target="displayAddressInputButton"
+          = "Change address"
+
         = turbo_stream_from "cart_total"
+        
         = render "carts/total", cart: @cart
                 
         .row

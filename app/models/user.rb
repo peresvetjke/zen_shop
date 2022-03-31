@@ -15,6 +15,8 @@ class User < ApplicationRecord
   has_many :subscriptions, dependent: :destroy
   has_many :reviews, dependent: :destroy, foreign_key: "author_id"
 
+  delegate :address, to: :default_address, allow_nil: true
+
   after_create :create_cart
   after_create :create_bitcoin_wallet
 

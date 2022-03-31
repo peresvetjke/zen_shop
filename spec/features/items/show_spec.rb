@@ -1,4 +1,9 @@
+require 'pry'
 require "rails_helper"
+
+RSpec.configure do
+  Capybara.javascript_driver = :selenium_chrome
+end
 
 feature 'User as client can view item', %q{
   In order to get familiar with its details and purchase.
@@ -40,8 +45,10 @@ feature 'User as client can view item', %q{
           visit item_path(item) 
         }
 
-        scenario "subscribes for a notification about item arrival" do
+        scenario "subscribes for a notification about item arrival", js: true do
           expect(page).to have_no_button("Add to cart")
+          binding.pry
+          save_and_open_page
           click_link("Subscribe")
           msg = accept_confirm { }
           expect(msg).to have_content I18n.t("items.subscribed")

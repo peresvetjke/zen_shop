@@ -24,4 +24,6 @@ Rails.application.routes.draw do
   get :cart, to: 'orders#new'
 
   get :account, to: 'users#show'
+
+  resources :default_address
 end

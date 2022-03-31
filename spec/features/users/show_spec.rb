@@ -5,7 +5,7 @@ feature 'User as customer can check his account info', %q{
 } do
 
   given(:user)        { create(:user) }
-  given(:btc_address)                       { user.bitcoin_wallet.public_address }
+  given(:btc_address) { user.bitcoin_wallet.public_address }
   
   background { 
     sign_in(user) 
@@ -14,8 +14,8 @@ feature 'User as customer can check his account info', %q{
 
   feature "bitcoin wallet" do
     it "displays user's personal btc address" do
-      expect(page).to have_content("Your balance: #{user.bitcoin_wallet.available_btc}")
-      expect(page).to have_content("Your BTC address: #{btc_address}")
+      expect(page).to have_content("Your balance:\n#{user.bitcoin_wallet.available_btc}")
+      expect(page).to have_field('btc_wallet_address', with: btc_address)
     end
   end
 end

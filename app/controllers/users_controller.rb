@@ -5,5 +5,6 @@ class UsersController < ApplicationController
     authorize User
     
     @user = current_user
+    @default_address = @user.address
   end
 end
