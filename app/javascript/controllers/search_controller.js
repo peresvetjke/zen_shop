@@ -10,14 +10,19 @@ export default class extends Controller {
   connect() {
     this.priceFromTarget.placeholder = this.minPriceValue / 100
     this.priceToTarget.placeholder = this.maxPriceValue / 100
+
+    this.filterSearchResults()
   }
 
   filterSearchResults() {
     this.updatePriceFilter()
     
+    var availableCheckboxIsChecked = $(".search_filter .stock input")[0].checked
     var categoryCheckboxes = $(".search_filter .category input")
     var allCategories      = []
     var selectedCategories = []
+
+    console.log(availableCheckboxIsChecked)
 
     for (var i = 0; i < categoryCheckboxes.length; i++) {
       var categoryId = categoryCheckboxes[i].dataset.categoryId;
@@ -34,8 +39,12 @@ export default class extends Controller {
       for (var j = 0; j < categoryItems.length; j++) {
         var item = categoryItems[j]
         var price = parseInt( $(item).find(".price")[0].textContent ) * 100
+        var isAvailable = $(item).find(".available_amount")[0].textContent > 0
 
-        if ( price >= this.priceFromValue && price <= this.priceToValue ) { $(item).show() }
+        if ( price >= this.priceFromValue && 
+             price <= this.priceToValue &&
+             isAvailable == availableCheckboxIsChecked ) 
+        { $(item).show() }
       }
     }
   }
