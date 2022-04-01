@@ -1,7 +1,7 @@
 class Admin::CategoriesController < Admin::BaseController
   before_action :authenticate_user!
   before_action :load_category, only: %i[show edit update destroy]
-  before_action -> { authorize Category }
+  before_action -> { authorize([:admin, Category]) }
 
   def index
     skip_policy_scope

@@ -1,28 +1,32 @@
 require "rails_helper"
 
-feature 'User as admin can create category', %q{
-  In order to enhance items classification.
+feature 'User as admin can create item', %q{
+  In order to enhance items list.
 }, js: true do
 
+  let!(:category) { create(:category) }
+
   shared_examples "guest" do
-    scenario "tries to create a new category" do
-      visit admin_categories_path
+    scenario "tries to create a new item" do
+      visit admin_items_path
       expect(page).to have_content I18n.t("devise.failure.unauthenticated")
     end
   end
 
   shared_examples "customer" do
-    scenario "tries to create a new category" do
-      visit admin_categories_path
-      expect(page).to have_content I18n.t("pundit.admin/category_policy.new?")
+    scenario "tries to create a new item" do
+      visit admin_items_path
+      expect(page).to have_content I18n.t("pundit.admin/item_policy.new?")
     end
-  end  
+  end
 
-  shared_examples "admin" do
+  shared_examples "admin", js: true do
     context "with invalid params" do
       scenario "displays errors" do
-        visit admin_categories_path
-        fill_in "category_title", with: ""
+        visit admin_items_path
+        select "#{category.title}", from: "item[category_id]"
+        fill_in "item_title", with: ""
+        fill_in "item[weight_gross_gr]", with: 150
         click_button "Save"
         expect(page).to have_content I18n.t("errors.messages.blank")
       end
@@ -30,11 +34,13 @@ feature 'User as admin can create category', %q{
 
     context "with valid params" do
       scenario "creates new category" do
-        visit admin_categories_path
-        fill_in "category_title", with: "New title"
+        visit admin_items_path
+        select "#{category.title}", from: "item[category_id]"
+        fill_in "item_title", with: "New title"
+        fill_in "item[weight_gross_gr]", with: 150
         click_button "Save"
         expect(page).to have_content "New title"
-        expect(page).to have_content I18n.t("admin.categories.create.message")
+        expect(page).to have_content I18n.t("admin.items.create.message")
       end
     end
   end

@@ -74,7 +74,7 @@ en:
     aliases:
       &not_admin
         "You should be logged in as an admin to continue."
-    category_policy:
+    admin/category_policy:
       index?: *not_admin
       show?: *not_admin
       new?: *not_admin
@@ -82,4 +82,11 @@ en:
       edit?: *not_admin
       update?: *not_admin
       destroy?: *not_admin
-      
+    admin/item_policy:
+      index?: *not_admin
+      show?: *not_admin
+      new?: *not_admin
+      create?: *not_admin
+      edit?: *not_admin
+      update?: *not_admin
+      destroy?: *not_admin

@@ -1,7 +1,7 @@
 class Admin::ItemsController < Admin::BaseController
   before_action :authenticate_user!
   before_action :load_item, only: %i[show edit update destroy]
-  before_action -> { authorize Item }
+  before_action -> { authorize([:admin, Item]) }
 
   def index
     skip_policy_scope
