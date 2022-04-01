@@ -39,6 +39,14 @@ en:
       destroy:
         message: "Category has been succesfully deleted."
       no_records: "No categories yet."
+    items:
+      create:
+        message: "Item has been succesfully created."
+      update:
+        message: "Item has been succesfully updated."
+      destroy:
+        message: "Item has been succesfully deleted."
+      no_records: "No items yet."
   items:
     subscribed: "You were succesfully subscribed for item arrival notifications."
     unsubscribed: "You were succesfully unsubscribed from notifications."

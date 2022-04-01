@@ -1,0 +1,9 @@
+p.title All items
+
+= turbo_stream_from "items"
+= turbo_frame_tag "items"
+	= render "items"
+
+p.title.is-size-4.mt-5 New item
+
+= render partial: "admin/items/form", locals: { item: Item.new }

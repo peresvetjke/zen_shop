@@ -1,0 +1,7 @@
+h2 Edit item
+
+= turbo_frame_tag dom_id(@item)
+  - if @item&.errors.present?
+    = render "shared/errors", resource: @item
+
+  = render partial: "form", locals: { item: @item }

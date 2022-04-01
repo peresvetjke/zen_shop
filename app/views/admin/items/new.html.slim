@@ -1,0 +1,6 @@
+p.is-title.is-size-4 New item
+
+- if @item&.errors.present?
+  = render "shared/errors", resource: @item
+
+= render "form"
