@@ -22,8 +22,6 @@ export default class extends Controller {
     var allCategories      = []
     var selectedCategories = []
 
-    console.log(availableCheckboxIsChecked)
-
     for (var i = 0; i < categoryCheckboxes.length; i++) {
       var categoryId = categoryCheckboxes[i].dataset.categoryId;
       allCategories.push(categoryId)  
