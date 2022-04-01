@@ -3,7 +3,10 @@
   - url = cart_item.present? ? cart_item_path(cart_item) : ""
 
   div data-controller="cartitems" data-cartitems-url-value="#{url}" data-cartitems-itemid-value="#{item.id}"
-    p.is-size-7 = "Available: #{item.available_amount} pc"
+    p.is-size-7 
+      = "Available: "
+      div.available_amount = item.available_amount
+      = " pc"
 
     - if cart_item.present?
       .mt-2.field.has-addons

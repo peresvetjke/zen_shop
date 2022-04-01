@@ -30,3 +30,13 @@ div.search_filter.m-4.box
           = "To:"
       .control
         input.input.is-small title="Formatted number" id="input-format-to" data-search-target="priceTo" data-action="search#filterSearchResults"
+
+  p.title.is-size-6.mt-5 = "Stock"
+  
+  .stock
+    .field.is-grouped
+      .control
+        label for="is_available_checkbox"
+          = "Available?"
+      .control
+        input type="checkbox" checked="checked" data-search-target="availableCheckbox" data-action="search#filterSearchResults" id="is_available_checkbox"

@@ -8,9 +8,6 @@ class Item < ApplicationRecord
   has_many   :subscriptions, dependent: :destroy
   has_many   :reviews, dependent: :destroy
   has_one_attached :image
-  # has_one_attached :image, variants: {
-  #   small: { resize: "25x25" }
-  # }
 
   validates :title, presence: true
   validates :title, uniqueness: true
