@@ -1,0 +1,47 @@
+= turbo_frame_tag dom_id(item)
+  - if item.errors.present?
+
+   = render "shared/errors", resource: item
+
+  = form_with model: item, url: item&.persisted? ? admin_item_path(item) : admin_items_path, class: "mt-5" do |f|
+    .field.is-horizontal
+      .field-label.is-normal
+        = f.label :category
+      .field-body
+        .field
+          .control.is-expanded
+            .select.is-fullwidth
+              = f.select :category_id, options_for_select(Category.all.map{ |c| [c.title, c.id] })
+    .field.is-horizontal
+      .field-label.is-normal
+        = f.label :title
+      .field-body
+        .field
+          = f.text_field :title, { class: "input" }
+    .field.is-horizontal
+      .field-label.is-normal
+        = f.label :weight_gross_gr
+      .field-body
+        .field
+          = f.number_field :weight_gross_gr, { value: 100, min: 1, max: 100_000, class: "input" }
+    .field.is-horizontal
+      .field-label.is-normal
+        = f.label :image
+      .field-body
+        .field
+          = f.file_field :image
+
+    - if item.image.attached?
+      .field.is-horizontal
+        .field-label.is-normal
+        .field-body
+          .field
+            = image_tag item.image.variant(resize_to_limit: [100, 100])
+            br
+            = link_to "Delete", admin_image_path(item.image.id), method: :delete, data: {confirm: "Are you sure?"}
+
+    .buttons.is-right.control
+      = f.submit "Save", class: "button is-success"
+      - if item.persisted?
+        .control
+          = link_to "Cancel", admin_item_path(item), class: "button"

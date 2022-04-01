@@ -4,6 +4,9 @@
     .is-align-content-center
       .price = "#{item.price}"
       = " RUB"
-    
+
+    - if item.image.attached?
+      = image_tag item.image.variant(resize_to_limit: [125, 125])
+
     = turbo_stream_from "add_to_cart_#{item.id}"
     = render "add_to_cart", item: item, user: current_user

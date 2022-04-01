@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   namespace :admin do
     root "categories#index"
     resources :categories
+    resources :items
+    resources :images, only: :destroy
   end
 
   root to: "items#index"

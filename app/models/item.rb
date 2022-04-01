@@ -1,8 +1,16 @@
 class Item < ApplicationRecord
+  after_create_commit { broadcast_append_to "items", partial: "admin/items/item" }
+  after_update_commit { broadcast_replace_to "items", partial: "admin/items/item" }
+  after_destroy_commit { broadcast_remove_to "items" }
+
   belongs_to :category
   has_one    :stock
   has_many   :subscriptions, dependent: :destroy
   has_many   :reviews, dependent: :destroy
+  has_one_attached :image
+  # has_one_attached :image, variants: {
+  #   small: { resize: "25x25" }
+  # }
 
   validates :title, presence: true
   validates :title, uniqueness: true

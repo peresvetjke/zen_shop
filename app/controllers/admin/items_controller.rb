@@ -1,23 +1,24 @@
-class Admin::CategoriesController < Admin::BaseController
+class Admin::ItemsController < Admin::BaseController
   before_action :authenticate_user!
-  before_action :load_category, only: %i[show edit update destroy]
-  before_action -> { authorize([:admin, Category]) }
+  before_action :load_item, only: %i[show edit update destroy]
+  before_action -> { authorize([:admin, Item]) }
 
   def index
     skip_policy_scope
+    @items = Item.all
   end
 
   def show
   end
 
   def create
-    @category = Category.new(category_params)
+    @item = Item.new(item_params)
 
     respond_to do |format|
-      if @category.save
+      if @item.save
         format.turbo_stream { render turbo_stream: turbo_stream.replace("notice", partial: "shared/notice", locals: {notice: t('.message')}) }
       else
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("new_category", partial: "admin/categories/form", locals: { category: @category }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("new_item", partial: "admin/items/form", locals: { item: @item }) }
       end
     end
   end
@@ -27,10 +28,10 @@ class Admin::CategoriesController < Admin::BaseController
 
   def update
     respond_to do |format|
-      if @category.update(category_params)
+      if @item.update(item_params)
         format.turbo_stream { render turbo_stream: turbo_stream.replace("notice", partial: "shared/notice", locals: {notice: t('.message')}) }
       else
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@category, partial: "admin/categories/form", locals: { category: @category }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(@item, partial: "admin/items/form", locals: { item: @item }) }
       end
     end
   end
@@ -38,7 +39,7 @@ class Admin::CategoriesController < Admin::BaseController
   def destroy
     respond_to do |format|
       format.turbo_stream { 
-        @category.destroy
+        @item.destroy
         render turbo_stream: turbo_stream.replace("notice", partial: "shared/notice", locals: {notice: t('.message')}) 
       }
     end
@@ -46,11 +47,11 @@ class Admin::CategoriesController < Admin::BaseController
 
   private
 
-  def load_category
-    @category = Category.find(params[:id])
+  def load_item
+    @item = Item.find(params[:id])
   end
 
-  def category_params
-    params.require(:category).permit(:title)
+  def item_params
+    params.require(:item).permit(:title, :description, :category_id, :price, :weight_gross_gr, :image)
   end
 end

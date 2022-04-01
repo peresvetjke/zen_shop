@@ -16,7 +16,7 @@ feature 'User as admin can index categories', %q{
   shared_examples "customer", js: true do
     scenario "tries to index categories" do
       visit admin_categories_path
-      expect(page).to have_content I18n.t("pundit.category_policy.index?")
+      expect(page).to have_content I18n.t("pundit.admin/category_policy.index?")
     end
   end  
 

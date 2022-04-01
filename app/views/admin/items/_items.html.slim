@@ -1,0 +1,4 @@
+ul
+  - @items.each do |item|
+    li.item
+      = render "admin/items/item", item: item
