@@ -6,9 +6,9 @@
   = form_with model: category, url: category&.persisted? ? admin_category_path(category) : admin_categories_path, class: "mt-5" do |f|
     .field.is-grouped
       .control.is-expanded
-        = f.text_field :title, class: "input"
+        = f.text_field :title, class: "input is-small"
       .control
-        = f.submit "Save", class: "button is-small"
+        = f.submit "Save", class: "button is-small is-success"
       - if category.persisted?
         .control
           = link_to "Cancel", admin_category_path(category), class: "button is-small"

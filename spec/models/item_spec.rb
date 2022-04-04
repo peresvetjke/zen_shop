@@ -24,9 +24,11 @@ RSpec.describe Item, type: :model do
 
   describe 'associations' do
     it { should belong_to(:category) }
-    it { should have_one(:stock) }
+    it { should have_one(:stock).dependent(:destroy) }
     it { should have_many(:subscriptions).dependent(:destroy) }
     it { should have_many(:reviews).dependent(:destroy) }
+    it { should have_many(:order_items) }
+    it { should have_many(:orders).through(:order_items) }
   end
 
   describe "#available_amount" do

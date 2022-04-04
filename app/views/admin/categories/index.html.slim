@@ -4,6 +4,6 @@ p.title All categories
 = turbo_frame_tag "categories"
 	= render "categories"
 
-p.title.is-4 New category
+p.title.is-4.mt-5 New category
 
 = render partial: "admin/categories/form", locals: { category: Category.new }

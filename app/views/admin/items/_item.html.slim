@@ -1,11 +1,16 @@
 = turbo_frame_tag dom_id(item)
   .admin.item
-    .level
-      = item.title
-      .field.is-grouped.is-grouped-right
-        .control
-          = link_to "Edit", edit_admin_item_path(item), class: "button is-small is-info is-rounded"
-        .control
-          = link_to "Delete", admin_item_path(item), method: :delete, data: { confirm: t("shared.are_you_sure?") }, class: "button is-small is-danger is-rounded"
+    .columns
+      .column.is-3
+        = item.title
+      .column.is-2
+
+      .column.is-2
+        .field.is-grouped
+          .control
+            = link_to "Edit", edit_admin_item_path(item), class: "button is-small is-info is-rounded is-light"
+          .control
+            - unless item.orders.present?
+              = link_to "Delete", admin_item_path(item), method: :delete, data: { confirm: t("shared.are_you_sure?") }, class: "button is-small is-danger is-rounded is-light"
     - if item.image.attached?
       = image_tag item.image.variant(resize_to_limit: [100, 100])
