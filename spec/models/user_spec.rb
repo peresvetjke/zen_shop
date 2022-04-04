@@ -16,6 +16,7 @@ RSpec.describe User, type: :model do
     it { should have_many(:orders).dependent(:destroy) }
     it { should have_many(:subscriptions).dependent(:destroy) }
     it { should have_many(:reviews).dependent(:destroy) }
+    it { should have_many(:authentications).dependent(:destroy) }
   end
 
   describe "#subscribe!" do
