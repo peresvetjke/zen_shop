@@ -24,7 +24,9 @@ customer_deux  = User.create!(email: "customer_deux@example.com", password: "xxx
       weight_gross_gr: 250
     )
 
-    customer_deux.reviews.create!(item: item, body: "<p>Review review review</p>", rating: 5)
+    if i.even?
+      customer_deux.reviews.create!(item: item, body: "<p>Review review review</p>", rating: 5)
+    end
   end
 end
 

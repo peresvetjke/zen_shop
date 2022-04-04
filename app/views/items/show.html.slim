@@ -1,62 +1,43 @@
-.items
-  h2 = @item.title
+.item
+  p.title = @item.title
 
-  .item
-    p
-      strong Description: 
-      = @item.description
-    p
-      strong Price: 
-      = @item.price
+  p
+    strong Description: 
+    = @item.description
+  p
+    strong Price: 
+    = @item.price
+    = " RUB"
 
-      - if current_user
-        - if @item.available_amount > 0
-          = form_with model: CartItem do |f|
-            .amount.input-group.mt-3
-              span.input-group-btn
-                button type="button" class="btn btn-danger btn-number" data-type="minus" data-field="cart_item[amount]"
-                  span class="glyphicon glyphicon-minus"
-              input type="text" name="cart_item[amount]" class="form-control input-number" value="1" min="1" max="100"
-              span class="input-group-btn"
-                button type="button" class="btn btn-success btn-number" data-type="plus" data-field="cart_item[amount]"
-                  span class="glyphicon glyphicon-plus"
-              
-            span.available = "Available: #{@item.available_amount}"
-            
-            = f.hidden_field :item_id, value: @item.id
+  div
+    span.icon
+      i.fa-solid.fa-star
+    span.rating = @item.rating || "-"
 
-            br
-            
-            = f.submit "Add to cart", class: "button mt-2 is-success"
+  = turbo_stream_from "add_to_cart_#{@item.id}"
+  = render "add_to_cart", item: @item, user: current_user
 
-        - if @item.available_amount == 0 && !current_user.subscribed?(item: @item)
-          .subscription = link_to "Subscribe", subscribe_item_path(@item), remote: true, method: :post, data: {type: :json}
+  - if @review&.errors.present?
+    = render "shared/errors", resource: @review
 
-        - if current_user.subscribed?(item: @item)
-          .subscription = link_to "Unsubscribe", subscribe_item_path(@item), remote: true, method: :post, data: {type: :json}
+  .mt-5
+  = form_with model: [@item, Review.new], url: item_reviews_path(@item) do |f|
+    
+    = f.label :rating, class: "label"
+    .select
+      = f.select :rating, options_for_select((1..5).to_a, 5)
+    = f.label :body, class: "label mt-2"
+    = f.rich_text_area :body, class: "textarea"
+    = f.submit "Rate product", class: "button mt-2"
 
-      - else
-        p 
-          span Please 
-          span = link_to "sign in", new_user_session_path 
-          span  to continue.
+  .mt-5
+  ul#reviews
+    - @reviews.each do |review|
+      li.review.box
+        = "#{review.created_at} #{review.author.email}"
+        div
+          span.icon
+            i.fa-solid.fa-star.fa-xs
+          span.rating.is-size-7 = review.rating
 
-
-      - if @review&.errors.present?
-        = render "shared/errors", resource: @review
-
-      .mt-5
-      = form_with model: [@item, Review.new], url: item_reviews_path(@item) do |f|
-        
-        = f.label :rating, class: "label"
-        = f.number_field :rating, min: 1, max: 5, class: "input"
-        = f.label :body, class: "label mt-2"
-        = f.rich_text_area :body, class: "textarea"
-        = f.submit "Rate product", class: "button mt-2"
-
-      .mt-5
-      ul#reviews
-        - @reviews.each do |review|
-          li.review.box
-            = "#{review.created_at} #{review.author.email}"
-            == review.body
+        == review.body

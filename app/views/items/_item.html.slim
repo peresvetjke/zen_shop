@@ -1,12 +1,18 @@
 .item.box.column.is-one-quarter.m-5 data-category-id="#{item.category.id}" data-search-target="item"
   .row
     = link_to item.title, item_path(item)
-    .is-align-content-center
-      .price = "#{item.price}"
-      = " RUB"
-
+    
     - if item.image.attached?
-      = image_tag item.image.variant(resize_to_limit: [125, 125])
+      div = image_tag item.image.variant(resize_to_limit: [125, 125])
+
+    .is-align-content-center
+      span.price = "#{item.price}"
+      span = " RUB"
+
+    div
+      span.icon
+        i.fa-solid.fa-star.fa-xs
+      span.rating.is-size-7 = item.rating || "-"
 
     = turbo_stream_from "add_to_cart_#{item.id}"
     = render "add_to_cart", item: item, user: current_user

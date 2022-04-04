@@ -41,4 +41,21 @@ RSpec.describe Item, type: :model do
       expect(item_1.available_amount).to eq 6
     end
   end
+
+  describe "#rating" do
+    context "with reviews" do
+      let!(:review_1) { create(:review, item: item_1, rating: 4) }
+      let!(:review_2) { create(:review, item: item_1, rating: 5) }
+
+      it "returns average reviews value" do
+        expect(item_1.rating).to eq 4.5
+      end
+    end
+
+    context "without reviews" do
+      it "returns nil" do
+        expect(item_2.rating).to be_nil
+      end
+    end
+  end
 end
