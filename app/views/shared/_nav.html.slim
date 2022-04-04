@@ -5,7 +5,7 @@ nav.navbar.is-flex-mobile.is-flex-tablet role="navigation" aria-label="main navi
           .navbar-link
             span.icon
               i.fa-solid.fa-list-ul
-            span = link_to "Catalogue", items_path, class: "ms-1"
+            span = link_to "Catalogue", items_path, class: "ml-1"
 
           .navbar-dropdown
             - @categories.each do |category|
@@ -17,7 +17,12 @@ nav.navbar.is-flex-mobile.is-flex-tablet role="navigation" aria-label="main navi
         .navbar-item
           span.icon
             i.fa-solid.fa-cart-shopping
-          span = link_to "My cart", cart_path, id: "cart", class: "ms-1"
+          span = link_to "My cart", cart_path, id: "cart", class: "ml-1"
+
+        .navbar-item
+          span.icon
+            i.fa-solid.fa-truck-fast
+          span = link_to "My orders", orders_path, id: "orders", class: "ml-1"
 
         .navbar-item.has-dropdown.is-hoverable
           .navbar-link

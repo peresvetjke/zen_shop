@@ -12,7 +12,8 @@ feature 'User as customer can list all his orders', %q{
 
   feature "index order" do
     it "displays all orders list" do
-      visit orders_path
+      visit root_path
+      page.find('a', text: 'My orders').click
       expect(page).to have_content(order.id.to_s)
       expect(page).to have_content(another_order.id.to_s)
     end
