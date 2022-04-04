@@ -13,7 +13,7 @@ export default class extends Controller {
     }
 
     Rails.ajax({
-      url: 'cart_items',
+      url: this.urlValue,
       type: 'post',
       dataType: 'json',
       beforeSend(xhr, options) {
