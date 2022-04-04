@@ -2,7 +2,7 @@ div data-controller='search' data-search-min-price-value="#{@meta["prices"]["min
 
   = render partial: "items/search_filter", locals: { meta: @meta }
 
-  p.ml-5
+  p.ml-5.mt-5
     = link_to "Catalogue", items_path, class: "is-underlined"
     - if @heading
       = " / "
