@@ -16,6 +16,7 @@ RSpec.describe User, type: :model do
     it { should have_many(:orders).dependent(:destroy) }
     it { should have_many(:subscriptions).dependent(:destroy) }
     it { should have_many(:reviews).dependent(:destroy) }
+    it { should have_many(:authentications).dependent(:destroy) }
   end
 
   describe "#subscribe!" do
@@ -77,6 +78,17 @@ RSpec.describe User, type: :model do
       it "returns false" do
         expect(user.admin?).to eq false
       end
+    end
+  end
+
+  describe ".find_for_oauth" do
+    let(:auth)    { OmniAuth::AuthHash.new(provider: 'github', uid: '123456') }
+    let(:service) { double('OmniAuthFinder') }
+
+    it 'calls OmniAuthFinder' do
+      expect(Omni::AuthFinder).to receive(:new).with(auth).and_return(service)
+      expect(service).to receive(:call)
+      User.find_for_oauth(auth)
     end
   end
 end

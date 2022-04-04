@@ -36,6 +36,8 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include FactoryBot::Syntax::Methods
   config.include FeatureHelpers, type: :feature
+  config.include OmniauthHelpers, type: :feature
+  OmniAuth.config.test_mode = true
   
   Capybara.javascript_driver = :selenium_chrome_headless
   Capybara.default_max_wait_time = 2
