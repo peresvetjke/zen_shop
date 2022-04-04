@@ -9,6 +9,11 @@
     = @item.price
     = " RUB"
 
+  div
+    span.icon
+      i.fa-solid.fa-star
+    span.rating = @item.rating || "-"
+
   = turbo_stream_from "add_to_cart_#{@item.id}"
   = render "add_to_cart", item: @item, user: current_user
 
@@ -30,4 +35,9 @@
     - @reviews.each do |review|
       li.review.box
         = "#{review.created_at} #{review.author.email}"
+        div
+          span.icon
+            i.fa-solid.fa-star.fa-xs
+          span.rating.is-size-7 = review.rating
+
         == review.body

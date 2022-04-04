@@ -27,4 +27,8 @@ class Item < ApplicationRecord
     reserved = CartItem.where(item: self).pluck(:amount).sum
     stock.storage_amount - reserved
   end
+
+  def rating
+    reviews.present? ? reviews.average(:rating).to_f : nil
+  end
 end
