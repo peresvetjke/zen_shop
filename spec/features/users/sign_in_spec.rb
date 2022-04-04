@@ -1,7 +1,7 @@
 require "rails_helper"
 
 feature 'User can sign in', %q{
-  In order to ask questions or post answers
+  In order to purchase goods
 }, js: true do
 
   given(:user) { create(:user) }
@@ -13,7 +13,6 @@ feature 'User can sign in', %q{
   scenario "tries to sign in with blank email" do
     fill_in "Email", :with => ""
     fill_in "Password", :with => user.password
-    # binding.pry
     click_button "Log in"
     expect(page).to have_text("Invalid Email or password")
   end

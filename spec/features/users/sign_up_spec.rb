@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature 'User can register', %q{
   In order to sign in
-  and ask questions or post answers
+  and purchase goods
 } do
   
   feature "signs up using login ans password" do
