@@ -4,9 +4,11 @@ class Item < ApplicationRecord
   after_destroy_commit { broadcast_remove_to "items" }
 
   belongs_to :category
-  has_one    :stock
+  has_one    :stock, dependent: :destroy
   has_many   :subscriptions, dependent: :destroy
   has_many   :reviews, dependent: :destroy
+  has_many   :order_items
+  has_many   :orders, through: :order_items
   has_one_attached :image
 
   validates :title, presence: true

@@ -21,12 +21,24 @@ feature 'User as an admin can delete category', %q{
   end  
 
   shared_examples "admin" do
-    scenario "deletes a category" do
-      visit admin_categories_path
-      expect(page).to have_content category.title
-      accept_confirm { click_link "Delete" }
-      expect(page).to have_no_content category.title
-      expect(page).to have_content I18n.t("admin.categories.destroy.message")
+    feature "with no relevant items" do
+      scenario "deletes a category" do
+        visit admin_categories_path
+        expect(page).to have_content category.title
+        accept_confirm { click_link "Delete" }
+        expect(page).to have_no_content category.title
+        expect(page).to have_content I18n.t("admin.categories.destroy.message")
+      end
+    end
+
+    feature "with relevant items" do
+      let!(:items) { create_list(:item, 3, category: category) }
+
+      scenario "does not allow to delete a category" do
+        visit admin_categories_path
+        expect(page).to have_content category.title
+        expect(page).to have_no_link "Delete"
+      end
     end
   end
 

@@ -1,8 +1,15 @@
 = turbo_frame_tag dom_id(category)
-  .level
-    = category.title
-    .field.is-grouped.is-grouped-right
-      .control 
-        = link_to "Edit", edit_admin_category_path(category), class: "button is-small"
-      .control
-        = link_to "Delete", admin_category_path(category), method: :delete, data: { confirm: t("shared.are_you_sure?") }, class: "button is-small"
+  .columns
+    .column.is-3
+      = category.title
+    
+    .column.is-2
+      = "#{category.items.count} items"
+
+    .column.is-2
+      .field.is-grouped
+        .control 
+           = link_to "Edit", edit_admin_category_path(category), class: "button is-small is-rounded is-light is-info"
+        .control
+          - unless category.items.present?
+            = link_to "Delete", admin_category_path(category), method: :delete, data: { confirm: t("shared.are_you_sure?") }, class: "button is-small is-rounded is-light is-danger"
