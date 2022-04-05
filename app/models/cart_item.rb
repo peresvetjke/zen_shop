@@ -1,17 +1,14 @@
 class CartItem < ApplicationRecord
   after_create_commit { 
-    broadcast_append_to "cart_items" 
-    broadcast_replace_to "add_to_cart_#{item.id}", target: "add_to_cart_#{item.id}", partial: "items/add_to_cart", locals: {item: item, user: cart.user}
+    broadcast_append_to "cart_items"
     broadcast_replace_to "cart_total", target: "cart_total", partial: "carts/total", locals: {cart: self.cart}
   }
   after_update_commit { 
     broadcast_replace_to "cart_items"
-    broadcast_replace_to "add_to_cart_#{item.id}", target: "add_to_cart_#{item.id}", partial: "items/add_to_cart", locals: {item: item, user: cart.user}
     broadcast_replace_to "cart_total", target: "cart_total", partial: "carts/total", locals: {cart: self.cart}
   }
   after_destroy_commit { 
     broadcast_remove_to "cart_items"
-    broadcast_replace_to "add_to_cart_#{item.id}", target: "add_to_cart_#{item.id}", partial: "items/add_to_cart", locals: {item: item, user: cart.user}
     broadcast_replace_to "cart_total", target: "cart_total", partial: "carts/total", locals: {cart: self.cart}
   }
 

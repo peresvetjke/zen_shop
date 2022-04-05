@@ -6,9 +6,12 @@ class CartItemsController < ApplicationController
     authorize CartItem
     
     @cart_item = current_user.cart.cart_items.new(cart_item_params)
+
     respond_to do |format|
       format.json do
-        unless @cart_item.save
+        if @cart_item.save
+          render json: @cart_item
+        else
           render json: { message: @cart_item.errors.full_messages.join("; ") }, status: :unprocessable_entity
         end
       end
@@ -18,7 +21,9 @@ class CartItemsController < ApplicationController
   def update
     respond_to do |format|
       format.json do
-        unless @cart_item.update(amount: params[:cart_item][:amount].to_i)
+        if @cart_item.update(amount: params[:cart_item][:amount].to_i)
+          render json: @cart_item
+        else
           render json: { message: @cart_item.errors.full_messages.join("; ") }, status: :unprocessable_entity
         end
       end
@@ -27,7 +32,9 @@ class CartItemsController < ApplicationController
 
   def destroy
     respond_to do |format|
-      format.json { @cart_item.destroy }
+      format.json do 
+        render json: @cart_item.destroy
+      end
     end
   end
 

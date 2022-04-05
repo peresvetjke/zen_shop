@@ -4,54 +4,96 @@ feature 'User as client adds an item to cart', %q{
   In order to perform its purchase.
 }, js: true do
 
-  given!(:user) { create(:user) }
-  given!(:item) { create(:item) }
-
+  given!(:user_1) { create(:user) }
+  given!(:user_2) { create(:user) }
+  given!(:user_3) { create(:user) }
+  given!(:item)   { create(:item) }
+  
   shared_examples "guest" do
-    scenario "tries to add item to cart" do
-      visit items_path(item)
-      expect(page).to have_no_button("Add to cart")
+    it "tries to add item to cart" do
+      Capybara.using_session('guest') do
+        visit items_path(item)
+        expect(page).to have_no_button("Add to cart")
+      end
     end
   end
 
   shared_examples "authenticated" do
-    scenario "adds item to cart", js: true do
-      visit items_path
-      click_button("Add to cart")
-      within "#add_to_cart_#{item.id}" do
-        expect(page).to have_no_button("Add to cart")
-        expect(page).to have_field("amount", with: '1', disabled: true)
+    it "adds item to cart" do
+      Capybara.using_session('user_1') do
+        visit items_path
+        click_button("Add to cart")
+        within ".item[data-item-id='#{item.id}']" do
+          expect(page).to have_no_button("Add to cart")
+          expect(page).to have_field("amount", with: '1', disabled: true)
+        end
       end
     end
 
-    feature "stocks" do
+    it "does not relate to other user sessions" do
+      Capybara.using_session('user_2') do
+        visit items_path
+      end
+
+      Capybara.using_session('user_3') do
+        visit item_path(item)
+      end
+
+      Capybara.using_session('user_1') do
+        visit items_path
+        click_button("Add to cart")
+      end
+
+      Capybara.using_session('user_2') do
+        sleep(0.5)
+        expect(page).to have_button("Add to cart")
+      end
+
+      Capybara.using_session('user_3') do
+        sleep(0.5)
+        expect(page).to have_button("Add to cart")
+      end
+    end
+
+    describe "stocks" do
       background { 
         item.stock.storage_amount = 2
         item.stock.save
-        visit items_path
+        Capybara.using_session('user_1') do
+          visit items_path
+        end
       }
 
-      scenario "displays available amount" do
+      it "displays available amount" do
         expect(item.available_amount).to eq 2
-        expect(page).to have_content "Available: 2"
+        Capybara.using_session('user_1') do
+          expect(page).to have_content "Available: 2"
+        end
       end
 
-      scenario "doesn't allow to add an item in cart without available amount" do
-        click_button("Add to cart")
-        click_button("+")
-        click_button("+")
-        msg = accept_confirm { }
-        expect(msg).to have_content I18n.t("cart_items.errors.not_available")
+      it "doesn't allow to add an item in cart without available amount" do
+        Capybara.using_session('user_1') do
+          click_button("Add to cart")
+          click_button("+")
+          click_button("+")
+          msg = accept_confirm { }
+          expect(msg).to have_content I18n.t("cart_items.errors.not_available")
+        end
       end
     end
   end
 
-  feature "being a guest" do
+  describe "being a guest" do
     it_behaves_like "guest"
   end
   
-  feature "being authenticated" do
-    background { sign_in(user) }
+  describe "being authenticated" do
+    background do
+      Capybara.using_session('user_1') { sign_in(user_1) }
+      Capybara.using_session('user_2') { sign_in(user_2) }
+      Capybara.using_session('user_3') { sign_in(user_3) }
+    end
+
     it_behaves_like "authenticated"
   end
 end

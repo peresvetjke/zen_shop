@@ -1,4 +1,4 @@
-.item.box.column.is-one-quarter.m-5 data-category-id="#{item.category.id}" data-search-target="item"
+.item.box.column.is-one-quarter.m-5 data-category-id="#{item.category.id}" data-search-target="item" data-item-id="#{item.id}"
   .row
     = link_to item.title, item_path(item)
     
@@ -13,6 +13,24 @@
       span.icon
         i.fa-solid.fa-star.fa-xs
       span.rating.is-size-7 = item.rating || "-"
+      
 
-    = turbo_stream_from "add_to_cart_#{item.id}"
-    = render "add_to_cart", item: item, user: current_user
+
+    - cart_item = current_user.cart.cart_items.find_by(item_id: item.id)
+    div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}"
+
+      p.is-size-7 
+        = "Available: "
+        span.available_amount data-cartitems-target="availableAmount" = item.available_amount
+        span = " pc"
+
+      .mt-2.field.has-addons.hide data-cartitems-target="changeAmountButtons"
+        .control
+          button.button.is-success data-action="cartitems#decreaseAmount" -
+        .control
+          = text_field_tag "amount", nil, disabled: true, class: "input is-success", value: "#{cart_item&.amount}", data: {"cartitems-target": "amountSelect"}, size: 1
+        .control
+          button.button.is-success data-action="cartitems#increaseAmount" + 
+
+      button.button.mt-2.is-success.hide data-action="cartitems#create" data-cartitems-target="buyButton"
+        = "Add to cart"

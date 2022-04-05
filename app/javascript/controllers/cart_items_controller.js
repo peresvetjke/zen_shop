@@ -2,29 +2,48 @@ import { Controller } from "@hotwired/stimulus"
 import Rails from "@rails/ujs";
 
 export default class extends Controller {
-  static targets = ["amountSelect", "itemSum"]
-  static values = {url: String, itemid: Number}
+  static targets = [ "amountSelect", "itemSum", 
+                     "changeAmountButtons", "buyButton",
+                     "availableAmount" ]
+  static values = { url: String, itemId: Number, 
+                    amount: Number, available: Number, 
+                    id: { type: Number, default: 0 },
+                  }
 
-  create() {
-    let params = {
-      cart_item: { 
-        item_id: this.itemidValue
-      }
+  connect() {
+    this.updateButtons()
+  }
+
+  updateButtons() {
+    if (this.idValue == 0) {
+      $(this.changeAmountButtonsTarget).addClass('hide')
+      $(this.buyButtonTarget).removeClass('hide')
+    } else {
+      $(this.changeAmountButtonsTarget).removeClass('hide')
+      $(this.buyButtonTarget).addClass('hide')
     }
+  }
 
-    Rails.ajax({
-      url: this.urlValue,
-      type: 'post',
-      dataType: 'json',
-      beforeSend(xhr, options) {
-        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
-        options.data = JSON.stringify(params)
-        return true
-      },
-      error: function(error) {
-        alert(error.message)
-      }
-    })
+  updateAvailableAmount() {
+    this.availableAmountTarget.textContent = this.availableValue
+  }
+
+  updateAmountValue() {
+    this.amountSelectTarget.value = this.amountValue
+  }
+
+  updateCartItemValues(cartItem) {
+    this.idValue = cartItem.id
+    this.amountValue = cartItem.amount
+    this.availableValue = cartItem.available
+  }
+
+  url() {
+    if (this.idValue == 0) {
+      return "/cart_items"
+    } else {
+      return `/cart_items/${this.idValue}`
+    }
   }
   
   selectAmount() {
@@ -47,7 +66,37 @@ export default class extends Controller {
     }
   }
 
+  create() {
+    let self = this
+    let params = {
+      cart_item: { 
+        item_id: this.itemIdValue
+      }
+    }
+
+    Rails.ajax({
+      url: this.url(),
+      type: 'post',
+      dataType: 'json',
+      beforeSend(xhr, options) {
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
+        options.data = JSON.stringify(params)
+        return true
+      },
+      success(data) {
+        self.updateCartItemValues(data.cart_item)
+        self.updateAmountValue()
+        self.updateAvailableAmount()
+        self.updateButtons()
+      },
+      error: function(error) {
+        alert(error.message)
+      }
+    })
+  }
+
   update(amount) {
+    let self = this
     let params = {
       cart_item: { 
         amount: amount
@@ -55,13 +104,19 @@ export default class extends Controller {
     }
 
     Rails.ajax({
-      url: this.urlValue,
+      url: this.url(),
       type: 'patch',
       dataType: 'json',
       beforeSend(xhr, options) {
         xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
         options.data = JSON.stringify(params)
         return true
+      },
+      success(data) {
+        self.updateCartItemValues(data.cart_item)
+        self.updateAvailableAmount()
+        self.updateAmountValue()
+        self.updateButtons()
       },
       error: function(error) {
         alert(error.message)
@@ -72,10 +127,20 @@ export default class extends Controller {
   }
 
   delete() {
+    let self = this
+
     Rails.ajax({
-      url: this.urlValue,
+      url: this.url(),
       type: 'delete',
       dataType: 'json',
+      success(data) {
+        self.idValue = 0
+        self.amountValue = 0
+        self.availableValue = data.cart_item.available
+        self.updateAvailableAmount()
+        self.updateAmountValue()
+        self.updateButtons()
+      },
       error: function(error) {
         alert(error.message)
       }
