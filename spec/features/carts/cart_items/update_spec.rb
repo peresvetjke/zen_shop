@@ -15,19 +15,19 @@ feature 'User as client updates a cart item', %q{
   feature "updates item amount and totals" do
     background { 
       visit cart_path
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         select "5", from: "amount"
       end
     }
 
     it "increases the amount" do
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         expect(find("#amount")).to have_content('5')
       end
     end
 
     it "increases the sum" do
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         expect(find("span.sum")).to have_content('500')
       end
     end
@@ -41,7 +41,7 @@ feature 'User as client updates a cart item', %q{
     background {
       visit cart_path
       expect(page).to have_content(cart_item_1.item.title)
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         find("a.delete").click 
       end
     }
@@ -64,14 +64,14 @@ feature 'User as client updates a cart item', %q{
 
     scenario "displays available amount" do
       expect(cart_item_1.item.available_amount).to eq 0
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         expect(page).to have_content "Available: 0"
       end
       
     end
 
     scenario "updates available amount" do
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         expect(page).to have_content "Available: 0"
         select "1", from: "amount"
       end
@@ -79,7 +79,7 @@ feature 'User as client updates a cart item', %q{
     end
 
     scenario "doesn't allow to add an item in cart without available amount" do
-      within "#cart_item_#{cart_item_1.id}" do
+      within "[data-cartitems-id-value='#{cart_item_1.id}'" do
         select "5", from: "amount"
       end
       msg = accept_confirm { }

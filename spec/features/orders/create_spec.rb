@@ -1,8 +1,5 @@
 require "rails_helper"
-
-# RSpec.configure do
-#   Capybara.javascript_driver = :selenium_chrome
-# end
+# require "head_helper"
 
 feature 'User as customer can post order', %q{
   In order to purchase items.
@@ -15,16 +12,113 @@ feature 'User as customer can post order', %q{
   given(:cart_price)           { Money.new(1500_00, "RUB") }
   given(:delivery_cost)        { Money.new(499_94, "RUB") } # https://tariff.pochta.ru/v1/calculate/tariff?json&from=141206&to=101000&sumoc=150000&weight=1500&object=27020&pack=20
   given(:total)                { cart_price + delivery_cost }
-  given(:order)                { create(:order, user: user) }
+  
 
   given(:user_no_money)        { create(:user, :no_money) }
   given!(:user_no_money_ci_1)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
   given!(:user_no_money_ci_2)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
-  given(:insufficient_sum)     { user_no_money.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(1500_00, "RUB")) }
+
+  background { sign_in(user) }
+
+  describe "cart item", js: true do
+    describe "initial load", js: true do
+      background { visit cart_path }
+
+      it "displays item title" do
+        expect(page).to have_content(user_cart_item_1.item.title)
+      end
+
+      it "displays item sum" do
+        expect(find("##{dom_id(user_cart_item_1)} .sum")).to have_content('500')
+      end
+
+      it "displays item available amount" do
+        expect(find("##{dom_id(user_cart_item_1)} .available_amount")).to have_content(user_cart_item_1.item.available_amount)
+      end
+
+      it "displays total weight" do
+        expect(find("#total_weight")).to have_content(user.cart.total_weight)
+      end
+
+      it "displays total price" do
+        expect(find("#total_price")).to have_content(user.cart.total_sum)
+      end
+
+      it "displays total sum" do
+        expect(find("#total_sum")).to have_content(user.cart.total_sum)
+      end
+    end
+
+    describe "update", js: true do
+      background { 
+        visit cart_path
+      }
+
+      subject {
+        within "##{dom_id(user_cart_item_1)}" do
+          select "5", from: "amount"
+        end
+      }
+
+      it "changes item sum" do
+        subject
+        expect(find("##{dom_id(user_cart_item_1)} .sum")).to have_content('1250')
+      end
+      
+      it "changes item available amount" do
+        subject
+        expect(find("##{dom_id(user_cart_item_1)} .available_amount")).to have_content(user_cart_item_1.item.reload.available_amount)
+      end
+
+      it "does not allow to add an item in cart without available amount" do
+        user_cart_item_1.item.stock.storage_amount = 2
+        user_cart_item_1.item.stock.save
+        subject
+        msg = accept_confirm { }
+        expect(msg).to have_content I18n.t("cart_items.errors.not_available")
+      end
+
+      it "changes total weight" do
+        expect(find("#total_weight")).to have_content(user.cart.reload.total_weight)
+      end
+
+      it "changes total price" do
+        expect(find("#total_price")).to have_content(user.cart.reload.total_sum)
+      end
+
+      it "changes total sum" do
+        expect(find("#total_sum")).to have_content(user.cart.reload.total_sum)
+      end
+    end
+
+    describe "delete" do
+      background {
+        visit cart_path
+        expect(page).to have_content(user_cart_item_1.item.title)
+        within "[data-cartitems-id-value='#{user_cart_item_1.id}'" do
+          find("a.delete").click 
+        end
+      }
+
+      it "removes item" do
+        expect(page).to have_no_content(user_cart_item_1.item.title)
+      end
+
+      it "changes total weight" do
+        expect(find("#total_weight")).to have_content(user.cart.reload.total_weight)
+      end
+
+      it "changes total price" do
+        expect(find("#total_price")).to have_content(user.cart.reload.total_sum)
+      end
+
+      it "changes total" do
+        expect(find("#total_sum")).to have_content(user.cart.reload.total_sum)
+      end
+    end
+  end
 
   feature "deliveries" do
-    background { sign_in(user) }
-
     feature "self-pickup (no delivery)" do
       background { visit cart_path }
 
@@ -75,7 +169,7 @@ feature 'User as customer can post order', %q{
         expect(page).to have_content I18n.t("orders.create.message")
       end
 
-      scenario "displays delivery cost and planned date" do
+      scenario "displays delivery cost and planned date", js: true do
         visit cart_path
         select "Russian Post", from: delivery_type_select
         fill_in 'address', with: "Покровка 16"
@@ -83,15 +177,21 @@ feature 'User as customer can post order', %q{
         page.first("span.suggestions-nowrap", text: "д 15/16").click
         sleep(1)
         expect(page).to have_content "Delivery cost:\n#{delivery_cost} RUB"
-        expect(page).to have_content "Total:\n#{total.to_s.split('.').first + '.00'} RUB"
+        expect(page).to have_content "Total:\n#{total.to_s} RUB"
         expect(page).to have_content(/Deadline\:\n\d\d\-\d\d\-\d\d\d\d/)
         click_button("Checkout")
       end
 
       feature "previous address", js: true do
+        given(:order)       { create(:order, user: user) }
+        given(:cart_item_1) { create(:cart_item, cart: user.cart) }
+        given(:cart_item_2) { create(:cart_item, cart: user.cart) }
+
         feature "with previous order existing" do
           scenario "suggests previous delivery address" do
             order
+            cart_item_1
+            cart_item_2
             visit cart_path
             select "Russian Post", from: delivery_type_select
             sleep(1)
@@ -107,6 +207,8 @@ feature 'User as customer can post order', %q{
         
         feature "without previous order" do
           scenario "does not display suggested address" do
+            cart_item_1
+            cart_item_2
             visit cart_path
             select "Russian Post", from: delivery_type_select
             sleep(1)
@@ -148,17 +250,20 @@ feature 'User as customer can post order', %q{
   feature "payments" do
     feature "with zero wallet balance" do
       scenario "displays insufficient amount" do
-        sign_in(user_no_money) 
-        visit cart_path
-        select "Self-pickup", from: delivery_type_select
-        click_button("Checkout")
-        expect(page).to have_content "Please replenish your wallet for #{insufficient_sum}"
+        insufficient_sum = user_no_money.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(1500_00, "RUB"))
+        
+        Capybara.using_session('no_money') do
+          sign_in(user_no_money) 
+          visit cart_path
+          select "Self-pickup", from: delivery_type_select
+          click_button("Checkout")
+          expect(page).to have_content "Please replenish your wallet for #{insufficient_sum}"
+        end
       end
     end
 
     feature "with sufficient wallet balance" do
       scenario "allows to create order " do
-        sign_in(user) 
         visit cart_path
         select "Self-pickup", from: delivery_type_select
         click_button("Checkout")

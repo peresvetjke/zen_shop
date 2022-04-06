@@ -2,16 +2,24 @@ import { Controller } from "@hotwired/stimulus"
 import Rails from "@rails/ujs";
 
 export default class extends Controller {
-  static targets = [ "amountSelect", "itemSum", 
+  static targets = [ "amountSelect", "sum", 
                      "changeAmountButtons", "buyButton",
                      "availableAmount" ]
   static values = { url: String, itemId: Number, 
                     amount: Number, available: Number, 
                     id: { type: Number, default: 0 },
+                    price: Number, weight: Number
                   }
 
   connect() {
-    this.updateButtons()
+    if (this.changeAmountButtonsTargets.length > 0) { this.updateButtons() }
+    this.updateAvailableAmount()
+    this.updateAmountValue()
+    this.updateSum()
+  }
+
+  sum() {
+    return this.priceValue * this.amountValue
   }
 
   updateButtons() {
@@ -32,10 +40,15 @@ export default class extends Controller {
     this.amountSelectTarget.value = this.amountValue
   }
 
+  updateSum() {
+    this.sumTarget.textContent = this.toS(this.sum())
+  }
+
   updateCartItemValues(cartItem) {
     this.idValue = cartItem.id
     this.amountValue = cartItem.amount
     this.availableValue = cartItem.available
+    this.sumValue = this.priceValue * this.amountValue
   }
 
   url() {
@@ -87,7 +100,7 @@ export default class extends Controller {
         self.updateCartItemValues(data.cart_item)
         self.updateAmountValue()
         self.updateAvailableAmount()
-        self.updateButtons()
+        if (self.changeAmountButtonsTargets.length > 0) { self.updateButtons() }
       },
       error: function(error) {
         alert(error.message)
@@ -116,14 +129,15 @@ export default class extends Controller {
         self.updateCartItemValues(data.cart_item)
         self.updateAvailableAmount()
         self.updateAmountValue()
-        self.updateButtons()
+        self.updateSum()
+        if (self.changeAmountButtonsTargets.length > 0) { self.updateButtons() }
       },
       error: function(error) {
         alert(error.message)
       }
     })
 
-    window.dispatchEvent(new CustomEvent("cartItemsChanged"));
+    window.dispatchEvent(new CustomEvent("cartItemChanged"));
   }
 
   delete() {
@@ -134,19 +148,30 @@ export default class extends Controller {
       type: 'delete',
       dataType: 'json',
       success(data) {
+        self.removeCartItem(data.cart_item.id)
         self.idValue = 0
         self.amountValue = 0
         self.availableValue = data.cart_item.available
         self.updateAvailableAmount()
         self.updateAmountValue()
-        self.updateButtons()
+        if (self.changeAmountButtonsTargets.length > 0) { self.updateButtons() }
       },
       error: function(error) {
         alert(error.message)
       }
     })
 
-    window.dispatchEvent(new CustomEvent("cartItemsChanged"));
+    window.dispatchEvent(new CustomEvent("cartItemChanged"));
     window.dispatchEvent(new CustomEvent("cartItemDeleted"));
+  }
+
+  removeCartItem(id) {
+    $(`[data-cartitems-id-value='${id}']`).remove()
+  }
+
+  toS(argument) {
+    if (typeof(argument) == 'number') {
+      return (argument).toString(10) + '.00'
+    }
   }
 }

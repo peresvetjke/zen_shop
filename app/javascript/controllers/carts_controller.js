@@ -3,22 +3,24 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
                     "addressInput", "previousAddress", "previousAddressText", "defaultAddress", "defaultAddressText", 
-                    "displayAddressInputButton", "itemSum",
+                    "displayAddressInputButton",
                     "deliveryTypeSelect", "deliveryInfo", "deliveryCostInfo", 
                     "deliveryPlannedDateInfo", "deliveryCost", "deliveryPlannedDate",
-                    "addressFields"
+                    "addressFields", "cartItem",
+                    "totalWeight", "totalPrice", "total"
                    ]
 
   static values = { previousCountry: String, previousPostal: String, previousRegion: String, previousCity: String, previousStreet: String, previousHouse: String, previousFlat: String,
                     defaultCountry: String, defaultPostal: String, defaultRegion: String, defaultCity: String, defaultStreet: String, defaultHouse: String, defaultFlat: String,
-                    previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean }
+                    previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean,
+                    totalWeight: Number, totalPrice: Number, deliveryCost: Number, total: Number }
 
   connect() {
     if (this.previousAddressIsPresentValue) { this.presentPreviousAddress() }
     if (this.defaultAddressIsPresentValue)  { this.presentDefaultAddress() }
 
     this.hideAllDeliveryInfo()
-    this.updateTotal()
+    this.updateTotals()
 
     let self = this
 
@@ -35,6 +37,80 @@ export default class extends Controller {
         }
       }
     });
+  }
+
+  cartItemChanged() {
+    this.updateTotals()
+  }
+
+  cartItemDeleted() {
+    this.updateTotals()
+  }
+
+  updateTotals() {
+    $("#total_loading").removeClass("hide")
+    $("#total_sum").addClass("hide")
+    this.sleep(500).then(() => {
+      this.updateTotalPrice()
+      this.updateTotalWeight()
+      this.updateTotal()
+
+      $("#total_loading").addClass("hide")
+      $("#total_sum").removeClass("hide")
+    })
+  }
+
+  updateDeliveryCost() {
+    console.log('updateDeliveryCost')
+    console.log('(this.deliveryCostValue / 100).toFixed(2) = ' + (this.deliveryCostValue / 100).toFixed(2))
+    this.deliveryCostTarget.textContent = (this.deliveryCostValue / 100).toFixed(2)
+  }
+
+  updateTotalPrice() {
+    this.totalPriceTarget.textContent = (this.totalPrice() / 100).toFixed(2)
+  }
+
+  totalPrice() {
+    this.totalPriceValue = 100 * this.cartItemTargets
+      .map(el => {
+        let price = el.dataset.cartitemsPriceValue
+        let amount = el.dataset.cartitemsAmountValue
+        return parseInt(price * amount)
+      })
+      .reduce((sum, x) => sum + x)
+
+    return this.totalPriceValue
+  }
+
+  updateTotalWeight() {
+    this.totalWeightTarget.textContent = this.totalWeight()
+  }
+
+  updateTotal() {
+    this.totalTarget.textContent = (this.total()).toFixed(2)
+  }
+
+  total() {
+    return this.deliveryCostValue / 100 + this.totalPriceValue / 100
+  }
+
+  totalWeight() {
+    this.totalWeightValue = this.cartItemTargets
+      .map(el => {
+            let weight = el.dataset.cartitemsWeightValue
+            let amount = el.dataset.cartitemsAmountValue
+            return parseInt(weight * amount)
+          })
+      .reduce((sum, x) => sum + x)
+
+    return this.totalWeightValue
+  }
+
+  updateCart() {
+    // console.log(this.itemSumTargets.length)
+    this.sleep(500).then(() => {
+      if (this.itemSumTargets.length == 0) { Turbo.visit('/cart') }
+    })
   }
 
   fillAddress(suggestion) {
@@ -145,8 +221,7 @@ export default class extends Controller {
     const tariffEndPoint = "https://tariff.pochta.ru/v1/calculate/tariff?json&"
     const plannedDateEndPoint = "https://tariff.pochta.ru/v1/calculate/delivery?json&"
     var to     = $("input[name='order[address_attributes][postal_code]']")[0].value
-    var sum    = $("#total_price")[0].textContent
-    var sumoc  = parseInt(sum) * 100
+    var sumoc = this.totalPriceValue
     var weight = $("#total_weight")[0].textContent
 
     var query = $.param({ from: FROM, to: to, weight: weight, sumoc: sumoc, object: OBJECT, pack: PACK })
@@ -156,8 +231,11 @@ export default class extends Controller {
     $.ajax({
       url: tariffEndPoint + query
     }).done(function(data) {
-      var costRub = data.paynds / 100
-      self.deliveryCostTarget.textContent = costRub
+      self.deliveryCostValue = data.paynds
+      console.log(self.deliveryCostValue)
+      self.updateDeliveryCost()
+      // console.log(typeof(data.paynds) == 'number')
+      // console.log(data.paynds)
       self.updateTotal()
     });
 
@@ -180,25 +258,6 @@ export default class extends Controller {
     }
   }
 
-  updateTotal() {
-    $("#total_loading").removeClass("hide")
-    $("#total_sum").addClass("hide")
-    this.sleep(1000).then(() => {
-      var totalPrice = parseInt($("#total_price")[0].textContent) 
-      var deliveryCost = parseInt($("#delivery_cost")[0].textContent)
-      var totalSum = (totalPrice + deliveryCost).toString() + ".00"
-      $("#total_sum")[0].textContent = totalSum
-      $("#total_loading").addClass("hide")
-      $("#total_sum").removeClass("hide")
-    })
-  }
-
-  updateCart() {
-    this.sleep(1000).then(() => {
-      if (this.itemSumTargets.length == 0) { Turbo.visit('/cart') }
-    })
-  }
-
   parseDate(date) {
     var year = date.substring(0,4)
     var month = date.substring(4,6)
@@ -209,5 +268,11 @@ export default class extends Controller {
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  toS(kop) {
+    if (typeof(kop) == 'number') {
+      return (kop / 100).toString(10) + '.00'
+    }
   }
 }
