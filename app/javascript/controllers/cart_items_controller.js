@@ -41,7 +41,9 @@ export default class extends Controller {
   }
 
   updateSum() {
-    this.sumTarget.textContent = this.toS(this.sum())
+    if (this.hasSumTarget) {
+      this.sumTarget.textContent = this.toS(this.sum())
+    }
   }
 
   updateCartItemValues(cartItem) {
@@ -166,7 +168,9 @@ export default class extends Controller {
   }
 
   removeCartItem(id) {
-    $(`[data-cartitems-id-value='${id}']`).remove()
+    if (!this.hasBuyButtonTarget) {
+      $(`[data-cartitems-id-value='${id}']`).remove()
+    }
   }
 
   toS(argument) {
