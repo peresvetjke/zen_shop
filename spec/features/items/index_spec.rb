@@ -12,6 +12,7 @@ feature 'User as client can index all items list', %q{
   given(:category_2_items)  { create_list(:item, 5, category: category_2) }
   given(:item)              { category_1_items.first }
   given(:category)          { Category.first }
+  given(:subscription)      { create(:subscription, item: item, user: user) }
 
   shared_examples "guest" do
     it "tries to add item to cart" do
@@ -49,6 +50,10 @@ feature 'User as client can index all items list', %q{
 
       it "displays current availability" do
         expect(find("##{dom_id(item)}")).to have_content "Available: #{item.available_amount} pc"
+      end
+
+      it "displays rating" do
+        expect(find("##{dom_id(item)}")).to have_content item.rating
       end
     end
 
@@ -167,6 +172,106 @@ feature 'User as client can index all items list', %q{
           subject
           within "##{dom_id(item)}" do
             expect(page).to have_button "Add to cart"
+          end
+        end
+      end
+    end
+
+    describe "subscriptions", js: true do
+      background { category_1_items }
+
+      describe "when unsubscribed" do
+        describe "with available stock" do
+          background { 
+            visit items_path 
+          }
+
+          it "does not display subscribe link" do
+            within "##{dom_id(item)}" do
+              expect(page).to have_no_button("Subscribe")
+            end
+          end
+        end
+
+        describe "without stock available" do
+          background { 
+            item.stock.update(storage_amount: 0)
+            visit items_path
+          }
+
+          subject { 
+            within "##{dom_id(item)}" do
+              click_button("Subscribe") 
+            end
+            sleep(0.5)
+          }
+
+          it "does not display 'Add to cart' button" do
+            within "##{dom_id(item)}" do
+              expect(page).to have_no_button("Add to cart")
+            end
+          end
+
+          it "creates subscription" do
+            expect{ subject }.to change(Subscription, :count).by(1)
+          end
+
+          it "subscribes for a notification about item arrival", js: true do
+            subject
+            msg = accept_confirm { }
+            expect(msg).to have_content I18n.t("items.subscribed")
+          end
+        end
+      end
+
+      describe "when subscribed" do
+        background { 
+          subscription
+          visit items_path
+        }
+
+        describe "with available stock" do
+          it "does not display subscribe buttons" do
+            within "##{dom_id(item)}" do
+              expect(page).to have_no_button("Subscribe")
+              expect(page).to have_no_button("Unsubscribe")
+            end
+          end
+        end
+
+        describe "without stock available" do
+          background { 
+            item.stock.update(storage_amount: 0)
+            visit items_path
+          }
+
+          subject { 
+            within "##{dom_id(item)}" do
+              click_button("Unsubscribe")
+            end
+            sleep(0.5)
+          }
+
+          it "does not display 'Add to cart' button" do
+            within "##{dom_id(item)}" do
+              expect(page).to have_no_button("Add to cart")
+            end
+          end
+
+          it "does not display 'Subscribe' button" do
+            within "##{dom_id(item)}" do
+              expect(page).to have_no_button("Subscribe")
+            end
+          end
+
+          it "deletes subscription" do
+            expect{ subject }.to change(Subscription, :count).by(-1)
+          end
+
+          it "subscribes for a notification about item arrival", js: true do
+            subject
+            msg = accept_confirm { }
+            expect(msg).to have_content I18n.t("items.unsubscribed")
           end
         end
       end

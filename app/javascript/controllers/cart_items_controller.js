@@ -4,11 +4,12 @@ import Rails from "@rails/ujs";
 export default class extends Controller {
   static targets = [ "amountSelect", "sum", 
                      "changeAmountButtons", "buyButton",
-                     "availableAmount" ]
+                     "availableAmount", "subscribeButton" ]
   static values = { url: String, itemId: Number, 
                     amount: Number, available: Number, 
                     id: { type: Number, default: 0 },
-                    price: Number, weight: Number
+                    price: Number, weight: Number,
+                    isSubscribed: Boolean
                   }
 
   connect() {
@@ -23,12 +24,25 @@ export default class extends Controller {
   }
 
   updateButtons() {
-    if (this.idValue == 0) {
-      $(this.changeAmountButtonsTarget).addClass('hide')
-      $(this.buyButtonTarget).removeClass('hide')
+    if (this.availableValue == 0) {
+      
+      $(this.subscribeButtonTarget).removeClass('hide')
+      if (this.isSubscribedValue) {
+        this.subscribeButtonTarget.textContent = "Unsubscribe"
+      } else {
+        this.subscribeButtonTarget.textContent = "Subscribe"
+      }
+
     } else {
-      $(this.changeAmountButtonsTarget).removeClass('hide')
-      $(this.buyButtonTarget).addClass('hide')
+
+      if (this.idValue == 0) {
+        $(this.changeAmountButtonsTarget).addClass('hide')
+        $(this.buyButtonTarget).removeClass('hide')
+      } else {
+        $(this.changeAmountButtonsTarget).removeClass('hide')
+        $(this.buyButtonTarget).addClass('hide')
+      }
+
     }
   }
 
@@ -165,6 +179,24 @@ export default class extends Controller {
 
     window.dispatchEvent(new CustomEvent("cartItemChanged"));
     window.dispatchEvent(new CustomEvent("cartItemDeleted"));
+  }
+
+  subscribe() {
+    let url = `/items/${this.itemIdValue}/subscribe`
+    let self = this
+
+    Rails.ajax({
+      url: url,
+      type: 'post',
+      dataType: 'json',
+      success(data) {
+        self.updateButtons()
+        alert(data.message)
+      },
+      error: function(error) {
+        alert(error.message)
+      }
+    })
   }
 
   removeCartItem(id) {
