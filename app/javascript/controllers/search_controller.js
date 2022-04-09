@@ -13,6 +13,9 @@ export default class extends Controller {
     this.priceToTarget.placeholder = this.maxPriceValue / 100
 
     this.updateIcons()
+    this.sleep(200).then(() => {
+      this.filterSearchResults()
+    })
   }
   
   // on collapseFilter click
@@ -119,5 +122,9 @@ export default class extends Controller {
     } else {
       this.priceToValue = this.priceToTarget.value * 100
     }
+  }
+  
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

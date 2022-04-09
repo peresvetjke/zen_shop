@@ -24,8 +24,6 @@ feature 'User as customer can post order', %q{
 
   describe "cart item", js: true do
     describe "initial load", js: true do
-      # background { visit cart_path }
-
       it "displays item title" do
         expect(page).to have_content(user_cart_item_1.item.title)
       end
@@ -91,8 +89,6 @@ feature 'User as customer can post order', %q{
 
     describe "delete" do
       subject {
-        # visit cart_path
-        
         within "##{dom_id(user_cart_item_1)}" do
           find("a.delete").click 
         end
@@ -271,15 +267,16 @@ feature 'User as customer can post order', %q{
       click_button("Checkout")
     }
 
-    feature "with zero wallet balance" do
+    feature "with zero wallet balance", js: true do
+      background {
+        sign_out
+        sign_in(user_no_money) 
+      }
+
       scenario "displays insufficient amount" do
+        subject
         insufficient_sum = user_no_money.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(1500_00, "RUB"))
-        
-        Capybara.using_session('no_money') do
-          sign_in(user_no_money) 
-          subject
-          expect(page).to have_content "Please replenish your wallet for #{insufficient_sum}"
-        end
+        expect(page).to have_content "Please replenish your wallet for #{insufficient_sum}"
       end
     end
 

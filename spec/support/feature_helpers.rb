@@ -10,6 +10,6 @@ module FeatureHelpers
   end
 
   def sign_out
-    find("#sign_out").click
+    visit destroy_user_session_path
   end
 end

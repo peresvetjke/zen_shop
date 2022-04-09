@@ -129,6 +129,16 @@ feature 'User as client can view item', %q{
         end
       end
     end
+
+    describe "reviews" do
+      scenario "saves product rating" do
+        visit item_path(item)
+        find('trix-editor').click.set('My review')
+        click_button('Rate product')
+        sleep(0.5)
+        expect(find('#item_info .rating')).to have_content '5.0'
+      end
+    end
   end
 
   describe "being a guest" do
