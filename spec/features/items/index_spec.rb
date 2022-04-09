@@ -1,5 +1,4 @@
 require "rails_helper"
-# require "head_helper"
 
 feature 'User as client can index all items list', %q{
   In order to find the one he interested in

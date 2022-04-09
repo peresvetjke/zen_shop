@@ -13,11 +13,6 @@ export default class extends Controller {
 
   subscribe() {
     let self = this
-    // let params = {
-    //   cart_item: { 
-    //     item_id: this.itemIdValue
-    //   }
-    // }
 
     Rails.ajax({
       url: this.url(),

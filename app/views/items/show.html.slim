@@ -14,9 +14,6 @@
       i.fa-solid.fa-star
     span.rating = @item.rating || "-"
 
-  / = turbo_stream_from "add_to_cart_#{@item.id}"
-  / = render "add_to_cart", item: @item, user: current_user
-
 #add_to_cart
   = render 'items/add_to_cart', item: @item
 
