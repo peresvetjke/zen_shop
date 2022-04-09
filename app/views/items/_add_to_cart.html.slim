@@ -1,22 +1,21 @@
-= turbo_frame_tag "add_to_cart_#{item.id}"
-  - cart_item = user.cart.cart_items.find_by(item_id: item.id)
-  - url = cart_item.present? ? cart_item_path(cart_item) : cart_items_path
+- cart_item = current_user.cart.cart_items.find_by(item_id: item.id)
+div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}" data-cartitems-available-value="#{item.available_amount}" data-cartitems-amount-value="#{cart_item&.amount}" data-cartitems-is-subscribed-value="#{current_user.subscribed?(item: item)}"
 
-  div data-controller="cartitems" data-cartitems-url-value="#{url}" data-cartitems-itemid-value="#{item.id}"
-    p.is-size-7 
-      = "Available: "
-      span.available_amount = item.available_amount
-      span = " pc"
+  p.is-size-7 
+    = "Available: "
+    span.available_amount data-cartitems-target="availableAmount"
+    span = " pc"
 
-    - if cart_item.present?
-      .mt-2.field.has-addons
-        .control
-          button.button.is-success data-action="cartitems#decreaseAmount" -
-        .control
-          = text_field_tag "amount", nil, disabled: true, class: "input is-success", value: "#{cart_item.amount}", data: {"cartitems-target": "amountSelect"}
-        .control
-          button.button.is-success data-action="cartitems#increaseAmount" + 
-      p.is-size-7 = "#{cart_item.amount * cart_item.item.price} RUB"
+  .mt-2.field.has-addons.hide data-cartitems-target="changeAmountButtons"
+    .control
+      button.button.is-success data-action="cartitems#decreaseAmount" -
+    .control
+      = text_field_tag "amount", nil, disabled: true, class: "input is-success", data: {"cartitems-target": "amountSelect"}, size: 1
+    .control
+      button.button.is-success data-action="cartitems#increaseAmount" + 
+  
+  button.button.mt-2.is-success.hide data-action="cartitems#create" data-cartitems-target="buyButton"
+    = "Add to cart"
 
-    - else
-      button.button.mt-2.is-success data-action="cartitems#create" Add to cart
+  button.button.mt-2.is-info.hide data-action="cartitems#subscribe" data-cartitems-target="subscribeButton"
+    = "Subscribe"

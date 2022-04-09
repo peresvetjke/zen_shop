@@ -1,21 +1,23 @@
-= turbo_frame_tag dom_id(cart_item)
-  div data-controller="cartitems" data-cartitems-url-value="#{cart_item_path(cart_item)}"
-    .level.cart_item
-      .level-left
-        = cart_item.item.title  
+div data-carts-target="cartItem" data-controller="cartitems" data-cartitems-item-id-value="#{cart_item.item.id}" data-cartitems-id-value="#{cart_item.id}" data-cartitems-price-value="#{cart_item.item.price}" data-cartitems-weight-value="#{cart_item.item.price}" data-cartitems-amount-value="#{cart_item.amount}" data-cartitems-available-value="#{cart_item.item.available_amount}" id="#{dom_id(cart_item)}"
+  .level.cart_item
+    .level-left
+      = cart_item.item.title
 
-      .level-right
-        a.delete data-action="cartitems#delete"
+    .level-right
+      a.delete data-action="cartitems#delete"
 
-    .level
-      = select_tag :amount, options_for_select(1..10, cart_item.amount), {class: "select is-small level-left", data: {"cartitems-target": "amountSelect", action: "cartitems#selectAmount"}}
-      .level-right 
-        div
-          span.sum data-target="cartitems.itemSum carts.itemSum" = "#{cart_item.item.price * cart_item.amount}"
-          = " RUB"
-    
-    .level
-      .level-left
-        .is-size-7.mt-0 = "Available: #{cart_item.item.available_amount} pc"
+  .level
+    = select_tag :amount, options_for_select(1..10, cart_item.amount), {class: "select is-small level-left", data: {"cartitems-target": "amountSelect", action: "cartitems#selectAmount"}}
+    .level-right 
+      div
+        span.sum data-cartitems-target="sum"
+        = " RUB"
+  
+  .level
+    .level-left
+      .is-size-7.mt-0 
+        span = "Available: "
+        span.available_amount data-cartitems-target="availableAmount"
+        span = " pc"
 
-  .mb-5
+.mb-5

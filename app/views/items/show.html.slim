@@ -1,4 +1,4 @@
-.item
+#item_info
   p.title = @item.title
 
   p
@@ -14,9 +14,10 @@
       i.fa-solid.fa-star
     span.rating = @item.rating || "-"
 
-  = turbo_stream_from "add_to_cart_#{@item.id}"
-  = render "add_to_cart", item: @item, user: current_user
+#add_to_cart
+  = render 'items/add_to_cart', item: @item
 
+#reviews
   - if @review&.errors.present?
     = render "shared/errors", resource: @review
 
@@ -31,7 +32,7 @@
     = f.submit "Rate product", class: "button mt-2"
 
   .mt-5
-  ul#reviews
+  ul
     - @reviews.each do |review|
       li.review.box
         = "#{review.created_at} #{review.author.email}"

@@ -3,22 +3,24 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
                     "addressInput", "previousAddress", "previousAddressText", "defaultAddress", "defaultAddressText", 
-                    "displayAddressInputButton", "itemSum",
+                    "displayAddressInputButton",
                     "deliveryTypeSelect", "deliveryInfo", "deliveryCostInfo", 
                     "deliveryPlannedDateInfo", "deliveryCost", "deliveryPlannedDate",
-                    "addressFields"
+                    "addressFields", "cartItem",
+                    "totalWeight", "totalPrice", "total"
                    ]
 
   static values = { previousCountry: String, previousPostal: String, previousRegion: String, previousCity: String, previousStreet: String, previousHouse: String, previousFlat: String,
                     defaultCountry: String, defaultPostal: String, defaultRegion: String, defaultCity: String, defaultStreet: String, defaultHouse: String, defaultFlat: String,
-                    previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean }
+                    previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean,
+                    totalWeight: Number, totalPrice: Number, deliveryCost: Number, total: Number }
 
   connect() {
     if (this.previousAddressIsPresentValue) { this.presentPreviousAddress() }
     if (this.defaultAddressIsPresentValue)  { this.presentDefaultAddress() }
 
     this.hideAllDeliveryInfo()
-    this.updateTotal()
+    this.updateTotals()
 
     let self = this
 
@@ -37,6 +39,97 @@ export default class extends Controller {
     });
   }
 
+  previousAddress() {
+    return {  'country': this.previousCountryValue,
+              'postal_code': this.previousPostalValue,
+              'region_with_type': this.previousRegionValue,
+              'city_with_type': this.previousCityValue,
+              'street_with_type': this.previousStreetValue,
+              'house': this.previousHouseValue,
+              'flat': this.previousFlatValue
+    }
+  }
+
+  defaultAddress() {
+    return {  'country': this.defaultCountryValue,
+              'postal_code': this.defaultPostalValue,
+              'region_with_type': this.defaultRegionValue,
+              'city_with_type': this.defaultCityValue,
+              'street_with_type': this.defaultStreetValue,
+              'house': this.defaultHouseValue,
+              'flat': this.defaultFlatValue
+    }
+  }
+
+  cartItemChanged() {
+    this.updateTotals()
+  }
+
+  cartItemDeleted() {
+    this.updateTotals()
+    this.sleep(500).then(() => {
+      if (this.cartItemTargets.length == 0) { Turbo.visit('/cart') }
+    })
+    
+  }
+
+  updateTotals() {
+    $("#total_loading").removeClass("hide")
+    $("#total_sum").addClass("hide")
+    this.sleep(500).then(() => {
+      this.updateTotalPrice()
+      this.updateTotalWeight()
+      this.updateTotal()
+
+      $("#total_loading").addClass("hide")
+      $("#total_sum").removeClass("hide")
+    })
+  }
+
+  updateDeliveryCost() {
+    this.deliveryCostTarget.textContent = (this.deliveryCostValue / 100).toFixed(2)
+  }
+
+  updateTotalPrice() {
+    this.totalPriceTarget.textContent = (this.totalPrice() / 100).toFixed(2)
+  }
+  
+  updateTotalWeight() {
+    this.totalWeightTarget.textContent = this.totalWeight()
+  }
+
+  updateTotal() {
+    this.totalTarget.textContent = (this.total()).toFixed(2)
+  }
+
+  totalPrice() {
+    this.totalPriceValue = 100 * this.cartItemTargets
+      .map(el => {
+        let price = el.dataset.cartitemsPriceValue
+        let amount = el.dataset.cartitemsAmountValue
+        return parseInt(price * amount)
+      })
+      .reduce((sum, x) => sum + x)
+
+    return this.totalPriceValue
+  }
+
+  total() {
+    return ( this.deliveryCostValue + this.totalPriceValue ) / 100
+  }
+
+  totalWeight() {
+    this.totalWeightValue = this.cartItemTargets
+      .map(el => {
+            let weight = el.dataset.cartitemsWeightValue
+            let amount = el.dataset.cartitemsAmountValue
+            return parseInt(weight * amount)
+          })
+      .reduce((sum, x) => sum + x)
+
+    return this.totalWeightValue
+  }
+
   fillAddress(suggestion) {
     const addressFields = ["country", "postal_code", "region_with_type", "city_with_type", "street_with_type", "house", "flat"]
 
@@ -49,30 +142,26 @@ export default class extends Controller {
 
   // on "Choose previous" click ;
   copyPreviousAddress() {
-    $(`input[name='order[address_attributes][country]']`)[0].value = this.previousCountryValue
-    $(`input[name='order[address_attributes][postal_code]']`)[0].value = this.previousPostalValue
-    $(`input[name='order[address_attributes][region_with_type]']`)[0].value = this.previousRegionValue
-    $(`input[name='order[address_attributes][city_with_type]']`)[0].value = this.previousCityValue
-    $(`input[name='order[address_attributes][street_with_type]']`)[0].value = this.previousStreetValue
-    $(`input[name='order[address_attributes][house]']`)[0].value = this.previousHouseValue
-    $(`input[name='order[address_attributes][flat]']`)[0].value = this.previousFlatValue
-
+    this.copyAddress(this.previousAddress)
     this.retrieveDeliveryInfo()
     this.showDeliveryCostInfo(true)
   }
 
   // on "Choose default" click ;
   copyDefaultAddress() {
-    $(`input[name='order[address_attributes][country]']`)[0].value = this.defaultCountryValue
-    $(`input[name='order[address_attributes][postal_code]']`)[0].value = this.defaultPostalValue
-    $(`input[name='order[address_attributes][region_with_type]']`)[0].value = this.defaultRegionValue
-    $(`input[name='order[address_attributes][city_with_type]']`)[0].value = this.defaultCityValue
-    $(`input[name='order[address_attributes][street_with_type]']`)[0].value = this.defaultStreetValue
-    $(`input[name='order[address_attributes][house]']`)[0].value = this.defaultHouseValue
-    $(`input[name='order[address_attributes][flat]']`)[0].value = this.defaultFlatValue
-
+    this.copyAddress(this.defaultAddress)
     this.retrieveDeliveryInfo()
     this.showDeliveryCostInfo(true)
+  }
+
+  copyAddress(address) {
+    $(`input[name='order[address_attributes][country]']`)[0].value = address.country
+    $(`input[name='order[address_attributes][postal_code]']`)[0].value = address.postal_code
+    $(`input[name='order[address_attributes][region_with_type]']`)[0].value = address.region_with_type
+    $(`input[name='order[address_attributes][city_with_type]']`)[0].value = address.city_with_type
+    $(`input[name='order[address_attributes][street_with_type]']`)[0].value = address.street_with_type
+    $(`input[name='order[address_attributes][house]']`)[0].value = address.house
+    $(`input[name='order[address_attributes][flat]']`)[0].value = address.flat    
   }
 
   // on 'Update address' click ;
@@ -145,8 +234,7 @@ export default class extends Controller {
     const tariffEndPoint = "https://tariff.pochta.ru/v1/calculate/tariff?json&"
     const plannedDateEndPoint = "https://tariff.pochta.ru/v1/calculate/delivery?json&"
     var to     = $("input[name='order[address_attributes][postal_code]']")[0].value
-    var sum    = $("#total_price")[0].textContent
-    var sumoc  = parseInt(sum) * 100
+    var sumoc = this.totalPriceValue
     var weight = $("#total_weight")[0].textContent
 
     var query = $.param({ from: FROM, to: to, weight: weight, sumoc: sumoc, object: OBJECT, pack: PACK })
@@ -156,8 +244,8 @@ export default class extends Controller {
     $.ajax({
       url: tariffEndPoint + query
     }).done(function(data) {
-      var costRub = data.paynds / 100
-      self.deliveryCostTarget.textContent = costRub
+      self.deliveryCostValue = data.paynds
+      self.updateDeliveryCost()
       self.updateTotal()
     });
 
@@ -178,25 +266,6 @@ export default class extends Controller {
     } else {
       this.showAddressSearch(true)
     }
-  }
-
-  updateTotal() {
-    $("#total_loading").removeClass("hide")
-    $("#total_sum").addClass("hide")
-    this.sleep(1000).then(() => {
-      var totalPrice = parseInt($("#total_price")[0].textContent) 
-      var deliveryCost = parseInt($("#delivery_cost")[0].textContent)
-      var totalSum = (totalPrice + deliveryCost).toString() + ".00"
-      $("#total_sum")[0].textContent = totalSum
-      $("#total_loading").addClass("hide")
-      $("#total_sum").removeClass("hide")
-    })
-  }
-
-  updateCart() {
-    this.sleep(1000).then(() => {
-      if (this.itemSumTargets.length == 0) { Turbo.visit('/cart') }
-    })
   }
 
   parseDate(date) {

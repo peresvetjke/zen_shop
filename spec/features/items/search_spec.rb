@@ -30,6 +30,7 @@ feature 'User as a client can perform search of goods item', %q{
   feature "search filter" do
     background {
       visit items_path
+      sleep(0.5)
     }
 
     feature "filter search by category" do
