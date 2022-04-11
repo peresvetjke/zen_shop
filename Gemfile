@@ -31,8 +31,6 @@ gem 'slim-rails'
 gem 'money-rails', '~>1.12'
 gem 'bootstrap', '~> 5.1.3'
 gem 'jquery-rails'
-gem 'mysql2',          '~> 0.4',    :platform => :ruby
-gem 'thinking-sphinx', '~> 5.4'
 gem 'devise'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'oj'

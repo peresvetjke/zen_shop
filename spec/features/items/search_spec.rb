@@ -1,8 +1,8 @@
-require "sphinx_helper"
+require "rails_helper"
 
 feature 'User as a client can perform search of goods item', %q{
   In order to minimize time of its discovering and purchase
-}, sphinx: true, js: true do
+}, js: true do
 
   given!(:category_one) { create(:category, title: "Category #1") }
   given!(:category_two) { create(:category, title: "Category #2") }
