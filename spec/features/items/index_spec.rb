@@ -73,7 +73,7 @@ feature 'User as client can index all items list', %q{
           within "##{dom_id(item)}" do
             click_button("Add to cart")
           end
-          sleep(0.5)
+          sleep(1)
         }
 
         it "creates cart item" do
@@ -125,7 +125,7 @@ feature 'User as client can index all items list', %q{
           within "##{dom_id(cart_item.item)}" do
             click_button('+')
           end
-          sleep(0.5)
+          sleep(1)
         }
 
         it "updates amount" do
@@ -153,7 +153,7 @@ feature 'User as client can index all items list', %q{
           within "##{dom_id(cart_item.item)}" do
             click_button('-')
           end
-          sleep(0.5)
+          sleep(1)
         }
 
         it "removes cart item" do
@@ -202,7 +202,7 @@ feature 'User as client can index all items list', %q{
             within "##{dom_id(item)}" do
               click_button("Subscribe") 
             end
-            sleep(0.5)
+            sleep(1)
           }
 
           it "does not display 'Add to cart' button" do
@@ -248,7 +248,7 @@ feature 'User as client can index all items list', %q{
             within "##{dom_id(item)}" do
               click_button("Unsubscribe")
             end
-            sleep(0.5)
+            sleep(1)
           }
 
           it "does not display 'Add to cart' button" do
