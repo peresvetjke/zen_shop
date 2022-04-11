@@ -227,32 +227,54 @@ feature 'User as customer can post order', %q{
         end
       end
 
-      feature "default address suggestion", js: true do
-        feature "with default address existing", js: true do
+      describe "default address suggestion", js: true do
+        describe "with default address existing", js: true do
           given(:default_address) { create(:default_address, user: user) }
           
-          subject {
+          background { 
+            default_address 
             visit cart_path
             select "Russian Post", from: delivery_type_select
-            sleep(1)
+            sleep(0.5)
           }
 
-          scenario "suggests default delivery address" do
-            default_address
-            subject
-            expect(page).to have_content("Choose default address?")
+          subject {
             within("#default_address") do
               find("a", text: "Choose").click
             end
+            sleep(0.5)
+          }
+
+          it "suggests default delivery address" do
+            expect(page).to have_content("Choose default address?")
+          end
+
+          it "displays chosen default address", js: true do
+            subject
+            expect(find("input#country").value).to eq default_address.address.country
+            expect(find("input#postal_code").value).to eq default_address.address.postal_code
+            expect(find("input#region_with_type").value).to eq default_address.address.region_with_type
+            expect(find("input#city_with_type").value).to eq default_address.address.city_with_type
+            expect(find("input#street_with_type").value).to eq default_address.address.street_with_type
+            expect(find("input#house").value).to eq default_address.address.house
+            expect(find("input#flat").value).to eq default_address.address.flat
+          end
+          
+          it "allows to create order with default address" do
+            subject
             click_button("Checkout")
-            sleep(1)
             expect(page).to have_content I18n.t("orders.create.message")
           end
         end
         
-        feature "without previous order" do
-          scenario "does not display suggested address" do
-            subject
+        describe "without previous order" do
+          background { 
+            visit cart_path
+            select "Russian Post", from: delivery_type_select
+            sleep(0.5)
+          }
+
+          it "does not display suggested address" do
             expect(page).to have_no_content("Choose default address?")
           end
         end
@@ -275,8 +297,7 @@ feature 'User as customer can post order', %q{
 
       scenario "displays insufficient amount" do
         subject
-        insufficient_sum = user_no_money.bitcoin_wallet.calculate_insufficient_btc_amount(money_rub: Money.new(1500_00, "RUB"))
-        expect(page).to have_content "Please replenish your wallet for #{insufficient_sum}"
+        expect(page).to have_content "Please replenish your wallet for"
       end
     end
 

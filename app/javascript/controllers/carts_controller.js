@@ -142,14 +142,14 @@ export default class extends Controller {
 
   // on "Choose previous" click ;
   copyPreviousAddress() {
-    this.copyAddress(this.previousAddress)
+    this.copyAddress(this.previousAddress())
     this.retrieveDeliveryInfo()
     this.showDeliveryCostInfo(true)
   }
 
   // on "Choose default" click ;
   copyDefaultAddress() {
-    this.copyAddress(this.defaultAddress)
+    this.copyAddress(this.defaultAddress())
     this.retrieveDeliveryInfo()
     this.showDeliveryCostInfo(true)
   }
@@ -161,7 +161,7 @@ export default class extends Controller {
     $(`input[name='order[address_attributes][city_with_type]']`)[0].value = address.city_with_type
     $(`input[name='order[address_attributes][street_with_type]']`)[0].value = address.street_with_type
     $(`input[name='order[address_attributes][house]']`)[0].value = address.house
-    $(`input[name='order[address_attributes][flat]']`)[0].value = address.flat    
+    $(`input[name='order[address_attributes][flat]']`)[0].value = address.flat
   }
 
   // on 'Update address' click ;
@@ -242,22 +242,40 @@ export default class extends Controller {
 
     // retrieve cost
     $.ajax({
-      url: tariffEndPoint + query
-    }).done(function(data) {
-      self.deliveryCostValue = data.paynds
-      self.updateDeliveryCost()
-      self.updateTotal()
+      url: tariffEndPoint + query,
+      success: function(response) {
+        if (self.isSuccessful(response)) {
+          self.deliveryCostValue = response.paynds
+          self.updateDeliveryCost()
+          self.updateTotal()
+        } else {
+          alert(response.error.join('; '))
+        }
+      }
     });
 
     // retrieve planned date
     $.ajax({
-      url: plannedDateEndPoint + query
-    }).done(function(data) {
-      var plannedDate = self.parseDate(data.delivery.deadline)
-      self.deliveryPlannedDateTarget.textContent = plannedDate
+      url: plannedDateEndPoint + query,
+      success: function(response) {
+        if (self.isSuccessful(response)) {
+          var plannedDate = self.parseDate(response.delivery.deadline)
+          self.deliveryPlannedDateTarget.textContent = plannedDate
+        } else {
+          alert(response.error.join('; '))
+        }
+      }
     });
 
     this.showAddressSearch(false)
+  }
+
+  isSuccessful(response) {
+    if (typeof(response.error) == 'undefined') {
+      return true;
+    } else {
+      return false
+    }
   }
 
   updateDeliveryType() {
