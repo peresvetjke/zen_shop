@@ -20,10 +20,13 @@ class Item < ApplicationRecord
 
   after_create :create_stock
 
-  ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
-
   scope :arrived_items_for_follower, ->(follower) { Item.joins(:stock, :subscriptions).
                                                       where("stocks.storage_amount > ? AND subscriptions.user_id = ?", 0, follower.id) }
+
+  def self.search(query)
+    words = query.split.map(&:downcase)
+    words.inject(Item.search_word words.first) { |result, word| result.or(Item.search_word word) }
+  end
 
   def available_amount
     reserved = CartItem.where(item: self).pluck(:amount).sum
@@ -32,5 +35,11 @@ class Item < ApplicationRecord
 
   def rating
     reviews.present? ? reviews.average(:rating).to_f : nil
+  end
+
+  private
+
+  def self.search_word(word)
+    Item.where("lower(title) LIKE ? OR lower(description) LIKE ?", "%#{word}%", "%#{word}%")
   end
 end
