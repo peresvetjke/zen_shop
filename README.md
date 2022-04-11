@@ -1,6 +1,8 @@
 # ZenShop
 My graduation project in [Thinknetica](https://thinknetica.com/) (c)
 
+[https://peresvetjke-zenshop.herokuapp.com/](https://peresvetjke-zenshop.herokuapp.com/)
+
 ### Goals
 Develop an online-shop.
 
