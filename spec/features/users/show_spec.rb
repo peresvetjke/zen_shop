@@ -6,16 +6,34 @@ feature 'User as customer can check his account info', %q{
 
   given(:user)        { create(:user) }
   given(:btc_address) { user.bitcoin_wallet.public_address }
-  
-  background { 
-    sign_in(user) 
-    visit account_path
-  }
 
-  feature "bitcoin wallet" do
-    it "displays user's personal btc address" do
-      expect(page).to have_content("Your balance:\n#{user.bitcoin_wallet.available_btc}")
-      expect(page).to have_field('btc_wallet_address', with: btc_address)
+  subject { visit account_path }
+
+  shared_examples "guest" do
+    describe "show account" do
+      it "deny access" do
+        subject
+        expect(page).to have_content I18n.t("devise.failure.unauthenticated")
+      end
     end
+  end
+
+  shared_examples "customer" do
+    describe "show account" do
+      it "displays account" do
+        subject
+        expect(page).to have_content("Your balance:\n#{user.bitcoin_wallet.available_btc}")
+        expect(page).to have_field('btc_wallet_address', with: btc_address)
+      end
+    end
+  end
+
+  context "being a guest" do
+    it_behaves_like "guest"
+  end
+
+  context "being a customer" do
+    background { sign_in(user) }
+    it_behaves_like "customer"
   end
 end

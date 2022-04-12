@@ -10,14 +10,18 @@ feature 'User as client can index all items list', %q{
   given(:category_1_items)  { create_list(:item, 5, category: category_1) }
   given(:category_2_items)  { create_list(:item, 5, category: category_2) }
   given(:item)              { category_1_items.first }
+  given(:review)            { create(:review, item: item) }
   given(:category)          { Category.first }
   given(:subscription)      { create(:subscription, item: item, user: user) }
 
   shared_examples "guest" do
     it "tries to add item to cart" do
+      category_1_items
       visit items_path
-      expect(page).to have_no_button("Add to cart")
-      expect(page).to have_content("Please sign in to continue.")
+      within "##{dom_id(item)}" do
+        click_button("Add to cart")
+      end
+      expect(page).to have_content(I18n.t("devise.failure.unauthenticated"))
     end
   end
 
@@ -33,6 +37,7 @@ feature 'User as client can index all items list', %q{
       background {
         category_1_items
         category_2_items
+        review
         visit items_path
       }
 

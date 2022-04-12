@@ -6,13 +6,14 @@ feature 'User as client can view item', %q{
 
   given(:user)          { create(:user) }
   given(:item)          { create(:item) }
+  given(:review)        { create(:review, item: item) }
   given(:subscription)  { create(:subscription, item: item, user: user) }
 
   shared_examples "guest" do
     it "tries to add item to cart" do
-      visit items_path
-      expect(page).to have_no_button("Add to cart")
-      expect(page).to have_content("Please sign in to continue.")
+      visit item_path(item)
+      click_button("Add to cart")
+      expect(page).to have_content(I18n.t("devise.failure.unauthenticated"))
     end
   end
 
@@ -41,6 +42,7 @@ feature 'User as client can view item', %q{
       end
 
       it "displays rating" do
+        review
         subject
         expect(find('#item_info .rating')).to have_content item.rating
       end
