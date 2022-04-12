@@ -5,12 +5,10 @@ feature 'User can sign in', %q{
 }, js: true do
 
   given(:user) { create(:user) }
-  background { 
-    visit items_path
-    find('a', text: 'sign in').click
-  }
+  
+  background { visit new_user_session_path }
 
-  scenario "tries to sign in with blank email" do
+  scenario "tries to sign in with blank email", js: true do
     fill_in "Email", :with => ""
     fill_in "Password", :with => user.password
     click_button "Log in"

@@ -1,21 +1,38 @@
-- cart_item = current_user.cart.cart_items.find_by(item_id: item.id)
-div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}" data-cartitems-available-value="#{item.available_amount}" data-cartitems-amount-value="#{cart_item&.amount}" data-cartitems-is-subscribed-value="#{current_user.subscribed?(item: item)}"
+- if user_signed_in?
+  - cart_item = current_user.cart.cart_items.find_by(item_id: item.id)
+  div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}" data-cartitems-available-value="#{item.available_amount}" data-cartitems-amount-value="#{cart_item&.amount}" data-cartitems-is-subscribed-value="#{current_user.subscribed?(item: item)}"
 
+    p.is-size-7 
+      = "Available: "
+      span.available_amount data-cartitems-target="availableAmount"
+      span = " pc"
+
+    .mt-2.field.has-addons.hide data-cartitems-target="changeAmountButtons"
+      .control
+        button.button.is-success data-action="cartitems#decreaseAmount" -
+      .control
+        = text_field_tag "amount", nil, disabled: true, class: "input is-success", data: {"cartitems-target": "amountSelect"}, size: 1
+      .control
+        button.button.is-success data-action="cartitems#increaseAmount" + 
+    
+    button.button.mt-2.is-success.hide data-action="cartitems#create" data-cartitems-target="buyButton"
+      = "Add to cart"
+
+    button.button.mt-2.is-info.hide data-action="cartitems#subscribe" data-cartitems-target="subscribeButton"
+      = "Subscribe"
+
+- else  
   p.is-size-7 
     = "Available: "
-    span.available_amount data-cartitems-target="availableAmount"
+    span.available_amount = item.available_amount
     span = " pc"
-
-  .mt-2.field.has-addons.hide data-cartitems-target="changeAmountButtons"
-    .control
-      button.button.is-success data-action="cartitems#decreaseAmount" -
-    .control
-      = text_field_tag "amount", nil, disabled: true, class: "input is-success", data: {"cartitems-target": "amountSelect"}, size: 1
-    .control
-      button.button.is-success data-action="cartitems#increaseAmount" + 
   
-  button.button.mt-2.is-success.hide data-action="cartitems#create" data-cartitems-target="buyButton"
-    = "Add to cart"
+  - if item.available_amount > 0
+    = form_with model: CartItem, url: cart_items_path, method: :post, data: {turbo: false} do |f|
+      = f.text_field :item_id, value: item.id, type: "hidden"
+      = f.text_field :amount, value: 1, type: "hidden"
+      = f.submit "Add to cart", class: "button mt-2 is-success"
 
-  button.button.mt-2.is-info.hide data-action="cartitems#subscribe" data-cartitems-target="subscribeButton"
-    = "Subscribe"
+  - else
+    = form_with model: Subscription, url: subscribe_item_path(item), method: :post, data: {turbo: false} do |f|
+      = f.submit "Subscribe", class: "button mt-2 is-info"

@@ -8,14 +8,7 @@ div data-controller='search' data-search-min-price-value="#{@meta["prices"]["min
       = " / "
       = @heading
 
-  - if current_user
-    - if @items.present?
-      = render partial: "items", locals: { items: @items }
-    - else
-      p.ml-5 No items at the moment.
-
+  - if @items.present?
+    = render partial: "items", locals: { items: @items }
   - else
-    p.ml-5 
-      span Please 
-      span = link_to "sign in", new_user_session_path 
-      span  to continue.
+    p.ml-5 No items at the moment.

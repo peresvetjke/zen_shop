@@ -13,17 +13,17 @@ nav.navbar.is-flex-mobile.is-flex-tablet role="navigation" aria-label="main navi
             
             = link_to "All goods", items_path, class: "navbar-item"
 
+      .navbar-item
+        span.icon
+          i.fa-solid.fa-cart-shopping
+        span = link_to "My cart", cart_path, id: "cart", class: "ml-1"
+
+      .navbar-item
+        span.icon
+          i.fa-solid.fa-truck-fast
+        span = link_to "My orders", orders_path, id: "orders", class: "ml-1"
+
       - if user_signed_in?
-        .navbar-item
-          span.icon
-            i.fa-solid.fa-cart-shopping
-          span = link_to "My cart", cart_path, id: "cart", class: "ml-1"
-
-        .navbar-item
-          span.icon
-            i.fa-solid.fa-truck-fast
-          span = link_to "My orders", orders_path, id: "orders", class: "ml-1"
-
         .navbar-item.has-dropdown.is-hoverable.account
           .navbar-link
             span.icon
@@ -33,3 +33,9 @@ nav.navbar.is-flex-mobile.is-flex-tablet role="navigation" aria-label="main navi
           .navbar-dropdown
             = link_to "My account", account_path, class: "navbar-item"
             = link_to "Sign out", destroy_user_session_path, class: "navbar-item"
+
+      - else
+        .navbar-item
+          span.icon
+            i.fa-solid.fa-user
+          span.ms-1 = link_to "Sign in", account_path
