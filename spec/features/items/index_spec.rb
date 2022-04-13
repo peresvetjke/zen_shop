@@ -118,6 +118,20 @@ feature 'User as client can index all items list', %q{
             expect(page).to have_content "Available: #{item.available_amount} pc"
           end
         end
+
+        describe "without available units" do
+          background { 
+            item.stock.update(storage_amount: cart_item.amount)
+            visit items_path
+            find(:css, "#is_available_checkbox").set(false)    
+          }
+
+          it "displays change amount buttons", js: true do
+            within "##{dom_id(item)}" do
+              expect(page).to have_button('-')
+            end
+          end
+        end
       end
 
       describe "on update" do
@@ -184,98 +198,120 @@ feature 'User as client can index all items list', %q{
     describe "subscriptions", js: true do
       background { category_1_items }
 
-      describe "when unsubscribed" do
-        describe "with available stock" do
-          background { 
-            visit items_path 
-          }
+      describe "with units in cart", js: true do
+        given!(:cart_item) { create(:cart_item, item: item, cart: user.cart, amount: item.stock.storage_amount) }
 
-          it "does not display subscribe link" do
-            within "##{dom_id(item)}" do
-              expect(page).to have_no_button("Subscribe")
-            end
-          end
-        end
+        background {
+          visit items_path
+          find(:css, "#is_available_checkbox").set(false)
+          sleep(0.5)
+        }
 
-        describe "without stock available" do
-          background { 
-            item.stock.update(storage_amount: 0)
-            visit items_path
-          }
-
-          subject { 
-            within "##{dom_id(item)}" do
-              click_button("Subscribe") 
-            end
-            sleep(1)
-          }
-
-          it "does not display 'Add to cart' button" do
-            within "##{dom_id(item)}" do
-              expect(page).to have_no_button("Add to cart")
-            end
-          end
-
-          it "creates subscription" do
-            expect{ subject }.to change(Subscription, :count).by(1)
-          end
-
-          it "subscribes for a notification about item arrival", js: true do
-            subject
-            msg = accept_confirm { }
-            expect(msg).to have_content I18n.t("items.subscribed")
+        it "does not display subscribe link", js: true do
+          within "##{dom_id(item)}" do
+            expect(page).to have_no_button("Subscribe")
           end
         end
       end
 
-      describe "when subscribed" do
-        background { 
-          subscription
-          visit items_path
-        }
+      describe "without units in cart", js: true do
+        describe "when unsubscribed" do
+          describe "with available stock", js: true do
+            background { 
+              item.stock.update(storage_amount: 1)
+              visit items_path
+              sleep(0.5)
+            }
 
-        describe "with available stock" do
-          it "does not display subscribe buttons" do
-            within "##{dom_id(item)}" do
-              expect(page).to have_no_button("Subscribe")
-              expect(page).to have_no_button("Unsubscribe")
+            it "does not display subscribe link" do
+              within "##{dom_id(item)}" do
+                expect(page).to have_no_button("Subscribe")
+              end
+            end
+          end
+
+          describe "without stock available", js: true do
+            background { 
+              item.stock.update(storage_amount: 0)
+              visit items_path
+              find(:css, "#is_available_checkbox").set(false)
+              sleep(0.5)
+            }
+
+            subject {
+              within "##{dom_id(item)}" do
+                click_button("Subscribe")
+              end              
+              sleep(0.5)
+            }
+
+            it "does not display 'Add to cart' button", js: true do
+              within "##{dom_id(item)}" do
+                expect(page).to have_no_button("Add to cart")
+              end
+            end
+
+            it "creates subscription", js: true do
+              expect{ subject }.to change(Subscription, :count).by(1)
+            end
+
+            it "subscribes for a notification about item arrival", js: true do
+              subject
+              msg = accept_confirm { }
+              expect(msg).to have_content I18n.t("items.subscribed")
             end
           end
         end
 
-        describe "without stock available" do
+        describe "when subscribed" do
           background { 
-            item.stock.update(storage_amount: 0)
+            subscription
             visit items_path
           }
 
-          subject { 
-            within "##{dom_id(item)}" do
-              click_button("Unsubscribe")
-            end
-            sleep(1)
-          }
-
-          it "does not display 'Add to cart' button" do
-            within "##{dom_id(item)}" do
-              expect(page).to have_no_button("Add to cart")
+          describe "with available stock" do
+            it "does not display subscribe buttons" do
+              within "##{dom_id(item)}" do
+                expect(page).to have_no_button("Subscribe")
+                expect(page).to have_no_button("Unsubscribe")
+              end
             end
           end
 
-          it "does not display 'Subscribe' button" do
-            within "##{dom_id(item)}" do
-              expect(page).to have_no_button("Subscribe")
+          describe "without stock available" do
+            background { 
+              item.stock.update(storage_amount: 0)
+              visit items_path
+            }
+
+            subject { 
+              within "##{dom_id(item)}" do
+                click_button("Unsubscribe")
+              end
+              sleep(1)
+            }
+
+            it "does not display 'Add to cart' button" do
+              within "##{dom_id(item)}" do
+                expect(page).to have_no_button("Add to cart")
+              end
             end
-          end
 
-          it "deletes subscription" do
-            expect{ subject }.to change(Subscription, :count).by(-1)
-          end
+            it "does not display 'Subscribe' button" do
+              within "##{dom_id(item)}" do
+                expect(page).to have_no_button("Subscribe")
+              end
+            end
 
-          it "subscribes for a notification about item arrival", js: true do
-            subject
-            msg = accept_confirm { }
-            expect(msg).to have_content I18n.t("items.unsubscribed")
+            it "deletes subscription" do
+              expect{ subject }.to change(Subscription, :count).by(-1)
+            end
+
+            it "subscribes for a notification about item arrival", js: true do
+              subject
+              msg = accept_confirm { }
+              expect(msg).to have_content I18n.t("items.unsubscribed")
+            end
           end
         end
       end
