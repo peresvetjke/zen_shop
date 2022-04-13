@@ -17,14 +17,8 @@ export default class extends Controller {
     this.updateAvailableAmount()
     this.updateAmountValue()
     this.updateSum()
-  }
 
-  sum() {
-    return this.priceValue * this.amountValue
-  }
-
-  updateButtons() {
-    if (this.availableValue == 0) {
+    if (this.availableValue == 0 && this.amountValue == 0) {
       
       $(this.subscribeButtonTarget).removeClass('hide')
       if (this.isSubscribedValue) {
@@ -33,15 +27,25 @@ export default class extends Controller {
         this.subscribeButtonTarget.textContent = "Subscribe"
       }
 
+    }
+  }
+
+  sum() {
+    return this.priceValue * this.amountValue
+  }
+
+  updateButtons() {
+    if (this.idValue == 0) {
+      
+      $(this.changeAmountButtonsTarget).addClass('hide')
+      if (this.availableValue > 0) {
+        $(this.buyButtonTarget).removeClass('hide')
+      }
+
     } else {
 
-      if (this.idValue == 0) {
-        $(this.changeAmountButtonsTarget).addClass('hide')
-        $(this.buyButtonTarget).removeClass('hide')
-      } else {
-        $(this.changeAmountButtonsTarget).removeClass('hide')
-        $(this.buyButtonTarget).addClass('hide')
-      }
+      $(this.changeAmountButtonsTarget).removeClass('hide')
+      $(this.buyButtonTarget).addClass('hide')
 
     }
   }
