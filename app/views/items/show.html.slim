@@ -1,6 +1,9 @@
 #item_info
   p.title = @item.title
 
+  - if @item.google_image_id.present?
+    img src="#{google_image_src(google_image_id: @item.google_image_id, size: 500)}"
+
   p
     strong Description: 
     = @item.description
