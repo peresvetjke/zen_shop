@@ -6,16 +6,17 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-def create_item(category:, title:, description:, price_usd:, image_name: nil, weight_gross_gr: 250, storage_amount: 5)
+def create_item(category:, title:, description:, price_usd:, google_image_id:, image_name: nil, weight_gross_gr: 250, storage_amount: 5)
   item = category.items.create!(
       title: title, 
       description: description, 
       price: Money.from_cents(price_usd, "USD"), 
-      weight_gross_gr: weight_gross_gr
+      weight_gross_gr: weight_gross_gr,
+      google_image_id: google_image_id
     )
-  if image_name
-    item.image.attach(io: File.open(Rails.root.join('db', 'seeds', image_name)), content_type: "image/webp", filename: image_name)
-  end
+  # if image_name
+  #   item.image.attach(io: File.open(Rails.root.join('db', 'seeds', image_name)), content_type: "image/webp", filename: image_name)
+  # end
   item.stock.update(storage_amount: storage_amount)
 end
 
@@ -64,7 +65,8 @@ Capacity: 18 litres
 Dimensions: 48 x 38 x 10 cm
 Weight: 1.3kg", 
     price_usd: 121_02, 
-    image_name: "il_794xN.3341280794_agcf.webp"
+    # image_name: "il_794xN.3341280794_agcf.webp"
+    google_image_id: "1mS_2wPlek997O4mrJbRV0YAS3FgKsGAG",
   )
 
 # https://www.etsy.com/listing/1090241699/mens-and-womens-backpack-oxford-backpack?click_key=9d96cb880cb10b763aeffd324eb9043938f34d92%3A1090241699&click_sum=48399a98&ref=search_recently_viewed-4&pro=1&frs=1
@@ -94,7 +96,8 @@ Before delivery, the quality will be strictly checked, and then carefully packed
 
 PS: the lighting effect of the studio is different from that of the natural light. There may be a little color difference between the picture and the real object, which is not a quality problem.", 
     price_usd: 40_32, 
-    image_name: "il_794xN.3350223336_mgn0.webp"
+    # image_name: "il_794xN.3350223336_mgn0.webp"
+    google_image_id: "1O7eaAfhaVBuqAX5p-MMTe9wFLMxAQgvf"
   )
 
 # https://www.etsy.com/listing/1118418581/ultimate-diaper-bag-backpack-with?click_key=c6627f9cf5be9e3a867333c1f53253954dda8b31%3A1118418581&click_sum=a12ec451&ref=search_recently_viewed-2&pro=1
@@ -103,7 +106,8 @@ create_item(
     title: "Baby Care Bag Travel Backpack", 
     description: "Large Capacity Diaper Bag Backpack: This spacious diaper bag backpack will easily fit everything your baby needs and make traveling with your little one more convenient on all occasions.", 
     price_usd: 29_99, 
-    image_name: "il_794xN.3767053267_kff2.webp"
+    # image_name: "il_794xN.3767053267_kff2.webp"
+    google_image_id: "1jrr15lazjjiBV4tUgRhFC192RGyxcE1Z"
   )
 
 # https://www.etsy.com/listing/836525397/oxford-backpack-in-real-leather?click_key=c20585aea30b842b2115e0394478720baf058d9a%3A836525397&click_sum=016074cd&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=backpack&ref=sr_gallery-2-39&organic_search_click=1
@@ -133,7 +137,8 @@ Size in cm: 32 x 36 x 18
 
 ⚠During use, the product will slowly develop its unique brillium and consistency. Therefore it will become a real skin product with your own and exclusive characteristics.", 
     price_usd: 305_73, 
-    image_name: "il_794xN.2451632059_px4l.jpg"
+    # image_name: "il_794xN.2451632059_px4l.jpg"
+    google_image_id: "16k4RwObeW1EVR_CrdG3r7DWCAyjRQX50"
   )
 
 # https://www.etsy.com/listing/623202585/diaper-bag-backpack-brown-leather?click_key=de8215c06a3490f4858493378a446d7e347e7b4e%3A623202585&click_sum=7ee9cb53&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=backpack&ref=sr_gallery-3-47&organic_search_click=1&pro=1
@@ -148,7 +153,7 @@ The bag has enough space for carrying a laptop (up to 15 inches), documents, or 
 
 Our leather backpack will be a great everyday bag for school, work, travel, and more uses... It will also make a wonderful gift for someone you love 💖", 
     price_usd: 99_50, 
-    image_name: "il_794xN.2200809309_j3ob.webp",
+    google_image_id: "1rWE8scHP28tx5O1xEZRldeqIsQlpBoX0",
     storage_amount: 0
   )
 
@@ -169,7 +174,8 @@ create_item(
 • Padded adjustable shoulder straps in matching fabric
 • Blank product sourced from China", 
     price_usd: 47_59, 
-    image_name: "il_794xN.3227332687_mbry.webp"
+    # image_name: "il_794xN.3227332687_mbry.webp"
+    google_image_id: "1BmES3oMzfsJL_xx-q6gfu4JCQ6np1wf4"
   )
 
 # https://www.etsy.com/listing/803876617/mary-poppins-london-backpack?click_key=c0e33fa037a540dd97e9e35a294625a0b9a08b80%3A803876617&click_sum=04b2a3bc&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=backpack&ref=sr_gallery-5-20&organic_search_click=1&frs=1
@@ -188,7 +194,8 @@ create_item(
 • Padded ergonomic bag straps from polyester with plastic strap regulators
 • Blank product components sourced from China", 
     price_usd: 54_39, 
-    image_name: "il_794xN.2340907389_ncjq.webp"
+    # image_name: "il_794xN.2340907389_ncjq.webp"
+    google_image_id: "1sWyz45i6Xz5oYr87Ubq5pIuCSvxwr0NQ"
   )
 
 create_item(
@@ -215,7 +222,8 @@ Sustainable & Fair
 
 Our products are designed in Germany and handmade in Turkey with a small company run in the 3rd generation. The small business works with students who need financial support for their studies. As a result, short production routes, fair payment and the elimination of intermediaries are possible. Since we attach great importance to sustainability, we only use leather, which is a by-product of meat production and remains as waste. This makes the leather an absolute recycling product. Our products are packaged in a recyclable way.", 
     price_usd: 124_91, 
-    image_name: "il_794xN.3663362346_orrf.webp"
+    # image_name: "il_794xN.3663362346_orrf.webp"
+    google_image_id: "1tIo_hsGYlhtHmzctiv5JwIZuqwbL5kI9"
   )
 
 create_item(
@@ -237,7 +245,7 @@ ATTENTION!!! The price is for one mug. Please select the quantity you want when 
 
 If you have questions, please feel free to contact me prior the purchase!", 
     price_usd: 23_00, 
-    image_name: "il_794xN.1480988531_mwtl.webp"
+    google_image_id: "1t3wsZX-GK1qGjjJQxyJrGS4tfB-issLZ"
   )
 
 create_item(
@@ -257,7 +265,8 @@ In great vintage condition. Mug is new, not used before. In some places there ar
 
 If you have questions, please feel free to contact me prior the purchase!", 
     price_usd: 49_00, 
-    image_name: "il_794xN.2689941701_6c2r.webp"
+    # image_name: "il_794xN.2689941701_6c2r.webp"
+    google_image_id: "1Wk91E0CDRCBpyn92CUMpaoWkVjdBG8vo"
   )
 
 # https://www.etsy.com/listing/510017282/vintage-yellow-enamel-mug-old-metal-cup?click_key=618b05f9101f5f21ff7179e91c3214a25b4324fa%3A510017282&click_sum=2bb6c801&ref=shop_home_recs_20&frs=1
@@ -278,7 +287,8 @@ Good vintage condition. There are signs of age. View photos
 
 If you have any questions, please contact me before purchasing!", 
     price_usd: 38_50, 
-    image_name: "il_794xN.2738223460_nhet.webp"
+    # image_name: "il_794xN.2738223460_nhet.webp"
+    google_image_id: "1vq2jgEbGQ7oHl5qkyf8NCxhkUnTzHh9o"
   )
 
 # https://www.etsy.com/listing/1015011354/enamel-mug-vintage-soviet-enamel-mug?click_key=2c44902d1b2a7b8c3791e779ab1ecd35b0f0aae5%3A1015011354&click_sum=6b9c917d&ga_order=most_relevant&ga_search_type=vintage&ga_view_type=gallery&ga_search_query=mug&ref=sr_gallery-1-44&organic_search_click=1&pro=1
@@ -298,7 +308,8 @@ create_item(
     title: "My mug", 
     description: "For sale is a small enamel mug is great for camping, home use, cooking with, and everyone loves them. But unlike many plain ones, this vintage Soviet cup has a cool retro picture on it. Wildflowers and leaves", 
     price_usd: 10_00, 
-    image_name: "il_794xN.3119003252_3ur7.webp"
+    # image_name: "il_794xN.3119003252_3ur7.webp"
+    google_image_id: "1NcHYox9QR_pl_OYFKvMSXwIyMYGgK22J"
   )
 
 create_item(
@@ -309,7 +320,8 @@ create_item(
     CLASSIC DESIGN: Simple and classic design for personal use, such as Father's Day, Vintage, Punk, Religion, Rock Band, Party, Travel, Daily Casual Clothes, etc. Economical jewelry bracelet for men and women.
     HIGH QUALITY MATERIAL: High quality hemp cords, bracelet made of braided leather and wooden beads, soft and comfortable to wear.", 
     price_usd: 18_25, 
-    image_name: "il_794xN.3799177096_ezwo.webp"
+    # image_name: "il_794xN.3799177096_ezwo.webp"
+    google_image_id: "1atYi-2GRezJKhhpsX5jdfsy5DWvAD5ob"
   )
 
 # https://www.etsy.com/listing/1027009065/upper-arm-bracelet-gold-arm-cuff-skinny?click_key=f8e3fc430b7b9ed7b7d072da68cb6127cb7d7d39%3A1027009065&click_sum=9e6ac035&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-5-23&frs=1
@@ -329,7 +341,8 @@ create_item(
 
     Delicate Gold filled spiral upper arm bracelet featuring with overlapping open ends. The bangle is gently handcrafted and hammered with 14K gold filled wire. I use only the highest quality of materials in my jewelry and in this particular bracelet I hammer the gold fill wire to get the best sparkle gold look out of it. The bracelet can easily be bent to fit your upper arm.", 
     price_usd: 149_00, 
-    image_name: "il_794xN.3111327750_dhbo.webp"
+    # image_name: "il_794xN.3111327750_dhbo.webp"
+    google_image_id: "1sa26SxzmXu8Cq_hYd5XoD9f8B9wJjhS9"
   )
 
 # https://www.etsy.com/listing/906424321/moonstone-arm-cuff-silver-brass-swirl?click_key=e8ecdfc6fd4252295c7c104429174ca0534f182b%3A906424321&click_sum=9ea18900&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-5-32
@@ -351,7 +364,8 @@ We're sure you'll love this! But if you are not satisfied with your purchase for
 *About our shop*
 For years we've traveled the globe, first as English teachers and then as collectors of unique traditional jewelry and folk art. Our collection represents the cultural heritage of the many of-the-beaten-track places we visit.", 
     price_usd: 26_95, 
-    image_name: "il_794xN.2715905645_bg27.webp"
+    # image_name: "il_794xN.2715905645_bg27.webp"
+    google_image_id: "1C0fi2xGrg83RFiBOcF14UvnuIMYN8OdE"
   )
 
 # https://www.etsy.com/listing/779236161/vegan-leather-bracelet-with-driftwood?click_key=38440f4121961c9fe2cfdcdd7459c92c809fc023%3A779236161&click_sum=5c7f29d9&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-6-34&cns=1
@@ -362,7 +376,8 @@ create_item(
 Our pieces are all 100% handmade with love to details in Bali.
 Choose your favourite color and get a piece of Bali delivered to you.", 
     price_usd: 39_87, 
-    image_name: "il_794xN.2239509335_ksmu.webp"
+    # image_name: "il_794xN.2239509335_ksmu.webp"
+    google_image_id: "1ewtVklSjgXpjb_tpbIATm3rsGcpapHrU"
   )
 
 # https://www.etsy.com/listing/703599052/minimalist-layered-leaf-arm-cuff?click_key=6a87da8964d2475c86c971a80300a18bd7099742%3A703599052&click_sum=285175a9&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=&ref=sr_gallery-6-11
@@ -375,7 +390,7 @@ This 14k gold silver tone Layered Leaf Charm Arm Cuff is truly a gift for her to
 
 Suitable for all kinds of occasions", 
     price_usd: 10_00, 
-    image_name: "il_794xN.1972797835_60lg.webp"
+    google_image_id: "1gxxSNZh480Tdph_4imjGw7LabP64PaNl"
   )
 
 # https://www.etsy.com/listing/664587304/authentic-fossil-mosasaur-halisaurus?click_key=31b5a5b59f6412383a5acd529037d612945963a1%3A664587304&click_sum=28f69a58&ga_order=price_desc&ga_search_type=all&ga_view_type=gallery&ga_search_query=dinosaur+fossil&ref=sr_gallery-1-1&organic_search_click=1&frs=1&cns=1
@@ -388,7 +403,7 @@ Size: 78'' x 42'' x 22'' (as mounted). Skeleton is 81'' long from tail to chin.
 Mosasaurs were ancient Marine Reptiles that lived 75-65 million years ago during the Maastrichtian age of the Late Cretaceous period. They went extinct during the Cretaceous Tertiary Extinction Event - the asteroid impact that wiped out the dinosaurs and 75% of all species on the planet. Mosasaurs were considered the top marine predators during the Late Cretaceous, and are sometimes referred to as the T. Rex of the Sea. They ate virtually everything they could swallow, and their jaws were similar to those of a snake because they were not hinged and could disarticulate to swallow large prey.
 This exquisite fossilized Mosasaur skeleton belongs to the species Halisaurus Arambourgi. Most Mosasaur species are large and can be up to 55' in length, so they require a museum in which to be displayed; but Haliasaurus is a relatively rare, smaller species of Mosasaur which makes them easy to display in a home, office, or gallery. This particular fossil is 6' 9'' long - big enough to impress, but small enough to be practical. Maury the Mosasaur, as he is named, is 70-65 million years old, and he was discovered in 2014 in the phosphate beds of Sidi Daoui in Morocco.", 
     price_usd: 50_000_00, 
-    image_name: "il_794xN.1760529128_f9ti.webp",
+    google_image_id: "1CvJ-C4tElmdzq3R8e65HRK-US6Bl0QqQ",
     weight_gross_gr: 12_500,
     storage_amount: 1
   )
@@ -399,7 +414,8 @@ create_item(
     title: "Madagascar Dinosaur Egg", 
     description: "Superb rare ancient Madagascar Dinosaur Egg fossil gemstone w. 'hatched vascellum' . 12x10x4.5cm, 795 grams.perfect condition. multi-millions years old.", 
     price_usd: 18_000_00, 
-    image_name: "il_794xN.1512691455_hyng.webp",
+    # image_name: "il_794xN.1512691455_hyng.webp",
+    google_image_id: "1imJdhZVIhKj8FLTD6tpT99jAvmmwHFew",
     weight_gross_gr: 795,
     storage_amount: 0
   )
@@ -419,9 +435,12 @@ Miocene in age - 5 Million Years old.
 
 Provided with a stand for ease of display, alongside a specimen label.",
     price_usd: 1_699_76, 
-    image_name: "il_794xN.3648811497_so7j.webp",
+    # image_name: "il_794xN.3648811497_so7j.webp",
+    google_image_id: "19dTTsmVYq3Yct6Pu36rdX626dMRalbz5",
     weight_gross_gr: 266
   )
+
+# https://drive.google.com/thumbnail?id=19dTTsmVYq3Yct6Pu36rdX626dMRalbz5&sz=w250-h250
 
 # https://www.etsy.com/listing/750534884/773-grams-45x-13x-08-rare-natural?click_key=68703918daa5df880b18c0f31eb307f99fbab7a4%3A750534884&click_sum=c8a5ad8f&ga_order=price_desc&ga_search_type=all&ga_view_type=gallery&ga_search_query=dinosaur+fossil&ref=sr_gallery-8-5&organic_search_click=1
 create_item(
@@ -431,7 +450,7 @@ create_item(
 Age: About 90-112 Millions Years Old or so.
 Origin: Morocco", 
     price_usd: 599_99, 
-    image_name: "il_794xN.2177124785_2mr0.webp",
+    google_image_id: "1sQGHpNrzsi01ym95wX-6bMbW15FdIbVm",
     weight_gross_gr: 73
   )
 
