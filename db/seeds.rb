@@ -14,11 +14,15 @@ def create_item(category:, title:, description:, price_usd:, google_image_id:, i
       weight_gross_gr: weight_gross_gr,
       google_image_id: google_image_id
     )
-  # if image_name
-  #   item.image.attach(io: File.open(Rails.root.join('db', 'seeds', image_name)), content_type: "image/webp", filename: image_name)
-  # end
   item.stock.update(storage_amount: storage_amount)
 end
+
+ConversionRate.create!(from: "RUB", to: "BTC", rate: 0.000000304000322)
+ConversionRate.create!(from: "BTC", to: "RUB", rate: 3_289_470.20)
+ConversionRate.create!(from: "RUB", to: "USD", rate: 0.012110119)
+ConversionRate.create!(from: "USD", to: "RUB", rate: 82.483862)
+ConversionRate.create!(from: "USD", to: "BTC", rate: 0.0000251001)
+ConversionRate.create!(from: "BTC", to: "USD", rate: 39_841.272)
 
 admin     = User.create!(email: "admin@example.com", password: "xxxxxx", type: "Admin")
 customer  = User.create!(email: "customer@example.com", password: "xxxxxx", type: "Customer")
