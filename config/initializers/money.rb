@@ -4,8 +4,8 @@ MoneyRails.configure do |config|
 
   # To set the default currency
   #
-  # config.default_currency = :usd
-  config.default_currency = :rub
+  config.default_currency = :usd
+  # config.default_currency = :rub
   # config.default_currency = Money::Currency.new("RUB")
   # Money.default_currency = Money::Currency.new("RUB")
 
@@ -18,8 +18,12 @@ MoneyRails.configure do |config|
   # (The conversion rate refers to one direction only)
   #
   # Example:
-  # config.add_rate "USD", "CAD", 1.24515
-  # config.add_rate "CAD", "USD", 0.803115
+  config.add_rate "RUB", "BTC", 0.000000304000322
+  config.add_rate "BTC", "RUB", 3_289_470.20
+  config.add_rate "RUB", "USD", 0.012110119
+  config.add_rate "USD", "RUB", 82.483862
+  config.add_rate "USD", "BTC", 0.0000251001
+  config.add_rate "BTC", "USD", 39_841.272
 
   # To handle the inclusion of validations for monetized fields
   # The default value is true
