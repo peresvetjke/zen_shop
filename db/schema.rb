@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_13_062241) do
+ActiveRecord::Schema.define(version: 2022_04_15_072000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,6 +119,14 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "conversion_rates", force: :cascade do |t|
+    t.string "from", null: false
+    t.string "to", null: false
+    t.decimal "rate", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "default_addresses", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "address_id", null: false
@@ -126,6 +134,15 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["address_id"], name: "index_default_addresses_on_address_id"
     t.index ["user_id"], name: "index_default_addresses_on_user_id"
+  end
+
+  create_table "default_wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "wallet_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_default_wallets_on_user_id"
+    t.index ["wallet_id"], name: "index_default_wallets_on_wallet_id"
   end
 
   create_table "deliveries", force: :cascade do |t|
@@ -143,7 +160,7 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
     t.text "description"
     t.bigint "category_id", null: false
     t.integer "price_cents", default: 0, null: false
-    t.string "price_currency", default: "RUB", null: false
+    t.string "price_currency", default: "USD", null: false
     t.integer "weight_gross_gr"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -155,7 +172,7 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
     t.bigint "order_id", null: false
     t.bigint "item_id", null: false
     t.integer "unit_price_cents", default: 0, null: false
-    t.string "unit_price_currency", default: "RUB", null: false
+    t.string "unit_price_currency", default: "USD", null: false
     t.integer "quantity"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -168,6 +185,17 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "purchases", force: :cascade do |t|
+    t.bigint "wallet_id", null: false
+    t.bigint "order_id", null: false
+    t.integer "sum_cents", default: 0, null: false
+    t.string "sum_currency", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_purchases_on_order_id"
+    t.index ["wallet_id"], name: "index_purchases_on_wallet_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -209,6 +237,15 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "balance_cents", default: 0, null: false
+    t.string "balance_currency", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_wallets_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "authentications", "users"
@@ -220,14 +257,19 @@ ActiveRecord::Schema.define(version: 2022_04_13_062241) do
   add_foreign_key "carts", "users"
   add_foreign_key "default_addresses", "addresses"
   add_foreign_key "default_addresses", "users"
+  add_foreign_key "default_wallets", "users"
+  add_foreign_key "default_wallets", "wallets"
   add_foreign_key "deliveries", "addresses"
   add_foreign_key "deliveries", "orders"
   add_foreign_key "items", "categories"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "users"
+  add_foreign_key "purchases", "orders"
+  add_foreign_key "purchases", "wallets"
   add_foreign_key "reviews", "items"
   add_foreign_key "stocks", "items"
   add_foreign_key "subscriptions", "items"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "wallets", "users"
 end
