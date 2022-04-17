@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_15_072000) do
+ActiveRecord::Schema.define(version: 2022_04_17_132159) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,28 +74,6 @@ ActiveRecord::Schema.define(version: 2022_04_15_072000) do
     t.index ["user_id"], name: "index_authentications_on_user_id"
   end
 
-  create_table "bitcoin_purchases", force: :cascade do |t|
-    t.bigint "bitcoin_wallet_id", null: false
-    t.bigint "order_id", null: false
-    t.integer "amount_btc_cents", default: 0, null: false
-    t.string "amount_btc_currency", default: "BTC", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["bitcoin_wallet_id"], name: "index_bitcoin_purchases_on_bitcoin_wallet_id"
-    t.index ["order_id"], name: "index_bitcoin_purchases_on_order_id"
-  end
-
-  create_table "bitcoin_wallets", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.integer "balance_btc_cents", default: 0, null: false
-    t.string "balance_btc_currency", default: "BTC", null: false
-    t.integer "available_btc_cents", default: 0, null: false
-    t.string "available_btc_currency", default: "BTC", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_bitcoin_wallets_on_user_id"
-  end
-
   create_table "cart_items", force: :cascade do |t|
     t.bigint "cart_id", null: false
     t.bigint "item_id", null: false
@@ -134,6 +112,15 @@ ActiveRecord::Schema.define(version: 2022_04_15_072000) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["address_id"], name: "index_default_addresses_on_address_id"
     t.index ["user_id"], name: "index_default_addresses_on_user_id"
+  end
+
+  create_table "default_wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "wallet_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_default_wallets_on_user_id"
+    t.index ["wallet_id"], name: "index_default_wallets_on_wallet_id"
   end
 
   create_table "deliveries", force: :cascade do |t|
@@ -180,6 +167,17 @@ ActiveRecord::Schema.define(version: 2022_04_15_072000) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "wallet_id", null: false
+    t.bigint "order_id", null: false
+    t.integer "amount_cents", null: false
+    t.string "amount_currency", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["wallet_id"], name: "index_payments_on_wallet_id"
+  end
+
   create_table "reviews", force: :cascade do |t|
     t.integer "author_id"
     t.bigint "item_id", null: false
@@ -219,25 +217,37 @@ ActiveRecord::Schema.define(version: 2022_04_15_072000) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "type", default: 0, null: false
+    t.integer "balance_cents", default: 0, null: false
+    t.string "balance_currency", default: "BTC", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_wallets_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "authentications", "users"
-  add_foreign_key "bitcoin_purchases", "bitcoin_wallets"
-  add_foreign_key "bitcoin_purchases", "orders"
-  add_foreign_key "bitcoin_wallets", "users"
   add_foreign_key "cart_items", "carts"
   add_foreign_key "cart_items", "items"
   add_foreign_key "carts", "users"
   add_foreign_key "default_addresses", "addresses"
   add_foreign_key "default_addresses", "users"
+  add_foreign_key "default_wallets", "users"
+  add_foreign_key "default_wallets", "wallets"
   add_foreign_key "deliveries", "addresses"
   add_foreign_key "deliveries", "orders"
   add_foreign_key "items", "categories"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "users"
+  add_foreign_key "payments", "orders"
+  add_foreign_key "payments", "wallets"
   add_foreign_key "reviews", "items"
   add_foreign_key "stocks", "items"
   add_foreign_key "subscriptions", "items"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "wallets", "users"
 end
