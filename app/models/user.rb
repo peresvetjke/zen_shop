@@ -12,16 +12,21 @@ class User < ApplicationRecord
   has_one :cart, dependent: :destroy
   has_many :cart_items, through: :cart
   has_many :orders, dependent: :destroy
-  has_one :bitcoin_wallet, dependent: :destroy
-  has_many :bitcoin_purchases, through: :bitcoin_wallet, dependent: :destroy
+  # has_one :bitcoin_wallet, dependent: :destroy
+  # has_many :bitcoin_purchases, through: :bitcoin_wallet, dependent: :destroy
+  has_many :wallets, dependent: :destroy
+  has_one  :default_wallet, dependent: :destroy
+  has_many :payments, through: :wallets, dependent: :destroy
   has_many :subscriptions, dependent: :destroy
   has_many :reviews, dependent: :destroy, foreign_key: "author_id"
 
   delegate :address, to: :default_address, allow_nil: true
+  delegate :wallet, to: :default_wallet, allow_nil: true
 
   after_create :create_cart
-  after_create :create_bitcoin_wallet
-  after_create :charge_dummy_btc
+  # after_create :create_bitcoin_wallet
+  # after_create :charge_dummy_btc
+  after_create :charge_dummy_btc_wallet
 
   def self.find_for_oauth(auth)
     Omni::AuthFinder.new(auth).call
@@ -54,8 +59,8 @@ class User < ApplicationRecord
     authentications.create!(provider: provider, uid: uid)
   end
 
-  def charge_dummy_btc
-    bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))
-    bitcoin_wallet.save
+  def charge_dummy_btc_wallet
+    wallet = wallets.create!(balance: Money.new(1_0000_0000, "BTC"))
+    create_default_wallet!(wallet: wallet)
   end
 end

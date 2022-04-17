@@ -57,9 +57,9 @@ class OrderValidator < ActiveModel::Validator
   end
 
   def validate_enough_money
-    wallet = @order.user.bitcoin_wallet
+    wallet = @order.user.wallet
     total_cost = ConversionRate.exchange(@order.total_cost, @order.currency)
-    insufficient = total_cost - wallet.available_btc
+    insufficient = total_cost - wallet.balance
     
     if insufficient > 0
       @order.errors.add :base, "Not enough #{wallet.balance_btc_currency} for an order. Please replenish your wallet for #{insufficient}."
