@@ -53,6 +53,9 @@ RSpec.describe User, type: :model do
 
   describe "#owner_of?" do
     context "when owner" do
+      let(:item) { create(:item) }
+      let(:user) { create(:user) }
+
       it "returns true" do
         expect(user.owner_of?(order)).to eq true
       end

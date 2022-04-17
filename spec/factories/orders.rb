@@ -1,10 +1,22 @@
 FactoryBot.define do
   factory :order do
     association :user, factory: :user
-    order_items_attributes { [item_id: create(:item).id, unit_price: Money.from_cents(250_00, "RUB"), quantity: 2] }
+    delivery_type { 0 }
+    order_items   { build_list(:order_item, 5) }
+       
+    after(:build) do |order, evaluator|
+      # if order.delivery_type == "Self-pickup"
+      #   order.delivery = nil
+      # else
+      unless order.delivery_type == "Self-pickup"
+        order.address = FactoryBot.build(:address)
+      end
+    end
 
-    before(:create) do |order|
-      build(:delivery, order: order)
+    trait :no_items do
+      after(:build) do |order, evaluator|
+        order.order_items.destroy_all
+      end
     end
   end
 end
