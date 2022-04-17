@@ -2,7 +2,6 @@ class OrderValidator < ActiveModel::Validator
 
   def validate(order)
     @order = order
-    # binding.pry
     validate_delivery_type_presence
     validate_at_least_one_order_item
 
@@ -58,11 +57,9 @@ class OrderValidator < ActiveModel::Validator
   end
 
   def validate_enough_money
-    # temp
-
     wallet = @order.user.bitcoin_wallet
-    sum = ConversionRate.exchange(@order.sum, @order.currency)
-    insufficient = sum - wallet.available_btc
+    total_cost = ConversionRate.exchange(@order.total_cost, @order.currency)
+    insufficient = total_cost - wallet.available_btc
     
     if insufficient > 0
       @order.errors.add :base, "Not enough #{wallet.balance_btc_currency} for an order. Please replenish your wallet for #{insufficient}."
@@ -71,7 +68,6 @@ class OrderValidator < ActiveModel::Validator
 
   def has_minimum_sum?
     sum_rub = ConversionRate.exchange(@order.sum, "RUB")
-    # total_sum_rub = Money::Converter.new(money: @order.sum, currency_to: "RUB").call 
     sum_rub >= Order::MINIMUM_SUM_RUB
   end
 end

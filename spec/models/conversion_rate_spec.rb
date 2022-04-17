@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe ConversionRate, type: :model do
-  # let(:conversion_rate) { ConversionRate.find_by(from: "USD", to: "RUB") }
-  # let(:rate)            { conversion_rate.rate }
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:from) }

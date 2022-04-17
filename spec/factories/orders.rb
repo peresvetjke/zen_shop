@@ -5,9 +5,6 @@ FactoryBot.define do
     order_items   { build_list(:order_item, 5) }
        
     after(:build) do |order, evaluator|
-      # if order.delivery_type == "Self-pickup"
-      #   order.delivery = nil
-      # else
       unless order.delivery_type == "Self-pickup"
         order.address = FactoryBot.build(:address)
       end

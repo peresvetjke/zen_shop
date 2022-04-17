@@ -53,9 +53,6 @@ RSpec.describe Order, type: :model do
   shared_examples "common" do
     describe "no delivery type" do
       let(:delivery_type) { nil }
-      # it "tests" do
-      #   binding.pry
-      # end
       it_behaves_like "no changes"
     end
 
@@ -85,21 +82,11 @@ RSpec.describe Order, type: :model do
       it_behaves_like "common"
 
       describe "with delivery" do
-        before { order_draft.build_delivery }
-    
-        it "does not create order" do
-          expect{ subject }.not_to change(Order, :count)
-        end
-
+        before { order_draft.build_delivery }    
         it_behaves_like "no changes"
       end
       
       describe "no delivery" do
-        it "creates order" do
-          # binding.pry
-          expect{ subject }.to change(Order, :count)
-        end
-
         it_behaves_like "create order"
       end
 
@@ -129,11 +116,6 @@ RSpec.describe Order, type: :model do
 
       describe "no address" do
         before { order_draft.address = nil }
-
-        it "does not create order" do
-          expect{ subject }.not_to change(Order, :count)
-        end
-
         it_behaves_like "no changes"
       end
 
@@ -144,13 +126,6 @@ RSpec.describe Order, type: :model do
   end
 
   describe "instance methods" do
-    # let(:delivery_type) { 0 }
-    # let(:params) {{ user: user, delivery_type: delivery_type }}
-    
-    # before  { order_draft.save! }
-    
-    # subject { order_draft }
-
     subject { create(:order) }
 
     describe "#sum" do
