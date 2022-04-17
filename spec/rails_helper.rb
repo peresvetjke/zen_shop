@@ -46,7 +46,7 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
-  
+
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 
@@ -69,4 +69,13 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.before(:suite) do
+    ConversionRate.find_or_initialize_by(from: "RUB", to: "BTC").update(rate: 0.000000304000322)
+    ConversionRate.find_or_initialize_by(from: "BTC", to: "RUB").update(rate: 3_289_470.20)
+    ConversionRate.find_or_initialize_by(from: "RUB", to: "USD").update(rate: 0.012110119)
+    ConversionRate.find_or_initialize_by(from: "USD", to: "RUB").update(rate: 82.483862)
+    ConversionRate.find_or_initialize_by(from: "USD", to: "BTC").update(rate: 0.0000251001)
+    ConversionRate.find_or_initialize_by(from: "BTC", to: "USD").update(rate: 39_841.272)
+  end
 end

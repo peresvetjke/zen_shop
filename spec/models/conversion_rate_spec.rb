@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe ConversionRate, type: :model do
-  let!(:rate)     { create(:conversion_rate, from: "USD", to: "RUB", rate: 82.483862) }
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:from) }
@@ -18,10 +17,36 @@ RSpec.describe ConversionRate, type: :model do
   end
 
   describe ".exchange" do
-    let(:money_usd) { Money.new(1_00, "USD") }
+    describe "calculation" do
+      describe "RUB -> BTC" do
+        it "returns money of target currency" do
+          expect(ConversionRate.find_by(from: "BTC", to: "RUB").rate).to eq 3_289_470.20
 
-    it "calculates money of target currency" do
-      expect(ConversionRate.exchange(money_usd, "RUB")).to eq Money.new(82_48, "RUB")
+          money_btc = Money.new(1_0000_0000, "BTC")
+          money_rub = Money.new(3_289_470_20, "RUB")
+
+          expect(ConversionRate.exchange(money_btc, "RUB")).to eq money_rub
+        end
+      end
+
+      describe "RUB -> USD" do
+        it "returns money of target currency" do
+          ConversionRate.find_by(from: "USD", to: "RUB").update!(rate: 80)
+
+          money_usd = Money.new(1_00, "USD")
+          money_rub = Money.new(80_00, "RUB")
+
+          expect(ConversionRate.exchange(money_usd, "RUB")).to eq money_rub
+        end
+      end
+    end
+
+    describe "same source and target currencies" do
+      let(:money_usd) { Money.new(1000_00, "USD") }
+
+      it "returns source money" do
+        expect(ConversionRate.exchange(money_usd, "USD")).to eq money_usd
+      end
     end
   end
 end

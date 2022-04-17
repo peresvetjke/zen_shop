@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :delivery do
-    delivery_type { 0 }
-    association :address, factory: :address    
+    type { "RussianPostDelivery" }
+    association :address, factory: :address
+    association :order, factory: :order
   end
 end

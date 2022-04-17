@@ -4,9 +4,8 @@ FactoryBot.define do
     password { "xxxxxx" }
     type { "Customer" }
 
-    after(:create) do |user|
-      user.bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))
-      user.bitcoin_wallet.save
+    after(:build) do |user|
+      build(:bitcoin_wallet, user: user)
     end
 
     trait(:no_money) do
