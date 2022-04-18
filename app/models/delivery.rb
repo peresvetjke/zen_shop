@@ -4,7 +4,7 @@ class Delivery < ApplicationRecord
   enum type: { "RussianPostDelivery" => 0 }
 
   belongs_to :order
-  belongs_to :address, optional: true
+  belongs_to :address
 
   def cost
     raise "Not implemented for abstract class."

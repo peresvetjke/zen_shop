@@ -5,17 +5,20 @@ class OrderValidator < ActiveModel::Validator
     validate_delivery_type_presence
     validate_at_least_one_order_item
 
-    if @order.order_items.present?
-      validate_enough_money
-    end
+    # if order.delivery_type == "Self-pickup"
+    #   validate_delivery_absence
+    # else
+      # validate_at_least_one_delivery 
+      # validate_minimum_sum
+      # validate_address_exists
+      
+      # return unless address_exists?
+    # end
+    
+    validate_enough_money if @order.order_items.present?
 
-    if order.delivery_type == "Self-pickup"
-      validate_delivery_absence
-    else
-      validate_at_least_one_delivery 
-      validate_minimum_sum
-      validate_address_exists
-    end
+    # @order
+
   end
 
   private
@@ -32,23 +35,27 @@ class OrderValidator < ActiveModel::Validator
     end
   end
 
-  def validate_delivery_absence
-    if @order.delivery.present?
-      @order.errors.add :base, "is not expected to have Delivery."
-    end
-  end
+  # def validate_delivery_absence
+  #   if @order.delivery.present?
+  #     @order.errors.add :base, "is not expected to have Delivery."
+  #   end
+  # end
 
-  def validate_at_least_one_delivery
-    unless @order.delivery.present?
-      @order.errors.add :base, "Must have at least one Delivery."
-    end
-  end
+  # def validate_at_least_one_delivery
+  #   unless @order.delivery.present?
+  #     @order.errors.add :base, "Must have at least one Delivery."
+  #   end
+  # end
 
-  def validate_address_exists
-    if @order.address.nil?
-      @order.errors.add :base, "Must have address."
-    end
-  end
+  # def validate_address_exists
+  #   unless @order.address.nil?
+  #     @order.errors.add :base, "Must have address."
+  #   end
+  # end
+
+  # def address_exists?
+  #   @order.address.present?
+  # end
 
   def validate_minimum_sum
     unless has_minimum_sum?
@@ -56,6 +63,10 @@ class OrderValidator < ActiveModel::Validator
     end
   end
 
+  def has_minimum_sum?
+    sum_rub = ConversionRate.exchange(@order.sum, "RUB")
+    sum_rub >= Order::MINIMUM_SUM_RUB
+  end
   def validate_enough_money
     wallet = @order.user.wallet
     total_cost = ConversionRate.exchange(@order.total_cost, @order.currency)

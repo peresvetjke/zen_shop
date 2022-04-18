@@ -149,9 +149,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
   create_table "order_items", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "item_id", null: false
-    t.integer "unit_price_cents", default: 0, null: false
-    t.string "unit_price_currency", default: "USD", null: false
-    t.integer "quantity"
+    t.integer "amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["item_id"], name: "index_order_items_on_item_id"

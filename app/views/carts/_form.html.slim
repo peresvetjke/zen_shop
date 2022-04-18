@@ -1,19 +1,25 @@
 - if @order&.errors.present?
   = render "shared/errors", resource: @order
 
-div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemDeleted cartItemChanged@window->carts#cartItemChanged" data-carts-previous-country-value="#{@previous_address&.country}" data-carts-previous-postal-value="#{@previous_address&.postal_code}" data-carts-previous-region-value="#{@previous_address&.region_with_type}" data-carts-previous-city-value="#{@previous_address&.city_with_type}" data-carts-previous-street-value="#{@previous_address&.street_with_type}" data-carts-previous-house-value="#{@previous_address&.house}" data-carts-previous-flat-value="#{@previous_address&.flat}" data-carts-default-country-value="#{@default_address&.country}" data-carts-default-postal-value="#{@default_address&.postal_code}" data-carts-default-region-value="#{@default_address&.region_with_type}" data-carts-default-city-value="#{@default_address&.city_with_type}" data-carts-default-street-value="#{@default_address&.street_with_type}" data-carts-default-house-value="#{@default_address&.house}" data-carts-default-flat-value="#{@default_address&.flat}" data-carts-default-address-is-present-value="#{@default_address.present?}" data-carts-previous-address-is-present-value="#{@previous_address.present?}"
+div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemDeleted cartItemChanged@window->carts#cartItemChanged" data-carts-previous-country-value="#{@previous_address&.country}" data-carts-previous-postal-value="#{@previous_address&.postal_code}" data-carts-previous-region-value="#{@previous_address&.region_with_type}" data-carts-previous-city-value="#{@previous_address&.city_with_type}" data-carts-previous-street-value="#{@previous_address&.street_with_type}" data-carts-previous-house-value="#{@previous_address&.house}" data-carts-previous-flat-value="#{@previous_address&.flat}" data-carts-default-country-value="#{@default_address&.country}" data-carts-default-postal-value="#{@default_address&.postal_code}" data-carts-default-region-value="#{@default_address&.region_with_type}" data-carts-default-city-value="#{@default_address&.city_with_type}" data-carts-default-street-value="#{@default_address&.street_with_type}" data-carts-default-house-value="#{@default_address&.house}" data-carts-default-flat-value="#{@default_address&.flat}" data-carts-default-address-is-present-value="#{@default_address.present?}" data-carts-previous-address-is-present-value="#{@previous_address.present?}" data-carts-delivery-type-value="0" 
 
   = form_with model: @order ||= Order.new, url: orders_path, data: {turbo: "false"} do |f|
     .columns
       .column        
         p.title.is-4 = "Info"
         p.title.is-6 Delivery
+  
+        = f.label "Type", class: "control label is-small"
+
+        .select.is-small.mb-3 = f.select :delivery_type, Order.delivery_types.keys.to_a, {data: {"carts-target": "deliveryTypeTarget", action: "carts#updateDeliveryType"}}
 
         = f.fields_for :delivery_attributes, Delivery.new(order: @order) do |delivery|
-          = delivery.label "Type", class: "control label is-small"
-          = delivery.select :delivery_type, Delivery.delivery_types.keys.to_a, {include_blank: "Please choose", selected: "Self-pickup"}, {data: {"carts-target": "deliveryTypeSelect", action: "carts#updateDeliveryType"}, class: "select"}
+
+          div data-carts-target="orderDeliveryTypeInfo"
+            = delivery.label "Shipment by", class: "control label is-small"
+            .select.is-small = delivery.select :type, Delivery.types.keys.to_a, {include_blank: "Please choose", selected: "RussianPostDelivery"}, {data: {"carts-target": "shipmentBySelect", action: "carts#updateShipmentBy"}}
         
-        .mt-4.delivery_info data-carts-target="deliveryInfo"
+          / .mt-4.delivery_info data-carts-target="deliveryInfo"
 
           div data-carts-target="addressInput"
             p.label.is-small = "Address:"

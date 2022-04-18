@@ -28,10 +28,6 @@ RSpec.describe Order, type: :model do
       subject
       expect(user.cart.cart_items.reload.count).to eq 0
     end
-
-    it "returns true" do
-      expect(subject).to eq true
-    end
   end
 
   shared_examples "no changes" do
@@ -42,17 +38,14 @@ RSpec.describe Order, type: :model do
     it "does not change cart items count" do
       cart_items_count = user.cart.cart_items.count
       subject
-      expect(user.cart.cart_items.reload.count).to eq cart_items_count
-    end
-
-    it "returns false" do
-      expect(subject).to eq false
+      expect(user.cart.reload.cart_items.count).to eq cart_items_count
     end
   end
 
   shared_examples "common" do
     describe "no delivery type" do
       let(:delivery_type) { nil }
+      # it "tests" do binding.pry end
       it_behaves_like "no changes"
     end
 
@@ -78,7 +71,7 @@ RSpec.describe Order, type: :model do
         user: user, 
         delivery_type: delivery_type 
       }}
-
+      
       it_behaves_like "common"
 
       describe "with delivery" do
@@ -130,7 +123,8 @@ RSpec.describe Order, type: :model do
 
     describe "#sum" do
       it "returns total sum of items" do
-        sum = subject.order_items.map { |order_item| order_item.unit_price * order_item.quantity }.sum
+        # binding.pry
+        sum = subject.order_items.map { |order_item| order_item.price * order_item.amount }.sum
         expect(subject.sum).to be > 0
         expect(subject.sum).to eq sum
       end
@@ -138,7 +132,7 @@ RSpec.describe Order, type: :model do
 
     describe "#weight" do
       it "returns total weight" do
-        weight = subject.order_items.map { |order_item| order_item.item.weight_gross_gr * order_item.quantity }.sum
+        weight = subject.order_items.map { |order_item| order_item.item.weight_gross_gr * order_item.amount }.sum
         expect(subject.weight).to be > 0
         expect(subject.weight).to eq weight
       end

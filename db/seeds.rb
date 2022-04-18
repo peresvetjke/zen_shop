@@ -26,8 +26,8 @@ ConversionRate.create!(from: "BTC", to: "USD", rate: 39_841.272)
 
 admin     = User.create!(email: "admin@example.com", password: "xxxxxx", type: "Admin")
 customer  = User.create!(email: "customer@example.com", password: "xxxxxx", type: "Customer")
-customer.bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))
-customer.bitcoin_wallet.save
+# customer.bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))
+# customer.bitcoin_wallet.save
 
 backpacks = Category.create!(title: "Backpacks")
 bracelets = Category.create!(title: "Bracelets")

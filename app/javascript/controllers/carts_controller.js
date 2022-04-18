@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
                     "addressInput", "previousAddress", "previousAddressText", "defaultAddress", "defaultAddressText", 
                     "displayAddressInputButton",
-                    "deliveryTypeSelect", "deliveryInfo", "deliveryCostInfo", 
+                    "deliveryTypeSelect", "shipmentBySelect", "orderDeliveryTypeInfo", "deliveryCostInfo", // "deliveryInfo", 
                     "deliveryPlannedDateInfo", "deliveryCost", "deliveryPlannedDate",
                     "addressFields", "cartItem",
                     "totalWeight", "totalPrice", "total"
@@ -13,7 +13,8 @@ export default class extends Controller {
   static values = { previousCountry: String, previousPostal: String, previousRegion: String, previousCity: String, previousStreet: String, previousHouse: String, previousFlat: String,
                     defaultCountry: String, defaultPostal: String, defaultRegion: String, defaultCity: String, defaultStreet: String, defaultHouse: String, defaultFlat: String,
                     previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean,
-                    totalWeight: Number, totalPrice: Number, deliveryCost: Number, total: Number }
+                    totalWeight: Number, totalPrice: Number, deliveryCost: Number, total: Number,
+                    deliveryType: Number }
 
   connect() {
     if (this.previousAddressIsPresentValue) { this.presentPreviousAddress() }
@@ -173,7 +174,11 @@ export default class extends Controller {
   // on connect ; 
   // on updateDeliveryType change to 'RussianPost' ;
   hideAllDeliveryInfo() {
-    let targets = [ this.defaultAddressTarget, this.previousAddressTarget, this.addressInputTarget, this.deliveryCostInfoTarget, this.deliveryPlannedDateInfoTarget, this.addressFieldsTarget, this.displayAddressInputButtonTarget, this.addressFieldsTarget, this.displayAddressInputButtonTarget ]
+    console.log("hideAllDeliveryInfo")
+    let targets = [ this.defaultAddressTarget, this.previousAddressTarget, 
+      this.addressInputTarget, this.deliveryCostInfoTarget, this.deliveryPlannedDateInfoTarget, 
+      this.addressFieldsTarget, this.displayAddressInputButtonTarget, this.addressFieldsTarget, 
+      this.displayAddressInputButtonTarget, this.orderDeliveryTypeInfoTarget, this.shipmentBySelectTarget ]
     targets.forEach(el => { $(el).addClass("hide") })    
   }
 
@@ -279,7 +284,7 @@ export default class extends Controller {
   }
 
   updateDeliveryType() {
-    if (this.deliveryTypeSelectTarget.value != "Russian Post") {
+    if (this.deliveryTypeSelectTarget.value == 0) {
       this.hideAllDeliveryInfo()
     } else {
       this.showAddressSearch(true)
