@@ -15,13 +15,14 @@ class Order < ApplicationRecord
   validates :order_items, presence: true
   validates_associated :delivery,       if: -> { delivery_type == "Delivery" }
   validates :delivery, presence: true,  if: -> { delivery_type == "Delivery" }
-  validates :delivery, presence: false, if: -> { delivery_type == "Delivery" }
+  validates :delivery, absence: true,   if: -> { delivery_type == "Self-pickup" }
   validates_associated :address,        if: -> { delivery_type == "Delivery" }
   validates :address, presence: true,   if: -> { delivery_type == "Delivery" }
-  validate :validate_enough_money, if: -> { delivery_type.present? && order_items.present? &&
-                                              ( delivery_type == "Self-pickup" || 
-                                                ( delivery_type == "Delivery" && delivery.present? ) 
-                                              )
+  validates :address, absence: true,    if: -> { delivery_type == "Self-pickup" }
+  validate :validate_enough_money,      if: -> { delivery_type.present? && order_items.present? &&
+                                                  ( delivery_type == "Self-pickup" || 
+                                                    ( delivery_type == "Delivery" && delivery.present? ) 
+                                                  )
                                           }
 
   before_validation :copy_cart, unless: -> { order_items.present? }

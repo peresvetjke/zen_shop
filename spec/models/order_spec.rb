@@ -1,13 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Order, type: :model do
-  let(:price)         { Money.from_cents(1000_00, "RUB") }
-  let(:item)          { create(:item, price: price, weight_gross_gr: 500) }
   let(:user)          { create(:user) }
-  let!(:cart_item)    { user.cart.cart_items.create(item: item, amount: 2) }
-  let(:address_attributes)  { { postal_code: 101000 } }
-
-  let(:order_draft)   { build(:order, :no_items, params) }
+  let(:cart_item)     { create(:cart_item, cart: user.cart) }
+  let(:order_draft)   { build(:order, :no_items, user: user) }
 
   describe "associations" do
     # it { should belong_to(:user) } -- duplicates #enough_money validation where user is called
@@ -15,105 +11,68 @@ RSpec.describe Order, type: :model do
     it { should have_one(:delivery).dependent(:destroy) }
   end
 
-################## Shared ################## 
+  describe "validations" do
+    subject { order_draft }
 
-  shared_examples "create order" do
-    it "creates order" do
-      expect{ subject }.to change(Order, :count)
+    it { should validate_presence_of(:delivery_type) }
+    
+    describe "validate presence of items" do
+      describe "with cart items" do
+        before { cart_item }
+        
+        it "valid" do
+          expect(subject).to be_valid
+        end
+      end
+
+      describe "no cart items" do
+        it "not valid" do
+          expect(subject).not_to be_valid
+        end
+      end
+    end
+        
+    describe "self-pickup" do
+      before { cart_item }
+      
+      let(:order_draft)   { build(:order, :no_items, user: user, delivery_type: 0) }
+
+      it { should validate_absence_of(:delivery) }
     end
 
-    it "clears cart" do
-      cart_items_count = user.cart.cart_items.count
-      expect(cart_items_count).to be > 0
-      subject
-      expect(user.cart.cart_items.reload.count).to eq 0
-    end
-  end
+    describe "delivery" do
+      
+      before { cart_item }
 
-  shared_examples "no changes" do
-    it "does not create order" do
-      expect{ subject }.not_to change(Order, :count)
-    end
+      let(:order_draft)   { build(:order, :no_items, user: user, delivery_type: 1) }
 
-    it "does not change cart items count" do
-      cart_items_count = user.cart.cart_items.count
-      subject
-      expect(user.cart.reload.cart_items.count).to eq cart_items_count
-    end
-  end
-
-  shared_examples "common" do
-    describe "no delivery type" do
-      let(:delivery_type) { nil }
-      # it "tests" do binding.pry end
-      it_behaves_like "no changes"
-    end
-
-    describe "no items" do
-      let(:cart_item) { }
-      it_behaves_like "no changes"
-    end
-
-    describe "no money" do
-      let(:user) { create(:user, :no_money) }
-      it_behaves_like "no changes"
+      it { should validate_presence_of(:delivery) }
+      it { should validate_presence_of(:address) }
     end
   end
-
-##########################################
 
   describe ".post_from_cart!" do
     subject { Order.post_from_cart!(order_draft) }
 
-    describe "self-pickup" do
-      let(:delivery_type) { 0 }
-      let(:params) {{ 
-        user: user, 
-        delivery_type: delivery_type 
-      }}
-      
-      it_behaves_like "common"
+    describe "valid order draft" do
+      before { cart_item }
 
-      describe "with delivery" do
-        before { order_draft.build_delivery }    
-        it_behaves_like "no changes"
-      end
-      
-      describe "no delivery" do
-        it_behaves_like "create order"
+      it "creates order" do
+        expect{ subject }.to change(Order, :count).by(1)
       end
 
-      describe "no address" do
-        it_behaves_like "create order"
-      end
-
-      describe "valid" do
-        it_behaves_like "create order"
+      it "deletes cart items" do
+        expect{ subject }.to change(CartItem, :count).by(-1)
       end
     end
 
-    describe "russian post" do
-      let(:delivery_type) { 1 }
-      let(:params) {{ 
-        user: user, 
-        delivery_type: delivery_type, 
-        address_attributes: address_attributes 
-      }}
-
-      it_behaves_like "common"
-
-      describe "no delivery" do
-        before { order_draft.delivery = nil }
-        it_behaves_like "no changes"
+    describe "invalid order draft" do
+      it "does not create order" do
+        expect{ subject }.not_to change(Order, :count)
       end
 
-      describe "no address" do
-        before { order_draft.address = nil }
-        it_behaves_like "no changes"
-      end
-
-      describe "valid" do
-        it_behaves_like "create order"
+      it "does not delete cart items" do
+        expect{ subject }.not_to change(CartItem, :count)
       end
     end
   end
@@ -123,7 +82,6 @@ RSpec.describe Order, type: :model do
 
     describe "#sum" do
       it "returns total sum of items" do
-        # binding.pry
         sum = subject.order_items.map { |order_item| order_item.price * order_item.amount }.sum
         expect(subject.sum).to be > 0
         expect(subject.sum).to eq sum
