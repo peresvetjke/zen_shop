@@ -1,3 +1,16 @@
-p.title.is-4 = "Order #" + @order.id.to_s
+p.title.is-2 = "Order #" + @order.id.to_s
 
+p.title.is-3.is-underlined Info
+
+p
+  span
+    strong = "Date: "
+  span = @order.created_at
+
+p
+  span
+    strong = "Type: "
+  span = @order.delivery_type == "Delivery" ? "#{@order.delivery_type} (#{@order.delivery.type})" : @order.delivery_type
+
+p.mt-5.title.is-3.is-underlined Items
 = render partial: "order_items/order_items", locals: { order_items: @order.order_items }

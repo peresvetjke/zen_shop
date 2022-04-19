@@ -21,7 +21,7 @@ class CartItemsController < ApplicationController
   def update
     respond_to do |format|
       format.json do
-        if @cart_item.update(amount: params[:cart_item][:amount].to_i)
+        if @cart_item.update(quantity: params[:cart_item][:quantity].to_i)
           render json: @cart_item
         else
           render json: { message: @cart_item.errors.full_messages.join("; ") }, status: :unprocessable_entity
@@ -45,6 +45,6 @@ class CartItemsController < ApplicationController
   end
 
   def cart_item_params
-    params.require(:cart_item).permit(:id, :item_id, :amount)
+    params.require(:cart_item).permit(:id, :item_id, :quantity)
   end
 end

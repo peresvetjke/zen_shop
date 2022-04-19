@@ -1,4 +1,5 @@
 tr.order
   td = link_to "Order ##{order.id}", order_path(order)
-  td = "#{order.total_sum} RUB"
+  td = "#{order.total_cost} #{order.currency}"
+  td = order.delivery_type
   td = order.created_at

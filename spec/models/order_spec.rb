@@ -82,7 +82,7 @@ RSpec.describe Order, type: :model do
 
     describe "#sum" do
       it "returns total sum of items" do
-        sum = subject.order_items.map { |order_item| order_item.price * order_item.amount }.sum
+        sum = subject.order_items.map { |order_item| order_item.price * order_item.quantity }.sum
         expect(subject.sum).to be > 0
         expect(subject.sum).to eq sum
       end
@@ -90,7 +90,7 @@ RSpec.describe Order, type: :model do
 
     describe "#weight" do
       it "returns total weight" do
-        weight = subject.order_items.map { |order_item| order_item.item.weight_gross_gr * order_item.amount }.sum
+        weight = subject.order_items.map { |order_item| order_item.item.weight_gross_gr * order_item.quantity }.sum
         expect(subject.weight).to be > 0
         expect(subject.weight).to eq weight
       end

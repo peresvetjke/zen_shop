@@ -10,14 +10,13 @@ class OrdersController < ApplicationController
 
   def create
     @order = current_user.orders.new(order_params)
-    byebug
-    if @order.copy_cart.valid?
+    
+    if @order.valid?
       Order.post_from_cart!(@order)
       redirect_to @order, notice: t(".message")
     else
       render :new
     end
-    byebug
   end
 
   def show
@@ -32,9 +31,9 @@ class OrdersController < ApplicationController
 
   def order_params
     params.require(:order).permit(:delivery_type,
-                                  order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
-                                  delivery_attributes: [:id, :type, :_destroy],
-                                  address_attributes: [:id, :country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat, :_destroy])
+      order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
+      delivery_attributes: [:id, :type, :_destroy],
+      address_attributes: [:id, :country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat, :_destroy])
   end
 
   def load_cart

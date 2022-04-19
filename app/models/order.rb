@@ -21,13 +21,11 @@ class Order < ApplicationRecord
   validates :address, absence: true,    if: -> { delivery_type == "Self-pickup" }
   validate :validate_enough_money,      if: -> { delivery_type.present? && order_items.present? &&
                                                   ( delivery_type == "Self-pickup" || 
-                                                    ( delivery_type == "Delivery" && delivery.present? ) 
+                                                    ( delivery_type == "Delivery" && delivery.present? && address.present? ) 
                                                   )
                                           }
 
   before_validation :copy_cart, unless: -> { order_items.present? }
-
-  # validates_with OrderValidator
 
   def self.post_from_cart!(order_draft)
     # binding.pry
@@ -58,12 +56,12 @@ class Order < ApplicationRecord
   end
 
   def sum
-    sum = order_items.map { |i| i.price * i.amount }.sum
+    sum = order_items.map { |i| i.price * i.quantity }.sum
     ConversionRate.exchange(sum, currency)
   end
 
   def weight
-    order_items.map { |i| i.item.weight_gross_gr * i.amount }.sum
+    order_items.map { |i| i.item.weight_gross_gr * i.quantity }.sum
   end
 
   def build_address(params)
@@ -73,14 +71,13 @@ class Order < ApplicationRecord
   def copy_cart
     user.cart.cart_items.each do |cart_item|
       order_items.new(item: cart_item.item,
-                      amount: cart_item.amount
+                      quantity: cart_item.quantity
       )
     end
     self
   end
 
   def validate_enough_money
-    # binding.pry
     insufficient = ConversionRate.exchange(total_cost, currency) - user.wallet.balance
     
     if insufficient > 0

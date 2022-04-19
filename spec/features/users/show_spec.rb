@@ -5,7 +5,7 @@ feature 'User as customer can check his account info', %q{
 } do
 
   given(:user)        { create(:user) }
-  given(:btc_address) { user.bitcoin_wallet.public_address }
+  given(:btc_address) { user.wallet.public_address }
 
   subject { visit account_path }
 
@@ -22,7 +22,7 @@ feature 'User as customer can check his account info', %q{
     describe "show account" do
       it "displays account" do
         subject
-        expect(page).to have_content("Your balance:\n#{user.bitcoin_wallet.available_btc}")
+        expect(page).to have_content("Your balance:\n#{user.wallet.balance}")
         expect(page).to have_field('btc_wallet_address', with: btc_address)
       end
     end

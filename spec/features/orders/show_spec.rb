@@ -13,7 +13,10 @@ feature 'User as customer can view the order', %q{
     it "displays order" do
       visit order_path(order)
       expect(page).to have_content(order.id.to_s)
-      expect(page).to have_content(order.total_sum.to_s)
+      order.order_items.each do |i|
+        expect(page).to have_content(i.item.title)
+      end
+      # expect(page).to have_content(order.sum.to_s)
     end
   end
 end

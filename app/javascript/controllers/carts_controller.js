@@ -2,19 +2,18 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-                    "addressInput", "previousAddress", "previousAddressText", "defaultAddress", "defaultAddressText", 
-                    "displayAddressInputButton",
-                    "deliveryTypeSelect", "shipmentBySelect", "orderDeliveryTypeInfo", "deliveryCostInfo", // "deliveryInfo", 
+                    "deliveryInfo", "addressInput", "previousAddress", "previousAddressText", 
+                    "defaultAddress", "defaultAddressText", "displayAddressInputButton",
+                    "deliveryTypeSelect", "shipmentByInfo", "orderDeliveryTypeInfo", "deliveryCostInfo",
                     "deliveryPlannedDateInfo", "deliveryCost", "deliveryPlannedDate",
-                    "addressFields", "cartItem",
-                    "totalWeight", "totalPrice", "total"
+                    "addressFields", "cartItem", "totalWeight", "totalPrice", "total"
                    ]
 
   static values = { previousCountry: String, previousPostal: String, previousRegion: String, previousCity: String, previousStreet: String, previousHouse: String, previousFlat: String,
                     defaultCountry: String, defaultPostal: String, defaultRegion: String, defaultCity: String, defaultStreet: String, defaultHouse: String, defaultFlat: String,
                     previousAddressIsPresent: Boolean, defaultAddressIsPresent: Boolean,
                     totalWeight: Number, totalPrice: Number, deliveryCost: Number, total: Number,
-                    deliveryType: Number }
+                    deliveryType: Number, usdToRub: Number, rubToBtc: Number, usdToBtc: Number }
 
   connect() {
     if (this.previousAddressIsPresentValue) { this.presentPreviousAddress() }
@@ -28,7 +27,7 @@ export default class extends Controller {
     $("#address").suggestions({
       token: "8eef865634dc4c1d346ba618ae7fca0e2cc1e837",
       type: "ADDRESS",
-      /* Вызывается, когда пользователь выбирает одну из подсказок */
+       // Вызывается, когда пользователь выбирает одну из подсказок 
       onSelect: function(suggestion) {
         if (typeof(suggestion.data['postal_code']) != "undefined") {
           self.fillAddress(suggestion)
@@ -88,11 +87,13 @@ export default class extends Controller {
   }
 
   updateDeliveryCost() {
-    this.deliveryCostTarget.textContent = (this.deliveryCostValue / 100).toFixed(2)
+    var sumRub = this.deliveryCostValue
+    this.deliveryCostTarget.textContent = this.convert(sumRub, "RUB", "BTC")
   }
 
   updateTotalPrice() {
-    this.totalPriceTarget.textContent = (this.totalPrice() / 100).toFixed(2)
+    var sumUsd = this.totalPrice()
+    this.totalPriceTarget.textContent = this.convert(sumUsd, "USD", "BTC")
   }
   
   updateTotalWeight() {
@@ -100,7 +101,27 @@ export default class extends Controller {
   }
 
   updateTotal() {
-    this.totalTarget.textContent = (this.total()).toFixed(2)
+    this.totalTarget.textContent = this.total().toFixed(8)
+  }
+
+  convert(moneyCents, fromCurrency, toCurrency) {
+    var rate
+    var precision
+
+    if (toCurrency == "BTC") {
+      if (fromCurrency == "USD") {
+        rate = this.usdToBtcValue
+      } else if (fromCurrency == "RUB") {
+        rate = this.rubToBtcValue  
+      }     
+      precision = 8
+
+    } else if (fromCurrency == "USD" && toCurrency == "RUB") {
+      rate = this.usdToRubValue
+      precision = 2
+    } 
+
+    return (moneyCents / 100 * rate).toFixed(precision) 
   }
 
   totalPrice() {
@@ -108,7 +129,8 @@ export default class extends Controller {
       .map(el => {
         let price = el.dataset.cartitemsPriceValue
         let amount = el.dataset.cartitemsAmountValue
-        return parseInt(price * amount)
+        // return parseInt(price * amount)
+        return price * amount
       })
       .reduce((sum, x) => sum + x)
 
@@ -116,7 +138,9 @@ export default class extends Controller {
   }
 
   total() {
-    return ( this.deliveryCostValue + this.totalPriceValue ) / 100
+    var deliveryCostBtc = parseFloat(this.convert(this.deliveryCostValue, "RUB", "BTC"))
+    var totalPriceBtc = parseFloat(this.convert(this.totalPriceValue, "USD", "BTC"))
+    return deliveryCostBtc + totalPriceBtc
   }
 
   totalWeight() {
@@ -174,11 +198,10 @@ export default class extends Controller {
   // on connect ; 
   // on updateDeliveryType change to 'RussianPost' ;
   hideAllDeliveryInfo() {
-    console.log("hideAllDeliveryInfo")
     let targets = [ this.defaultAddressTarget, this.previousAddressTarget, 
       this.addressInputTarget, this.deliveryCostInfoTarget, this.deliveryPlannedDateInfoTarget, 
       this.addressFieldsTarget, this.displayAddressInputButtonTarget, this.addressFieldsTarget, 
-      this.displayAddressInputButtonTarget, this.orderDeliveryTypeInfoTarget, this.shipmentBySelectTarget ]
+      this.displayAddressInputButtonTarget, this.shipmentByInfoTarget ]
     targets.forEach(el => { $(el).addClass("hide") })    
   }
 
@@ -232,14 +255,14 @@ export default class extends Controller {
   // on suggestion select ;
   retrieveDeliveryInfo() {
     let self = this
-
+    
     const OBJECT = 27020 // Посылка (частное лицо или предприятие) -- Посылка стандарт с объявленной ценностью 
     const PACK = 20      // коробка M
     const FROM = 141206  // postal code of our plant
     const tariffEndPoint = "https://tariff.pochta.ru/v1/calculate/tariff?json&"
     const plannedDateEndPoint = "https://tariff.pochta.ru/v1/calculate/delivery?json&"
     var to     = $("input[name='order[address_attributes][postal_code]']")[0].value
-    var sumoc = this.totalPriceValue
+    var sumoc = parseInt(this.totalPriceValue * 100)
     var weight = $("#total_weight")[0].textContent
 
     var query = $.param({ from: FROM, to: to, weight: weight, sumoc: sumoc, object: OBJECT, pack: PACK })
@@ -284,11 +307,31 @@ export default class extends Controller {
   }
 
   updateDeliveryType() {
-    if (this.deliveryTypeSelectTarget.value == 0) {
+    if (this.deliveryTypeSelectTarget.value == "Self-pickup") {
       this.hideAllDeliveryInfo()
+      this.showShipmentByInfo(false)
+      this.deliveryTypeValue = 0
     } else {
+      this.showShipmentByInfo(true)
       this.showAddressSearch(true)
+      this.deliveryTypeValue = 1
     }
+  }
+
+  showShipmentByInfo(displayBoolean) {
+    if (displayBoolean) {
+      $(this.shipmentByInfoTarget).removeClass("hide")
+    } else {
+      $(this.shipmentByInfoTarget).addClass("hide")
+    }
+  }
+  
+  submit() {
+    if (this.deliveryTypeValue == 0) {
+      $(this.deliveryInfoTarget).remove()
+    }
+    
+    $("#order_form")[0].submit()
   }
 
   parseDate(date) {

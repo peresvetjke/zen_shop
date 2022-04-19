@@ -62,7 +62,7 @@ feature 'User as client can index all items list', %q{
     end
 
     describe "cart item" do
-      given(:cart_item) { create(:cart_item, cart: user.cart, item: item, amount: 1) }
+      given(:cart_item) { create(:cart_item, cart: user.cart, item: item, quantity: 1) }
 
       background {
         category_1_items
@@ -89,7 +89,7 @@ feature 'User as client can index all items list', %q{
           subject
           within "##{dom_id(item)}" do
             expect(page).to have_no_button("Add to cart")
-            expect(page).to have_field("amount", with: '1', disabled: true)
+            expect(page).to have_field("quantity", with: '1', disabled: true)
           end
         end
 
@@ -109,7 +109,7 @@ feature 'User as client can index all items list', %q{
 
         it "displays current amount" do  
           within "##{dom_id(item)}" do
-            expect(page).to have_field('amount', with: cart_item.amount, disabled: true)
+            expect(page).to have_field('quantity', with: cart_item.quantity, disabled: true)
           end
         end
 
@@ -121,7 +121,7 @@ feature 'User as client can index all items list', %q{
 
         describe "without available units" do
           background { 
-            item.stock.update(storage_amount: cart_item.amount)
+            item.stock.update(storage_amount: cart_item.quantity)
             visit items_path
             find(:css, "#is_available_checkbox").set(false)    
           }
@@ -147,10 +147,10 @@ feature 'User as client can index all items list', %q{
           sleep(1)
         }
 
-        it "updates amount" do
+        it "updates quantity" do
           subject
           within "##{dom_id(item)}" do
-            expect(page).to have_field('amount', with: cart_item.reload.amount, disabled: true)
+            expect(page).to have_field('quantity', with: cart_item.reload.quantity, disabled: true)
           end
         end
 
@@ -199,7 +199,7 @@ feature 'User as client can index all items list', %q{
       background { category_1_items }
 
       describe "with units in cart", js: true do
-        given!(:cart_item) { create(:cart_item, item: item, cart: user.cart, amount: item.stock.storage_amount) }
+        given!(:cart_item) { create(:cart_item, item: item, cart: user.cart, quantity: item.stock.storage_amount) }
 
         background {
           visit items_path

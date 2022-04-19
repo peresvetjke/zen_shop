@@ -5,8 +5,8 @@ RSpec.describe Cart, type: :model do
   let(:cart)              { user.cart }
   let(:item)              { create(:item, price: Money.from_cents(10000, "RUB")) }
   let(:another_item)      { create(:item, price: Money.from_cents(1500, "RUB")) }
-  let(:cart_item)         { cart.cart_items.create(item: item, amount: 2) }
-  let(:another_cart_item) { cart.cart_items.create(item: another_item, amount: 2) }
+  let(:cart_item)         { cart.cart_items.create(item: item, quantity: 2) }
+  let(:another_cart_item) { cart.cart_items.create(item: another_item, quantity: 2) }
 
   describe "associations" do
     it { should belong_to(:user) }

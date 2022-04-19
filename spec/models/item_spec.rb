@@ -6,12 +6,12 @@ RSpec.describe Item, type: :model do
 
   let!(:user_A)        { create(:user) }
   let!(:cart_A)        { user_A.cart }
-  let!(:cart_item_1)   { cart_A.cart_items.create(item: item_1, amount: 2) }
-  let!(:cart_item_2)   { cart_A.cart_items.create(item: item_2, amount: 2) }
+  let!(:cart_item_1)   { cart_A.cart_items.create(item: item_1, quantity: 2) }
+  let!(:cart_item_2)   { cart_A.cart_items.create(item: item_2, quantity: 2) }
   let!(:user_B)        { create(:user) }
   let!(:cart_B)        { user_B.cart }
-  let!(:cart_item_3)   { cart_B.cart_items.create(item: item_1, amount: 2) }
-  let!(:cart_item_4)   { cart_B.cart_items.create(item: item_2, amount: 2) }
+  let!(:cart_item_3)   { cart_B.cart_items.create(item: item_1, quantity: 2) }
+  let!(:cart_item_4)   { cart_B.cart_items.create(item: item_2, quantity: 2) }
 
   subject { build(:item) }
 

@@ -7,6 +7,6 @@ RSpec.describe OrderItem, type: :model do
   end
 
   describe 'validations' do
-    it { should validate_numericality_of(:amount).is_greater_than_or_equal_to(1).only_integer }
+    it { should validate_numericality_of(:quantity).is_greater_than_or_equal_to(1).only_integer }
   end
 end

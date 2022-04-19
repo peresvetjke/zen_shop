@@ -31,7 +31,7 @@ export default class extends Controller {
   }
 
   sum() {
-    return this.priceValue * this.amountValue
+    return (this.priceValue * this.amountValue).toFixed(2)
   }
 
   updateButtons() {
@@ -60,13 +60,14 @@ export default class extends Controller {
 
   updateSum() {
     if (this.hasSumTarget) {
-      this.sumTarget.textContent = this.toS(this.sum())
+      // this.sumTarget.textContent = this.toS(this.sum())
+      this.sumTarget.textContent = this.sum()
     }
   }
 
   updateCartItemValues(cartItem) {
     this.idValue = cartItem.id
-    this.amountValue = cartItem.amount
+    this.amountValue = cartItem.quantity
     this.availableValue = cartItem.available
     this.sumValue = this.priceValue * this.amountValue
   }
@@ -117,6 +118,7 @@ export default class extends Controller {
         return true
       },
       success(data) {
+        console.log(data)
         self.updateCartItemValues(data.cart_item)
         self.updateAmountValue()
         self.updateAvailableAmount()
@@ -132,7 +134,7 @@ export default class extends Controller {
     let self = this
     let params = {
       cart_item: { 
-        amount: amount
+        quantity: amount
       }
     }
 
@@ -206,12 +208,6 @@ export default class extends Controller {
   removeCartItem(id) {
     if (!this.hasBuyButtonTarget) {
       $(`[data-cartitems-id-value='${id}']`).remove()
-    }
-  }
-
-  toS(argument) {
-    if (typeof(argument) == 'number') {
-      return (argument).toString(10) + '.00'
     }
   }
 }
