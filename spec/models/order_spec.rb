@@ -9,6 +9,7 @@ RSpec.describe Order, type: :model do
     # it { should belong_to(:user) } -- duplicates #enough_money validation where user is called
     it { should have_many(:order_items).dependent(:destroy) }
     it { should have_one(:delivery).dependent(:destroy) }
+    it { should have_one(:payment).dependent(:destroy) }
   end
 
   describe "validations" do
@@ -52,7 +53,10 @@ RSpec.describe Order, type: :model do
   end
 
   describe ".post_from_cart!" do
-    subject { Order.post_from_cart!(order_draft) }
+    let(:wallet_id)     { user.wallet.id }
+    let(:order_draft)   { build(:order, :no_items, :no_payment, user: user) }
+
+    subject { Order.post_from_cart!(order: order_draft, wallet_id: wallet_id) }
 
     describe "valid order draft" do
       before { cart_item }
@@ -64,6 +68,10 @@ RSpec.describe Order, type: :model do
       it "deletes cart items" do
         expect{ subject }.to change(CartItem, :count).by(-1)
       end
+
+      it "returns true" do
+        expect(subject).to eq true
+      end
     end
 
     describe "invalid order draft" do
@@ -73,6 +81,10 @@ RSpec.describe Order, type: :model do
 
       it "does not delete cart items" do
         expect{ subject }.not_to change(CartItem, :count)
+      end
+
+      it "returns false" do
+        expect(subject).to eq false
       end
     end
   end

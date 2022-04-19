@@ -5,49 +5,53 @@ class Order < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_one :delivery, dependent: :destroy
   has_one :address, through: :delivery
+  has_one :payment, dependent: :destroy
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :delivery, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :address, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :payment, reject_if: :all_blank, allow_destroy: true
 
   validates :delivery_type, presence: true
   validates_associated :order_items
   validates :order_items, presence: true
+  validates_associated :payment
+  validates :payment, presence: true
   validates_associated :delivery,       if: -> { delivery_type == "Delivery" }
   validates :delivery, presence: true,  if: -> { delivery_type == "Delivery" }
   validates :delivery, absence: true,   if: -> { delivery_type == "Self-pickup" }
   validates_associated :address,        if: -> { delivery_type == "Delivery" }
   validates :address, presence: true,   if: -> { delivery_type == "Delivery" }
   validates :address, absence: true,    if: -> { delivery_type == "Self-pickup" }
-  validate :validate_enough_money,      if: -> { delivery_type.present? && order_items.present? &&
-                                                  ( delivery_type == "Self-pickup" || 
-                                                    ( delivery_type == "Delivery" && delivery.present? && address.present? ) 
-                                                  )
-                                          }
 
   before_validation :copy_cart, unless: -> { order_items.present? }
 
-  def self.post_from_cart!(order_draft)
-    # binding.pry
-    # order = order_draft.copy_cart
-
-    # binding.pry
-
+  def self.post_from_cart!(order:, wallet_id:)
+    wallet = Wallet.find(wallet_id)
     ActiveRecord::Base.transaction do
-      # order_draft.copy_cart
-      order_draft.save!
-      # purchase.create!
-      order_draft.user.cart.empty!
-    rescue ActiveRecord::RecordInvalid => exception
-      exception
-    #   false
+      order.copy_cart
+
+      wallet.payments.create!(
+        order: order, 
+        amount_cents: order.total_cost.cents, 
+        amount_currency: wallet.currency
+      )
+
+      order.save!
+      
+
+
+      # wallet.payments.create!(order: order, amount_cents: order.total_cost.cents, amount_currency: wallet.currency)
+
+      order.user.cart.empty!
+      true
+    rescue # ActiveRecord::RecordInvalid => exception
+      false
     end
-    # true
-    # order
+    
   end
 
   def total_cost
-    # binding.pry
     if delivery_type == "Self-pickup" 
       ConversionRate.exchange(sum, currency) 
     else
@@ -75,13 +79,5 @@ class Order < ApplicationRecord
       )
     end
     self
-  end
-
-  def validate_enough_money
-    insufficient = ConversionRate.exchange(total_cost, currency) - user.wallet.balance
-    
-    if insufficient > 0
-      errors.add :base, "Not enough #{user.wallet.balance_currency} for an order. Please replenish your wallet for #{insufficient}."
-    end
   end
 end

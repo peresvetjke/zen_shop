@@ -1,0 +1,21 @@
+
+[1mFrom:[0m /home/i/Documents/repo/zen_shop/app/models/order.rb:30 Order.post_from_cart!:
+
+    [1;34m29[0m: [32mdef[0m [1;36mself[0m.[1;34mpost_from_cart![0m(order_draft)
+ => [1;34m30[0m:   binding.pry
+    [1;34m31[0m: 
+    [1;34m32[0m:   [1;34;4mActiveRecord[0m::[1;34;4mBase[0m.transaction [32mdo[0m
+    [1;34m33[0m:     [1;34m# order_draft.copy_cart[0m
+    [1;34m34[0m:     order_draft.save!
+    [1;34m35[0m:     
+    [1;34m36[0m:     wallet.payment.create!(
+    [1;34m37[0m:       [35mamount[0m: order_draft.total_cost,
+    [1;34m38[0m:       [35mcurrency[0m: wallet.currency,
+    [1;34m39[0m:     )
+    [1;34m40[0m:     [1;34m# purchase.create![0m
+    [1;34m41[0m:     order_draft.user.cart.empty!
+    [1;34m42[0m:   [32mrescue[0m [1;34;4mActiveRecord[0m::[1;34;4mRecordInvalid[0m => exception
+    [1;34m43[0m:     exception
+    [1;34m44[0m:   [32mend[0m
+    [1;34m45[0m: [32mend[0m
+

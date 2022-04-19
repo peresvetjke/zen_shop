@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :payment do
-    wallet { nil }
-    order { nil }
+    association :wallet, factory: :wallet
+    association :order, factory: :order
     amount_cents { 1 }
-    amount_currency { "MyString" }
+    amount_currency { "USD" }
   end
 end

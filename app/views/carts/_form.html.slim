@@ -70,15 +70,21 @@ div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemD
         a.button.is-small.is-info.is-rounded.mb-3.mt-3 data-action="carts#displayAddressInput" data-carts-target="displayAddressInputButton"
           = "Change address"
 
-        = turbo_stream_from "cart_total"
-        
+        .row
+          = f.fields_for :payment_attributes, Payment.new(order: @order) do |payment|
+            / = "current_user}"
+            = payment.label "Wallet", class: "control label is-small"
+            .select.is-small.mb-3 = payment.select("wallet_id", current_user.wallets.all.map {|w| [ "#{w.currency} - #{w.available}", w.id ] })
+
+            /.select.is-small.mb-3 = f.select :wallet_id, current_user.wallets.ids.to_a, {}
+            /, {value: "RussianPostDelivery"}
+
         = render "carts/total", cart: @cart
-                
+
         .row
           .column
             a.button.is-success data-action="carts#submit"
               = "Checkout" 
-            / = f.submit "Checkout", class: "button is-success", data: { action: "carts#submit"}
 
       .column
         p.title.is-4 Cart

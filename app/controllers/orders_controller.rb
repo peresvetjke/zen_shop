@@ -9,12 +9,13 @@ class OrdersController < ApplicationController
   end
 
   def create
+    wallet_id = order_params[:payment_attributes][:wallet_id].to_i
     @order = current_user.orders.new(order_params)
     
-    if @order.valid?
-      Order.post_from_cart!(@order)
+    if Order.post_from_cart!(order: @order, wallet_id: wallet_id)
       redirect_to @order, notice: t(".message")
     else
+      @order.valid?
       render :new
     end
   end
@@ -31,9 +32,10 @@ class OrdersController < ApplicationController
 
   def order_params
     params.require(:order).permit(:delivery_type,
-      order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
-      delivery_attributes: [:id, :type, :_destroy],
-      address_attributes: [:id, :country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat, :_destroy])
+      # order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
+      delivery_attributes: [:type],
+      address_attributes: [:country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat],
+      payment_attributes: [:wallet_id])
   end
 
   def load_cart

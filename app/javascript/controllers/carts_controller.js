@@ -129,7 +129,6 @@ export default class extends Controller {
       .map(el => {
         let price = el.dataset.cartitemsPriceValue
         let amount = el.dataset.cartitemsAmountValue
-        // return parseInt(price * amount)
         return price * amount
       })
       .reduce((sum, x) => sum + x)

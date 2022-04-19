@@ -17,6 +17,14 @@ class Wallet < ApplicationRecord
     raise "Not implemented for abstract class."
   end
 
+  def available
+    balance - Money.new(payments.pluck(:amount_cents).sum, currency)
+  end
+
+  def currency
+    Wallet::CURRENCIES[type]
+  end
+
   private
 
   def currency_relevance
