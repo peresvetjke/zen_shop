@@ -10,10 +10,6 @@ feature 'User as customer can post order', %q{
   given!(:user_cart_item_2)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(10_00, "USD")), quantity: 5) }
   given(:order_delivery_type_select) { "order[delivery_type]" }
   given(:delivery_type_select) { "order[delivery_attributes][type]" }
-  # given(:delivery_cost)        { Money.new(499_94, "RUB") } # https://tariff.pochta.ru/v1/calculate/tariff?json&from=141206&to=101000&sumoc=150000&weight=1500&object=27020&pack=20
-  # given(:total)                { cart_price + delivery_cost }
-  
-
   given(:user_no_money)        { create(:user, :no_money) }
   given!(:user_no_money_ci_1)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), quantity: 2) }
   given!(:user_no_money_ci_2)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), quantity: 5) }

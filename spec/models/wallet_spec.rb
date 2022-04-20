@@ -29,7 +29,6 @@ RSpec.describe Wallet, type: :model do
 
     describe "with payments" do
       let!(:order) { create(:order, user: user) }
-      # let!(:payment) { create(:payment, amount: Money.new(50000, "BTC"), wallet: wallet, order: create(:order, user: user)) }
 
       it "returns available money amount" do
         expect(wallet.available).to eq (wallet.balance - order.payment.amount)

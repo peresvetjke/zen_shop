@@ -16,7 +16,6 @@ feature 'User as customer can view the order', %q{
       order.order_items.each do |i|
         expect(page).to have_content(i.item.title)
       end
-      # expect(page).to have_content(order.sum.to_s)
     end
   end
 end

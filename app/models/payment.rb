@@ -7,12 +7,6 @@ class Payment < ApplicationRecord
   validates :amount_cents, numericality: { greater_than: 0 }
   validate :matching_user,           if: -> { order.present? && wallet.present? }
   validate :matching_currency,       if: -> { wallet.present? }
-  # validate :validate_enough_money,   if: ->  {  order.present? && 
-  #                                               order.delivery_type.present? && order.order_items.present? &&
-  #                                                 ( order.delivery_type == "Self-pickup" || 
-  #                                                   ( order.delivery_type == "Delivery" && order.delivery.present? && order.address.present? ) 
-  #                                                 )
-  #                                            }
 
   monetize :amount_cents, as: "amount"
 

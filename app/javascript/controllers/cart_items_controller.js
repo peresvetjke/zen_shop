@@ -60,7 +60,6 @@ export default class extends Controller {
 
   updateSum() {
     if (this.hasSumTarget) {
-      // this.sumTarget.textContent = this.toS(this.sum())
       this.sumTarget.textContent = this.sum()
     }
   }

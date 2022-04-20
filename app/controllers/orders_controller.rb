@@ -31,10 +31,8 @@ class OrdersController < ApplicationController
 
   def order_params
     params.require(:order).permit(:delivery_type,
-      # order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
       delivery_attributes: [:type],
       address_attributes: [:country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat])
-      # payment_attributes: [:wallet_id])
   end
 
   def load_cart

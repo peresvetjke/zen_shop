@@ -21,8 +21,6 @@ div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemD
               = delivery.label "Shipment by", class: "control label is-small"
               .select.is-small = delivery.select :type, Delivery.types.keys.to_a, {}, {value: "RussianPostDelivery"}
           
-            / .mt-4.delivery_info data-carts-target="deliveryInfo"
-
             div.mt-3 data-carts-target="addressInput"
               p.label.is-small = "Address:"
               p.is-size-7 = "Enter your address:" 
@@ -71,16 +69,7 @@ div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemD
           = "Change address"
 
         .row
-          /= f.fields_for :payment_attributes, Payment.new(order: @order) do |payment|
-            / = "current_user}"
-          / = payment.label "Wallet", class: "control label is-small"
-          
-          / options_for_select([['Lisbon', 1], ['Madrid', 2], ...])
           = select_tag(:wallet_id, options_for_select(current_user.wallets.map {|w| [ "#{w.currency} - #{w.available}", w.id ] }))
-          /.select.is-small.mb-3 = select(:wallet_id, Wallet.all.map {|w| [ "#{w.currency} - #{w.available}", w.id ] })
-
-            /.select.is-small.mb-3 = f.select :wallet_id, current_user.wallets.ids.to_a, {}
-            /, {value: "RussianPostDelivery"}
 
         = render "carts/total", cart: @cart
 

@@ -104,13 +104,4 @@ class Order < ApplicationRecord
       errors.add :base, "Not sufficient funds. Please replenish you wallet."
     end
   end
-
-
-  # def validate_enough_money
-  #   insufficient = ConversionRate.exchange(order.total_cost, wallet.currency) - wallet.available
-    
-  #   if insufficient > 0
-  #     errors.add :base, "Not enough #{wallet.balance_currency} for an order. Please replenish your wallet for #{insufficient}."
-  #   end
-  # end
 end

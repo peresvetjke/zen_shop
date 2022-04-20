@@ -26,14 +26,11 @@ ConversionRate.create!(from: "BTC", to: "USD", rate: 39_841.272)
 
 admin     = User.create!(email: "admin@example.com", password: "xxxxxx", type: "Admin")
 customer  = User.create!(email: "customer@example.com", password: "xxxxxx", type: "Customer")
-# customer.bitcoin_wallet.update(available_btc: Money.new(100_000_000, "BTC"))
-# customer.bitcoin_wallet.save
 
 backpacks = Category.create!(title: "Backpacks")
 bracelets = Category.create!(title: "Bracelets")
 fossils = Category.create!(title: "Fossils")
 mugs = Category.create!(title: "Mugs")
-# coins = Category.create!(title: "Coins")
 
 create_item(
     category: backpacks, 
@@ -458,14 +455,6 @@ Origin: Morocco",
     google_image_id: "1sQGHpNrzsi01ym95wX-6bMbW15FdIbVm",
     weight_gross_gr: 73
   )
-
-# create_item(
-#     category: coins, 
-#     title: 'Euro Cent', 
-#     description: 'The euro came into existence on 1 January 1999.',
-#     price_usd: 10, 
-#     google_image_id: '13x0QM334bLr4kglkCPdrKEeucu3URH0A'
-# )
 
 # create_item(
 #     category: fossils, 
