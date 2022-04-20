@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
   create_table "cart_items", force: :cascade do |t|
     t.bigint "cart_id", null: false
     t.bigint "item_id", null: false
-    t.integer "amount", default: 1, null: false
+    t.integer "quantity", default: 1, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["cart_id"], name: "index_cart_items_on_cart_id"
@@ -149,8 +149,6 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
   create_table "order_items", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "item_id", null: false
-    t.integer "unit_price_cents", default: 0, null: false
-    t.string "unit_price_currency", default: "USD", null: false
     t.integer "quantity"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

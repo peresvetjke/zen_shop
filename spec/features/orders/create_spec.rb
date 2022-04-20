@@ -1,21 +1,18 @@
 require "rails_helper"
+# require "head_helper"
 
 feature 'User as customer can post order', %q{
   In order to purchase items.
 }, js: true do
 
   given(:user)                 { create(:user) }
-  given!(:user_cart_item_1)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
-  given!(:user_cart_item_2)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
-  given(:delivery_type_select) { "order[delivery_attributes][delivery_type]" }
-  given(:cart_price)           { Money.new(1500_00, "RUB") }
-  given(:delivery_cost)        { Money.new(499_94, "RUB") } # https://tariff.pochta.ru/v1/calculate/tariff?json&from=141206&to=101000&sumoc=150000&weight=1500&object=27020&pack=20
-  given(:total)                { cart_price + delivery_cost }
-  
-
+  given!(:user_cart_item_1)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(100_00, "USD")), quantity: 2) }
+  given!(:user_cart_item_2)    { create(:cart_item, cart: user.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(10_00, "USD")), quantity: 5) }
+  given(:order_delivery_type_select) { "order[delivery_type]" }
+  given(:delivery_type_select) { "order[delivery_attributes][type]" }
   given(:user_no_money)        { create(:user, :no_money) }
-  given!(:user_no_money_ci_1)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), amount: 2) }
-  given!(:user_no_money_ci_2)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), amount: 5) }
+  given!(:user_no_money_ci_1)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 250, price: Money.new(250_00, "RUB")), quantity: 2) }
+  given!(:user_no_money_ci_2)  { create(:cart_item, cart: user_no_money.cart, item: create(:item, weight_gross_gr: 200, price: Money.new(200_00, "RUB")), quantity: 5) }
 
   background { 
     sign_in(user)
@@ -29,7 +26,7 @@ feature 'User as customer can post order', %q{
       end
 
       it "displays item sum" do
-        expect(find("##{dom_id(user_cart_item_1)} .sum")).to have_content('500')
+        expect(find("##{dom_id(user_cart_item_1)} .sum")).to have_content(user_cart_item_1.quantity * user_cart_item_1.item.price)
       end
 
       it "displays item available amount" do
@@ -41,24 +38,30 @@ feature 'User as customer can post order', %q{
       end
 
       it "displays total price" do
-        expect(find("#total_price")).to have_content(user.cart.total_sum)
+        total_price = find("#total_price").text
+        expect(total_price).to match(/\d\.\d{8}/)
+        expect(total_price.to_f).to be > 0
       end
 
       it "displays total sum" do
-        expect(find("#total_sum")).to have_content(user.cart.total_sum)
+        total_sum = find("#total_sum").text
+        expect(total_sum).to match(/\d\.\d{8}/)
+        expect(total_sum.to_f).to be > 0
       end
     end
 
     describe "update", js: true do
       subject {
         within "##{dom_id(user_cart_item_1)}" do
-          select "5", from: "amount"
+          select "5", from: "quantity"
         end
+        sleep(0.5)
       }
 
       it "changes item sum" do
+        item_sum = find("##{dom_id(user_cart_item_1)} .sum").text
         subject
-        expect(find("##{dom_id(user_cart_item_1)} .sum")).to have_content('1250')
+        expect(find("##{dom_id(user_cart_item_1)} .sum").text).not_to eq item_sum
       end
       
       it "changes item available amount" do
@@ -79,11 +82,15 @@ feature 'User as customer can post order', %q{
       end
 
       it "changes total price" do
-        expect(find("#total_price")).to have_content(user.cart.reload.total_sum)
+        total_price = find("#total_price").text
+        subject
+        expect(find("#total_price").text).not_to eq total_price
       end
 
       it "changes total sum" do
-        expect(find("#total_sum")).to have_content(user.cart.reload.total_sum)
+        total_sum = find("#total_sum").text
+        subject
+        expect(find("#total_sum").text).not_to eq total_sum
       end
     end
 
@@ -92,6 +99,7 @@ feature 'User as customer can post order', %q{
         within "##{dom_id(user_cart_item_1)}" do
           find("a.delete").click 
         end
+        sleep(0.5)
       }
 
       it "removes item" do
@@ -106,13 +114,15 @@ feature 'User as customer can post order', %q{
       end
 
       it "changes total price" do
+        total_price = find("#total_price").text
         subject
-        expect(find("#total_price")).to have_content(user.cart.reload.total_sum)
+        expect(find("#total_price").text).not_to eq total_price
       end
 
       it "changes total" do
+        total_sum = find("#total_sum").text
         subject
-        expect(find("#total_sum")).to have_content(user.cart.reload.total_sum)
+        expect(find("#total_sum").text).not_to eq total_sum
       end
     end
   end
@@ -120,24 +130,30 @@ feature 'User as customer can post order', %q{
   feature "deliveries" do
     feature "self-pickup (no delivery)" do
       subject {
-        select "Self-pickup", from: delivery_type_select
+        select "Self-pickup", from: order_delivery_type_select
+        sleep(0.5)
       }
+
+      scenario "displays default select" do
+        expect(page).to have_content "Self-pickup" 
+      end
 
       scenario "creates order" do
         subject
-        click_button("Checkout")
+        find("a", text: "Checkout").click
         expect(page).to have_content I18n.t("orders.create.message")
       end
 
       scenario "does not show delivery info" do
         subject
+        expect(page).to have_no_content "RussianPostDelivery"
         expect(page).to have_no_content "Address:"
         expect(page).to have_no_content "Delivery cost:"
         expect(page).to have_no_content "Deadline:"
       end
 
       scenario "hides delivery cost after self-pickup chosen" do
-        select "Russian Post", from: delivery_type_select
+        select "Delivery", from: order_delivery_type_select
         fill_in 'address', with: "Покровка 16"
         sleep(1)
         page.first("span.suggestions-nowrap", text: "д 15/16").click
@@ -151,13 +167,13 @@ feature 'User as customer can post order', %q{
 
     feature "russian post delivery" do
       subject { 
-        select "Russian Post", from: delivery_type_select 
+        select "Delivery", from: order_delivery_type_select 
       }
 
       scenario "does not allow to create order without address" do
         subject
-        click_button("Checkout")
-        expect(page).to have_content "Must have address"
+        find("a", text: "Checkout").click
+        expect(page).to have_content "Address can't be blank"
       end
 
       scenario "displays dada suggestions for address input" do
@@ -167,7 +183,7 @@ feature 'User as customer can post order', %q{
         expect(page).to have_content "ул Покровка, д 15/16"
         page.first("span.suggestions-nowrap", text: "д 15/16").click
         sleep(1)
-        click_button("Checkout")
+        find("a", text: "Checkout").click
         sleep(1)
         expect(page).to have_content I18n.t("orders.create.message")
       end
@@ -178,50 +194,45 @@ feature 'User as customer can post order', %q{
         sleep(1)
         page.first("span.suggestions-nowrap", text: "д 15/16").click
         sleep(1)
-        expect(page).to have_content "Delivery cost:\n#{delivery_cost} RUB"
-        expect(page).to have_content "Total:\n#{total.to_s} RUB"
-        expect(page).to have_content(/Deadline\:\n\d\d\-\d\d\-\d\d\d\d/)
-        click_button("Checkout")
+        delivery_cost = find("#delivery_cost").text
+        expect(delivery_cost.to_f).to be > 0
+        expect(delivery_cost).to match(/\d\.\d{8}/)
+        total_sum = find("#total_sum").text
+        expect(total_sum.to_f).to be > 0
+        expect(total_sum).to match(/\d\.\d{8}/)
+        find("a", text: "Checkout").click
       end
 
       feature "previous address suggestion", js: true do
-        given(:order)       { create(:order, user: user) }
-        given(:cart_item_1) { create(:cart_item, cart: user.cart) }
-        given(:cart_item_2) { create(:cart_item, cart: user.cart) }
-
-        subject {
-          visit cart_path
-          select "Russian Post", from: delivery_type_select
-          sleep(1)
-        }
-
         feature "with previous order existing" do
-          background {
-            order
-            cart_item_1
-            cart_item_2
-          }
+          given!(:order)       { create(:order, delivery_type: 1, user: user) }
+          given!(:cart_item_1) { create(:cart_item, cart: user.cart) }
+          given!(:cart_item_2) { create(:cart_item, cart: user.cart) }
 
           scenario "suggests previous delivery address" do
-            subject
+            visit cart_path
+            select "Delivery", from: order_delivery_type_select
+            sleep(1)
+
             expect(page).to have_content("Choose previous address?")
             within("#previous_address") do
               page.find("a", text: "Choose").click
             end
-            click_button("Checkout")
+            find("a", text: "Checkout").click
             sleep(1)
             expect(page).to have_content I18n.t("orders.create.message")
           end
         end
         
         feature "without previous order" do
-          background {
-            cart_item_1
-            cart_item_2
-          }
+          given!(:cart_item_1) { create(:cart_item, cart: user.cart) }
+          given!(:cart_item_2) { create(:cart_item, cart: user.cart) }
 
           scenario "does not display suggested address" do
-            subject
+            visit cart_path
+            select "Delivery", from: order_delivery_type_select
+            sleep(1)
+        
             expect(page).to have_no_content("Choose previous address?")
           end
         end
@@ -234,7 +245,7 @@ feature 'User as customer can post order', %q{
           background { 
             default_address 
             visit cart_path
-            select "Russian Post", from: delivery_type_select
+            select "Delivery", from: order_delivery_type_select
             sleep(0.5)
           }
 
@@ -262,7 +273,7 @@ feature 'User as customer can post order', %q{
           
           it "allows to create order with default address" do
             subject
-            click_button("Checkout")
+            find("a", text: "Checkout").click
             expect(page).to have_content I18n.t("orders.create.message")
           end
         end
@@ -270,7 +281,7 @@ feature 'User as customer can post order', %q{
         describe "without previous order" do
           background { 
             visit cart_path
-            select "Russian Post", from: delivery_type_select
+            select "Delivery", from: order_delivery_type_select
             sleep(0.5)
           }
 
@@ -285,8 +296,8 @@ feature 'User as customer can post order', %q{
   feature "payments" do
     subject {
       visit cart_path
-      select "Self-pickup", from: delivery_type_select
-      click_button("Checkout")
+      select "Self-pickup", from: order_delivery_type_select
+      find("a", text: "Checkout").click
     }
 
     feature "with zero wallet balance", js: true do
@@ -297,7 +308,7 @@ feature 'User as customer can post order', %q{
 
       scenario "displays insufficient amount" do
         subject
-        expect(page).to have_content "Please replenish your wallet for"
+        expect(page).to have_content "Not sufficient funds. Please replenish you wallet."
       end
     end
 

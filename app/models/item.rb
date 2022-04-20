@@ -29,7 +29,7 @@ class Item < ApplicationRecord
   end
 
   def available_amount
-    reserved = CartItem.where(item: self).pluck(:amount).sum
+    reserved = CartItem.where(item: self).pluck(:quantity).sum
     stock.storage_amount - reserved
   end
 

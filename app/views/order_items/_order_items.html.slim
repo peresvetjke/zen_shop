@@ -1,5 +1,3 @@
 order_items
   - order_items.each do |order_item|
     = render "order_items/order_item", order_item: order_item
-
-strong.mt-5 = "Total sum: #{@order.total_sum} RUB"

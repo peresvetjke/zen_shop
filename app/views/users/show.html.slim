@@ -2,13 +2,13 @@
   p.title.is-4 = "Wallet info (BTC)"
 
   .label.is-small Your balance:
-  span#balance = " " + current_user.bitcoin_wallet.available_btc.to_s
+  span#balance = " " + current_user.wallet.balance.to_s
 
   div data-controller="clipboard"
     .mt-4.label.is-small Your BTC address:
     .field.has-addons
       .control
-        input.input#btc_wallet_address readonly="true" data-clipboard-target="source" type="text" value="#{current_user.bitcoin_wallet.public_address}"
+        input.input#btc_wallet_address readonly="true" data-clipboard-target="source" type="text" value="#{current_user.wallet.public_address}"
       .control
         button.button data-action="clipboard#copy" 
           i.fa-regular.fa-copy

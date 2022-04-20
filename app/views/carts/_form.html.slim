@@ -1,74 +1,82 @@
 - if @order&.errors.present?
   = render "shared/errors", resource: @order
 
-div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemDeleted cartItemChanged@window->carts#cartItemChanged" data-carts-previous-country-value="#{@previous_address&.country}" data-carts-previous-postal-value="#{@previous_address&.postal_code}" data-carts-previous-region-value="#{@previous_address&.region_with_type}" data-carts-previous-city-value="#{@previous_address&.city_with_type}" data-carts-previous-street-value="#{@previous_address&.street_with_type}" data-carts-previous-house-value="#{@previous_address&.house}" data-carts-previous-flat-value="#{@previous_address&.flat}" data-carts-default-country-value="#{@default_address&.country}" data-carts-default-postal-value="#{@default_address&.postal_code}" data-carts-default-region-value="#{@default_address&.region_with_type}" data-carts-default-city-value="#{@default_address&.city_with_type}" data-carts-default-street-value="#{@default_address&.street_with_type}" data-carts-default-house-value="#{@default_address&.house}" data-carts-default-flat-value="#{@default_address&.flat}" data-carts-default-address-is-present-value="#{@default_address.present?}" data-carts-previous-address-is-present-value="#{@previous_address.present?}"
+div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemDeleted cartItemChanged@window->carts#cartItemChanged" data-carts-previous-country-value="#{@previous_address&.country}" data-carts-previous-postal-value="#{@previous_address&.postal_code}" data-carts-previous-region-value="#{@previous_address&.region_with_type}" data-carts-previous-city-value="#{@previous_address&.city_with_type}" data-carts-previous-street-value="#{@previous_address&.street_with_type}" data-carts-previous-house-value="#{@previous_address&.house}" data-carts-previous-flat-value="#{@previous_address&.flat}" data-carts-default-country-value="#{@default_address&.country}" data-carts-default-postal-value="#{@default_address&.postal_code}" data-carts-default-region-value="#{@default_address&.region_with_type}" data-carts-default-city-value="#{@default_address&.city_with_type}" data-carts-default-street-value="#{@default_address&.street_with_type}" data-carts-default-house-value="#{@default_address&.house}" data-carts-default-flat-value="#{@default_address&.flat}" data-carts-default-address-is-present-value="#{@default_address.present?}" data-carts-previous-address-is-present-value="#{@previous_address.present?}" data-carts-delivery-type-value="0" data-carts-rub-to-btc-value="#{ConversionRate.find_by(from: "RUB", to: "BTC").rate}" data-carts-usd-to-btc-value="#{ConversionRate.find_by(from: "USD", to: "BTC").rate}" data-carts-usd-to-rub-value="#{ConversionRate.find_by(from: "USD", to: "RUB").rate}"
 
-  = form_with model: @order ||= Order.new, url: orders_path, data: {turbo: "false"} do |f|
+  = form_with model: @order ||= Order.new, url: orders_path, data: {turbo: "false"}, id: "order_form" do |f|
     .columns
       .column        
         p.title.is-4 = "Info"
         p.title.is-6 Delivery
+  
+        = f.label "Type", class: "control label is-small"
 
-        = f.fields_for :delivery_attributes, Delivery.new(order: @order) do |delivery|
-          = delivery.label "Type", class: "control label is-small"
-          = delivery.select :delivery_type, Delivery.delivery_types.keys.to_a, {include_blank: "Please choose", selected: "Self-pickup"}, {data: {"carts-target": "deliveryTypeSelect", action: "carts#updateDeliveryType"}, class: "select"}
+        .select.is-small.mb-3 = f.select :delivery_type, Order.delivery_types.keys.to_a, {}, {data: {"carts-target": "deliveryTypeSelect", action: "carts#updateDeliveryType"}}
+
+        div data-carts-target="deliveryInfo"
         
-        .mt-4.delivery_info data-carts-target="deliveryInfo"
+          = f.fields_for :delivery_attributes, Delivery.new(order: @order) do |delivery|
 
-          div data-carts-target="addressInput"
-            p.label.is-small = "Address:"
-            p.is-size-7 = "Enter your address:" 
-            input.input.mb-3 id="address" name="address" type="text"
+            div.mb-5 data-carts-target="shipmentByInfo"
+              = delivery.label "Shipment by", class: "control label is-small"
+              .select.is-small = delivery.select :type, Delivery.types.keys.to_a, {}, {value: "RussianPostDelivery"}
+          
+            div.mt-3 data-carts-target="addressInput"
+              p.label.is-small = "Address:"
+              p.is-size-7 = "Enter your address:" 
+              input.input.mb-3 id="address" name="address" type="text"
 
-          .box#default_address data-carts-target="defaultAddress"
-            .columns
-              .column
-                strong.is-size-7 = "Choose default address?"
-                .is-size-7 data-carts-target="defaultAddressText"
-              .column
-                a.button.is-small.is-info.is-rounded.mb-3.mt-3.is-pulled-right data-action="carts#copyDefaultAddress"
-                  = "Choose"
+            .box#default_address data-carts-target="defaultAddress"
+              .columns
+                .column
+                  strong.is-size-7 = "Choose default address?"
+                  .is-size-7 data-carts-target="defaultAddressText"
+                .column
+                  a.button.is-small.is-info.is-rounded.mb-3.mt-3.is-pulled-right data-action="carts#copyDefaultAddress"
+                    = "Choose"
 
-          .box#previous_address data-carts-target="previousAddress"
-            .columns
-              .column
-                strong.is-size-7 = "Choose previous address?"
-                .is-size-7 data-carts-target="previousAddressText"
-              .column
-                a.button.is-small.is-info.is-rounded.mb-3.mt-3.is-pulled-right data-action="carts#copyPreviousAddress"
-                  = "Choose"
-                  
-          div data-carts-target="addressFields"
-            - {"Country" => "country", "Postal code" => "postal_code", "Region" => "region_with_type", "City" => "city_with_type", "Street" => "street_with_type", "House" => "house", "Flat" => "flat"}.each do |label, field_name|
-                .field.is-horizontal
-                  .field-label.is-normal
-                    label for="search_#{field_name}"
-                      p.is-size-7 = "#{label}"
-                  .field-body
-                    .field
-                      input.input.is-small name="order[address_attributes][#{field_name}]" id="#{field_name}" readonly="true"
+            .box#previous_address data-carts-target="previousAddress"
+              .columns
+                .column
+                  strong.is-size-7 = "Choose previous address?"
+                  .is-size-7 data-carts-target="previousAddressText"
+                .column
+                  a.button.is-small.is-info.is-rounded.mb-3.mt-3.is-pulled-right data-action="carts#copyPreviousAddress"
+                    = "Choose"
+                    
+            div data-carts-target="addressFields"
+              - {"Country" => "country", "Postal code" => "postal_code", "Region" => "region_with_type", "City" => "city_with_type", "Street" => "street_with_type", "House" => "house", "Flat" => "flat"}.each do |label, field_name|
+                  .field.is-horizontal
+                    .field-label.is-normal
+                      label for="search_#{field_name}"
+                        p.is-size-7 = "#{label}"
+                    .field-body
+                      .field
+                        input.input.is-small name="order[address_attributes][#{field_name}]" id="#{field_name}" readonly="true"
 
-          #delivery_address
-          div data-carts-target="deliveryCostInfo"
-            p.mt-4
-              strong.label.is-small = "Delivery cost:"
-              span#delivery_cost data-carts-target="deliveryCost" = "0.00"
-              span = " RUB"
-          #delivery_planned_date data-carts-target="deliveryPlannedDateInfo"
-            p.mt-4
-              strong.label.is-small = "Deadline:"
-              span data-carts-target="deliveryPlannedDate" = ""
+            #delivery_address
+            div data-carts-target="deliveryCostInfo"
+              p.mt-4
+                strong.label.is-small = "Delivery cost:"
+                span#delivery_cost data-carts-target="deliveryCost" = "0.00"
+                span = " BTC"
+            #delivery_planned_date data-carts-target="deliveryPlannedDateInfo"
+              p.mt-4
+                strong.label.is-small = "Deadline:"
+                span data-carts-target="deliveryPlannedDate" = ""
 
         a.button.is-small.is-info.is-rounded.mb-3.mt-3 data-action="carts#displayAddressInput" data-carts-target="displayAddressInputButton"
           = "Change address"
 
-        = turbo_stream_from "cart_total"
-        
+        .row
+          = select_tag(:wallet_id, options_for_select(current_user.wallets.map {|w| [ "#{w.currency} - #{w.available}", w.id ] }))
+
         = render "carts/total", cart: @cart
-                
+
         .row
           .column
-            = f.submit "Checkout", class: "button is-success"
+            a.button.is-success data-action="carts#submit"
+              = "Checkout" 
 
       .column
         p.title.is-4 Cart

@@ -3,7 +3,7 @@ FactoryBot.define do
     title { generate(:title) }
     description { "Description" }
     association :category, factory: :category
-    price { Money.from_cents(10000, "RUB") }
+    price { Money.from_cents(50_00, "USD") }
     weight_gross_gr { 1000 }
 
     after(:create) do |item|
