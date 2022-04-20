@@ -61,7 +61,6 @@ RSpec.describe Order, type: :model do
     end
 
     describe "delivery" do
-      
       before { cart_item }
 
       let(:order_draft)   { build(:order, :no_items, user: user, delivery_type: 1) }
@@ -71,103 +70,101 @@ RSpec.describe Order, type: :model do
     end
   end
 
-  describe ".post_from_cart!" do
-    let(:wallet)        { user.wallet }
-    let(:order_draft)   { build(:order, :no_items, :no_payment, user: user) }
+  describe "instance methods" do
+    describe "#post_from_cart!" do
+      let(:wallet)        { user.wallet }
+      let(:order_draft)   { build(:order, :no_items, :no_payment, user: user) }
 
-    subject { Order.post_from_cart!(order_draft) }
+      subject { order_draft.post_from_cart! }
 
-    describe "valid order draft" do
-      before { cart_item }
+      describe "valid order draft" do
+        before { cart_item }
 
-      it "creates order" do
-        expect{ subject }.to change(Order, :count).by(1)
-      end
-
-      it "deletes cart items" do
-        expect{ subject }.to change(CartItem, :count).by(-1)
-      end
-
-      it "reduces storage amount" do
-        storage_amount = item.stock.storage_amount
-        subject
-        expect(item.stock.reload.storage_amount).to be < storage_amount
-      end
-
-      it "creates payment" do
-        expect{ subject }.to change(Payment, :count).by(1)
-      end      
-
-      it "reduces wallet balance" do
-        wallet_balance = wallet.balance
-        subject
-        expect(wallet.reload.balance).to be < wallet_balance
-      end
-
-      it "returns true" do
-        expect(subject).to eq true
-      end
-    end
-
-    describe "invalid order draft" do
-      shared_examples "no transaction" do
-        it "does not create order" do
-          expect{ subject }.not_to change(Order, :count)
+        it "creates order" do
+          expect{ subject }.to change(Order, :count).by(1)
         end
 
-        it "does not delete cart items" do
-          expect{ subject }.not_to change(CartItem, :count)
+        it "deletes cart items" do
+          expect{ subject }.to change(CartItem, :count).by(-1)
         end
 
-        it "does not change storage amount" do
+        it "reduces storage amount" do
           storage_amount = item.stock.storage_amount
           subject
-          expect(item.stock.reload.storage_amount).to eq storage_amount
+          expect(item.stock.reload.storage_amount).to be < storage_amount
         end
 
-        it "does not create payment" do
-          expect{ subject }.not_to change(Payment, :count)
+        it "creates payment" do
+          expect{ subject }.to change(Payment, :count).by(1)
         end      
 
-        it "does not reduce wallet balance" do
+        it "reduces wallet balance" do
           wallet_balance = wallet.balance
           subject
-          expect(wallet.reload.balance).to eq wallet_balance
+          expect(wallet.reload.balance).to be < wallet_balance
         end
 
-        it "returns nil" do
-          expect(subject).to be_nil
+        it "returns true" do
+          expect(subject).to eq true
         end
       end
 
-      describe "no order items" do
-        before { cart_item.destroy }
+      describe "invalid order draft" do
+        shared_examples "no transaction" do
+          it "does not create order" do
+            expect{ subject }.not_to change(Order, :count)
+          end
 
-        it_behaves_like "no transaction"
-      end
+          it "does not delete cart items" do
+            expect{ subject }.not_to change(CartItem, :count)
+          end
 
-      describe "no goods" do
-        before { 
-          cart_item 
-          cart_item.item.stock.update!(storage_amount: 0)
-        }
+          it "does not change storage amount" do
+            storage_amount = item.stock.storage_amount
+            subject
+            expect(item.stock.reload.storage_amount).to eq storage_amount
+          end
 
-        it_behaves_like "no transaction"
-      end
+          it "does not create payment" do
+            expect{ subject }.not_to change(Payment, :count)
+          end      
 
-      describe "no money" do
-        before { 
-          cart_item 
-          wallet.update!(balance: Money.new(0, wallet.currency))
-        }
+          it "does not reduce wallet balance" do
+            wallet_balance = wallet.balance
+            subject
+            expect(wallet.reload.balance).to eq wallet_balance
+          end
 
-        it_behaves_like "no transaction"
+          it "returns nil" do
+            expect(subject).to be_nil
+          end
+        end
+
+        describe "no order items" do
+          before { cart_item.destroy }
+
+          it_behaves_like "no transaction"
+        end
+
+        describe "no goods" do
+          before { 
+            cart_item 
+            cart_item.item.stock.update!(storage_amount: 0)
+          }
+
+          it_behaves_like "no transaction"
+        end
+
+        describe "no money" do
+          before { 
+            cart_item 
+            wallet.update!(balance: Money.new(0, wallet.currency))
+          }
+
+          it_behaves_like "no transaction"
+        end
       end
     end
-  end
-
-  describe "instance methods" do
-    
 
     describe "#sum" do
       subject { order.sum }

@@ -11,7 +11,7 @@ class OrdersController < ApplicationController
   def create
     @order = current_user.orders.new(order_params)
     
-    if Order.post_from_cart!(@order)
+    if @order.post_from_cart!
       redirect_to @order, notice: t(".message")
     else
       @order.valid?

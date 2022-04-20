@@ -7,7 +7,6 @@ class Order < ApplicationRecord
   has_one :address, through: :delivery
   has_one :payment, dependent: :destroy
 
-  accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :delivery, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :address, reject_if: :all_blank, allow_destroy: true
 
@@ -35,13 +34,12 @@ class Order < ApplicationRecord
                                                  )
                                                }
 
-  def self.post_from_cart!(order)
+  def post_from_cart!
     ActiveRecord::Base.transaction do
-      order.copy_cart
-      order.goods_issue!
-      order.save!
-      order.build_payment.post!
-      order.user.cart.empty!
+      copy_cart.save!
+      goods_issue!
+      build_payment.post!
+      user.cart.empty!
       true
     rescue
       raise ActiveRecord::Rollback
