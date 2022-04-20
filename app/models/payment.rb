@@ -16,6 +16,15 @@ class Payment < ApplicationRecord
 
   monetize :amount_cents, as: "amount"
 
+  def post!
+    ActiveRecord::Base.transaction do
+      save!
+      wallet.update!(balance: wallet.balance - amount)
+    rescue
+      raise ActiveRecord::Rollback
+    end
+  end
+
   private
 
   def matching_currency

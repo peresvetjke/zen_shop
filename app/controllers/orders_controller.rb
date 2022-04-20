@@ -9,11 +9,9 @@ class OrdersController < ApplicationController
   end
 
   def create
-    # byebug
-    wallet_id = params[:wallet_id].to_i
     @order = current_user.orders.new(order_params)
     
-    if Order.post_from_cart!(order: @order, wallet_id: wallet_id)
+    if Order.post_from_cart!(@order)
       redirect_to @order, notice: t(".message")
     else
       @order.valid?

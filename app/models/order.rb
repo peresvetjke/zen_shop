@@ -35,17 +35,14 @@ class Order < ApplicationRecord
                                                  )
                                                }
 
-  def self.post_from_cart!(order:, wallet_id:)
+  def self.post_from_cart!(order)
     ActiveRecord::Base.transaction do
       order.copy_cart
       order.goods_issue!
       order.save!
-      order.user.wallet.post_payment!(
-        order_id: order.id, 
-        amount: order.total_cost
-      )
+      order.build_payment.post!
       order.user.cart.empty!
-      order
+      true
     rescue
       raise ActiveRecord::Rollback
     end
@@ -92,14 +89,15 @@ class Order < ApplicationRecord
     self
   end
 
-  private
-
   def build_payment
     payment = Payment.new(
-      amount: total_cost,
-      wallet: user&.wallet
+      order_id: id,
+      amount:   total_cost,
+      wallet:   user&.wallet
     )
   end
+
+  private
 
   def validate_enough_money
     if user.wallet.available < total_cost

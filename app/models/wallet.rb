@@ -14,16 +14,6 @@ class Wallet < ApplicationRecord
     message: "already exists for user" }
   validate :validate_currency_relevance
 
-  def post_payment!(order_id:, amount:)
-    ActiveRecord::Base.transaction do
-      payments.create!(
-        order_id: order_id, 
-        amount: amount
-      )
-      update!(balance: balance - amount)
-    end
-  end
-
   def self.update_balances
     raise "Not implemented for abstract class."
   end

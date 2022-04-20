@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Order, type: :model do
-  let!(:user)           { create(:user) }
+  let!(:user)          { create(:user) }
   let!(:item)          { create(:item) }
-  let!(:cart_item)      { create(:cart_item, cart: user.cart, item: item) }
+  let!(:cart_item)     { create(:cart_item, cart: user.cart, item: item) }
   let(:order_draft)    { build(:order, :no_items, user: user) }
 
   describe "associations" do
@@ -75,7 +75,7 @@ RSpec.describe Order, type: :model do
     let(:wallet)        { user.wallet }
     let(:order_draft)   { build(:order, :no_items, :no_payment, user: user) }
 
-    subject { Order.post_from_cart!(order: order_draft, wallet_id: wallet.id) }
+    subject { Order.post_from_cart!(order_draft) }
 
     describe "valid order draft" do
       before { cart_item }
@@ -104,8 +104,8 @@ RSpec.describe Order, type: :model do
         expect(wallet.reload.balance).to be < wallet_balance
       end
 
-      it "returns order" do
-        expect(subject).to be_instance_of Order
+      it "returns true" do
+        expect(subject).to eq true
       end
     end
 

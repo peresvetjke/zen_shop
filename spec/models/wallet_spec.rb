@@ -36,18 +36,4 @@ RSpec.describe Wallet, type: :model do
       end
     end
   end
-
-  describe "#post_payment" do
-    let(:order)   { create(:order, :no_payment) }
-    let(:user)    { order.user }
-    let(:wallet)  { user.wallet }
-
-    subject { wallet.post_payment!(order_id: order.id, amount: order.total_cost) }
-
-    it "creates payment" do
-      expect{ subject }.to change(Payment, :count).by(1)
-      # payments.create!(order_id: order_id, amount: amount)
-      # payments.create!(order_id: order_id, amount_cents: amount.cents, amount_currency: amount.currency)
-    end
-  end
 end

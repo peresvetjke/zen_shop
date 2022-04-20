@@ -53,4 +53,37 @@ RSpec.describe Payment, type: :model do
       end
     end
   end
+
+  describe "#post!" do
+    let!(:order)   { create(:order, :no_payment) }
+    let(:payment)  { order.build_payment }
+
+    subject { payment.post! }
+
+    describe "valid" do
+      it "creates payment" do
+        expect{ subject }.to change(Payment, :count).by(1)
+      end
+
+      it "reduces balance" do
+        wallet_balance = payment.wallet.balance
+        subject
+        expect(payment.wallet.reload.balance).to be < wallet_balance
+      end
+    end
+
+    describe "not valid" do
+      before { payment.update!(amount: payment.wallet.balance * 2) }
+
+      it "does not create payment" do
+        expect{ subject }.not_to change(Payment, :count)
+      end
+
+      it "does not reduce balance" do
+        wallet_balance = payment.wallet.balance
+        subject
+        expect(payment.wallet.reload.balance).to eq wallet_balance
+      end
+    end
+  end
 end
