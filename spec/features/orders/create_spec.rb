@@ -1,4 +1,5 @@
 require "rails_helper"
+# require "head_helper"
 
 feature 'User as customer can post order', %q{
   In order to purchase items.
@@ -311,7 +312,7 @@ feature 'User as customer can post order', %q{
 
       scenario "displays insufficient amount" do
         subject
-        expect(page).to have_content "Please replenish your wallet for"
+        expect(page).to have_content "Not sufficient funds. Please replenish you wallet."
       end
     end
 

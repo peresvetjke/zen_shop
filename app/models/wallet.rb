@@ -9,9 +9,20 @@ class Wallet < ApplicationRecord
   belongs_to :user
   has_many :payments, dependent: :destroy
 
+  validates :balance_cents, numericality: { greater_than_or_equal_to: 0 }
   validates :type, uniqueness: { scope: :user_id, 
     message: "already exists for user" }
-  validate :currency_relevance
+  validate :validate_currency_relevance
+
+  def post_payment!(order_id:, amount:)
+    ActiveRecord::Base.transaction do
+      payments.create!(
+        order_id: order_id, 
+        amount: amount
+      )
+      update!(balance: balance - amount)
+    end
+  end
 
   def self.update_balances
     raise "Not implemented for abstract class."
@@ -27,7 +38,7 @@ class Wallet < ApplicationRecord
 
   private
 
-  def currency_relevance
+  def validate_currency_relevance
     unless balance_currency == CURRENCIES[type]
       errors.add :base, "Wrong currency"
     end

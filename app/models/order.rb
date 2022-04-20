@@ -10,45 +10,45 @@ class Order < ApplicationRecord
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :delivery, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :address, reject_if: :all_blank, allow_destroy: true
-  accepts_nested_attributes_for :payment, reject_if: :all_blank, allow_destroy: true
+
+  before_validation :copy_cart,     unless: -> { order_items.present? }
+  before_validation :build_payment, if:     -> { delivery_type.present? && 
+                                                 order_items.present? &&
+                                                 ((delivery_type == "Self-pickup") ||
+                                                  (delivery_type == "Delivery") && delivery.present? && address.present?
+                                                 )
+                                               }
 
   validates :delivery_type, presence: true
   validates_associated :order_items
   validates :order_items, presence: true
-  validates_associated :payment
-  validates :payment, presence: true
   validates_associated :delivery,       if: -> { delivery_type == "Delivery" }
   validates :delivery, presence: true,  if: -> { delivery_type == "Delivery" }
   validates :delivery, absence: true,   if: -> { delivery_type == "Self-pickup" }
   validates_associated :address,        if: -> { delivery_type == "Delivery" }
   validates :address, presence: true,   if: -> { delivery_type == "Delivery" }
   validates :address, absence: true,    if: -> { delivery_type == "Self-pickup" }
-
-  before_validation :copy_cart, unless: -> { order_items.present? }
+  validate  :validate_enough_money,     if: -> { delivery_type.present? && 
+                                                 order_items.present? && 
+                                                 ((delivery_type == "Self-pickup") ||
+                                                  (delivery_type == "Delivery") && delivery.present? && address.present?
+                                                 )
+                                               }
 
   def self.post_from_cart!(order:, wallet_id:)
-    wallet = Wallet.find(wallet_id)
     ActiveRecord::Base.transaction do
       order.copy_cart
-
-      wallet.payments.create!(
-        order: order, 
-        amount_cents: order.total_cost.cents, 
-        amount_currency: wallet.currency
-      )
-
+      order.goods_issue!
       order.save!
-      
-
-
-      # wallet.payments.create!(order: order, amount_cents: order.total_cost.cents, amount_currency: wallet.currency)
-
+      order.user.wallet.post_payment!(
+        order_id: order.id, 
+        amount: order.total_cost
+      )
       order.user.cart.empty!
-      true
-    rescue # ActiveRecord::RecordInvalid => exception
-      false
+      order
+    rescue
+      raise ActiveRecord::Rollback
     end
-    
   end
 
   def total_cost
@@ -60,8 +60,19 @@ class Order < ApplicationRecord
   end
 
   def sum
-    sum = order_items.map { |i| i.price * i.quantity }.sum
-    ConversionRate.exchange(sum, currency)
+    if order_items.empty?
+      Money.new(0, currency)
+    else
+      sum = order_items.map { |i| i.price * i.quantity }.sum
+      ConversionRate.exchange(sum, currency)
+    end
+  end
+
+  def goods_issue!
+    order_items.each do |i| 
+      amount = i.item.stock.storage_amount - i.quantity
+      i.item.stock.update!(storage_amount: amount)
+    end
   end
 
   def weight
@@ -73,11 +84,35 @@ class Order < ApplicationRecord
   end  
 
   def copy_cart
-    user.cart.cart_items.each do |cart_item|
+    user&.cart&.cart_items&.each do |cart_item|
       order_items.new(item: cart_item.item,
                       quantity: cart_item.quantity
       )
     end
     self
   end
+
+  private
+
+  def build_payment
+    payment = Payment.new(
+      amount: total_cost,
+      wallet: user&.wallet
+    )
+  end
+
+  def validate_enough_money
+    if user.wallet.available < total_cost
+      errors.add :base, "Not sufficient funds. Please replenish you wallet."
+    end
+  end
+
+
+  # def validate_enough_money
+  #   insufficient = ConversionRate.exchange(order.total_cost, wallet.currency) - wallet.available
+    
+  #   if insufficient > 0
+  #     errors.add :base, "Not enough #{wallet.balance_currency} for an order. Please replenish your wallet for #{insufficient}."
+  #   end
+  # end
 end

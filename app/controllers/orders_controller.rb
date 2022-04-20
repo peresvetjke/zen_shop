@@ -9,7 +9,8 @@ class OrdersController < ApplicationController
   end
 
   def create
-    wallet_id = order_params[:payment_attributes][:wallet_id].to_i
+    # byebug
+    wallet_id = params[:wallet_id].to_i
     @order = current_user.orders.new(order_params)
     
     if Order.post_from_cart!(order: @order, wallet_id: wallet_id)
@@ -34,8 +35,8 @@ class OrdersController < ApplicationController
     params.require(:order).permit(:delivery_type,
       # order_items_attributes: [:id, :item_id, :unit_price, :quantity, :_destroy],
       delivery_attributes: [:type],
-      address_attributes: [:country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat],
-      payment_attributes: [:wallet_id])
+      address_attributes: [:country, :postal_code, :region_with_type, :city_with_type, :street_with_type, :house, :flat])
+      # payment_attributes: [:wallet_id])
   end
 
   def load_cart

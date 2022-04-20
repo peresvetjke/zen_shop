@@ -2,6 +2,7 @@
   .row
     = link_to item.title, item_path(item)
     
+
     - if item.google_image_id.present?
       img src="#{google_image_src(google_image_id: item.google_image_id, size: 250)}"
 

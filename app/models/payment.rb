@@ -7,12 +7,12 @@ class Payment < ApplicationRecord
   validates :amount_cents, numericality: { greater_than: 0 }
   validate :matching_user,           if: -> { order.present? && wallet.present? }
   validate :matching_currency,       if: -> { wallet.present? }
-  validate :validate_enough_money,   if: ->  {  order.present? && 
-                                                order.delivery_type.present? && order.order_items.present? &&
-                                                  ( order.delivery_type == "Self-pickup" || 
-                                                    ( order.delivery_type == "Delivery" && order.delivery.present? && order.address.present? ) 
-                                                  )
-                                             }
+  # validate :validate_enough_money,   if: ->  {  order.present? && 
+  #                                               order.delivery_type.present? && order.order_items.present? &&
+  #                                                 ( order.delivery_type == "Self-pickup" || 
+  #                                                   ( order.delivery_type == "Delivery" && order.delivery.present? && order.address.present? ) 
+  #                                                 )
+  #                                            }
 
   monetize :amount_cents, as: "amount"
 
@@ -27,14 +27,6 @@ class Payment < ApplicationRecord
   def matching_user
     unless wallet.user == order.user
       errors.add :order, "does not match to wallet's user."
-    end
-  end
-
-  def validate_enough_money
-    insufficient = ConversionRate.exchange(order.total_cost, wallet.currency) - wallet.available
-    
-    if insufficient > 0
-      errors.add :base, "Not enough #{wallet.balance_currency} for an order. Please replenish your wallet for #{insufficient}."
     end
   end
 end

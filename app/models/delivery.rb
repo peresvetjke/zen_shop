@@ -6,6 +6,8 @@ class Delivery < ApplicationRecord
   belongs_to :order
   belongs_to :address
 
+  validates_associated :address
+
   def cost
     raise "Not implemented for abstract class."
   end

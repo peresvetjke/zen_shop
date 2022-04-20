@@ -12,5 +12,10 @@ p
     strong = "Type: "
   span = @order.delivery_type == "Delivery" ? "#{@order.delivery_type} (#{@order.delivery.type})" : @order.delivery_type
 
+p
+  span
+    strong = "Payment: "
+  span = @order.payment.amount
+
 p.mt-5.title.is-3.is-underlined Items
 = render partial: "order_items/order_items", locals: { order_items: @order.order_items }

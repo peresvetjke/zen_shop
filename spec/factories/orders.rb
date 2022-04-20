@@ -8,8 +8,12 @@ FactoryBot.define do
       unless order.delivery_type == "Self-pickup"
         order.address = FactoryBot.build(:address)
       end
-
-      order.payment = build(:payment, order: order, wallet: order.user.wallet, amount: order.total_cost)
+      
+      order.payment = build(:payment, 
+        order: order, 
+        wallet: order.user.wallet, 
+        amount: order.total_cost
+      )
     end
 
     trait :no_items do

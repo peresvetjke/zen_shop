@@ -76,7 +76,7 @@ export default class extends Controller {
       
       for (var j = 0; j < categoryItems.length; j++) {
         var item = categoryItems[j]
-        var price = parseInt( $(item).find(".price")[0].textContent ) * 100
+        var price = parseFloat( $(item).find(".price")[0].textContent ) * 100
         var isAvailable = $(item).find(".available_amount")[0].textContent > 0
 
         if ( price >= this.priceFromValue && 
