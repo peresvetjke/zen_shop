@@ -37,6 +37,7 @@ class OrdersController < ApplicationController
 
   def load_cart
     @cart = current_user.cart
+    @cart_items = @cart.cart_items.includes([:item], item: [:stock])
   end
 
   def load_previous_address

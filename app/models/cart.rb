@@ -8,10 +8,10 @@ class Cart < ApplicationRecord
   end
   
   def total_sum
-    cart_items.map { |cart_item| cart_item.item.price * cart_item.quantity }.sum
+    cart_items.includes([:item]).map { |cart_item| cart_item.item.price * cart_item.quantity }.sum
   end
 
   def total_weight
-    cart_items.map { |cart_item| cart_item.item.weight_gross_gr * cart_item.quantity }.sum
+    cart_items.includes([:item]).map { |cart_item| cart_item.item.weight_gross_gr * cart_item.quantity }.sum
   end
 end

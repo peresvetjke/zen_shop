@@ -6,7 +6,7 @@ class ItemsController < ApplicationController
 
   def index
     skip_policy_scope
-
+      
     if params[:query].present?
       @items = Item.search(params[:query])
       @heading = "Search results"
@@ -16,6 +16,7 @@ class ItemsController < ApplicationController
     else
       @items = Item.all
     end
+    @items = @items.includes([:category, :reviews, :stock])
 
     @meta = category_dict(@items).merge(price_dict(@items))
   end
@@ -36,10 +37,10 @@ class ItemsController < ApplicationController
 
   private
 
-  def load_items
-    @items = Item.all
-    @items = @items.where(category: params[:category_id]) if params[:category_id]
-  end
+  # def load_items
+  #   @items = Item.all.includes([:category, :reviews, :stock])
+  #   @items = @items.where(category: params[:category_id]) if params[:category_id]
+  # end
 
   def load_item
     @item = Item.find(params[:id])
