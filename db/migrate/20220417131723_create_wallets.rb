@@ -8,5 +8,7 @@ class CreateWallets < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
+
+    add_index :wallets, [:user_id, :type], unique: true
   end
 end

@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "country"
-    t.string "postal_code"
+    t.string "postal_code", null: false
     t.string "region_with_type"
     t.string "city_with_type"
     t.string "street_with_type"
@@ -67,8 +67,8 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
 
   create_table "authentications", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "provider"
-    t.string "uid"
+    t.string "provider", null: false
+    t.string "uid", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_authentications_on_user_id"
@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
     t.decimal "rate", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["from", "to"], name: "index_conversion_rates_on_from_and_to", unique: true
   end
 
   create_table "default_addresses", force: :cascade do |t|
@@ -139,7 +140,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
     t.bigint "category_id", null: false
     t.integer "price_cents", default: 0, null: false
     t.string "price_currency", default: "USD", null: false
-    t.integer "weight_gross_gr"
+    t.integer "weight_gross_gr", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "google_image_id"
@@ -149,7 +150,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
   create_table "order_items", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "item_id", null: false
-    t.integer "quantity"
+    t.integer "quantity", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["item_id"], name: "index_order_items_on_item_id"
@@ -182,12 +183,13 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
     t.integer "rating", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["author_id", "item_id"], name: "index_reviews_on_author_id_and_item_id", unique: true
     t.index ["item_id"], name: "index_reviews_on_item_id"
   end
 
   create_table "stocks", force: :cascade do |t|
     t.bigint "item_id", null: false
-    t.integer "storage_amount", default: 0
+    t.integer "storage_amount", default: 0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["item_id"], name: "index_stocks_on_item_id"
@@ -222,6 +224,7 @@ ActiveRecord::Schema.define(version: 2022_04_17_132159) do
     t.string "balance_currency", default: "BTC", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "type"], name: "index_wallets_on_user_id_and_type", unique: true
     t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
