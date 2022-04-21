@@ -28,11 +28,6 @@ class Item < ApplicationRecord
     words.inject(Item.search_word words.first) { |result, word| result.or(Item.search_word word) }
   end
 
-  def available_amount
-    reserved = CartItem.where(item: self).pluck(:quantity).sum
-    stock.storage_amount - reserved
-  end
-
   def rating
     reviews.present? ? reviews.average(:rating).to_f : nil
   end

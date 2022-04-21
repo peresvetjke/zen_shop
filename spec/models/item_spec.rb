@@ -31,19 +31,6 @@ RSpec.describe Item, type: :model do
     it { should have_many(:orders).through(:order_items) }
   end
 
-  describe "#available_amount" do
-    before {
-      item_1.stock.update(storage_amount: 10)
-      item_1.stock.save
-      item_2.stock.update(storage_amount: 10)
-      item_2.stock.save
-    }
-
-    it "returns available amount" do
-      expect(item_1.available_amount).to eq 6
-    end
-  end
-
   describe "#rating" do
     context "with reviews" do
       let!(:review_1) { create(:review, item: item_1, rating: 4) }

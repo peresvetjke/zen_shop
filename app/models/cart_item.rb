@@ -8,9 +8,13 @@ class CartItem < ApplicationRecord
   private
 
   def validate_available_amount
-    updated = self.quantity
-    current = self.persisted? ? self.reload.quantity : 0
-    errors.add :base, I18n.t("cart_items.errors.not_available") if item.available_amount < updated - current
-    self.quantity = updated
+    # updated = self.quantity
+    # current = self.persisted? ? self.reload.quantity : 0
+    # errors.add :base, I18n.t("cart_items.errors.not_available") if item.available_amount < updated - current
+    # self.quantity = updated
+
+    if item.stock.storage_amount < quantity
+      errors.add :base, I18n.t("cart_items.errors.not_available")
+    end
   end
 end

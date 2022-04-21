@@ -1,6 +1,6 @@
 - if user_signed_in?
   - cart_item = current_user.cart.cart_items.find_by(item_id: item.id)
-  div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}" data-cartitems-available-value="#{item.available_amount}" data-cartitems-amount-value="#{cart_item&.quantity}" data-cartitems-is-subscribed-value="#{current_user.subscribed?(item: item)}"
+  div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}" data-cartitems-available-value="#{item.stock.storage_amount}" data-cartitems-amount-value="#{cart_item&.quantity}" data-cartitems-is-subscribed-value="#{current_user.subscribed?(item: item)}"
 
     p.is-size-7 
       = "Available: "
@@ -24,10 +24,10 @@
 - else  
   p.is-size-7 
     = "Available: "
-    span.available_amount = item.available_amount
+    span.available_amount = item.stock.storage_amount
     span = " pc"
   
-  - if item.available_amount > 0
+  - if item.stock.storage_amount > 0
     = form_with model: CartItem, url: cart_items_path, method: :post, data: {turbo: false} do |f|
       = f.text_field :item_id, value: item.id, type: "hidden"
       = f.text_field :quantity, value: 1, type: "hidden"

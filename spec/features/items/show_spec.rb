@@ -38,7 +38,7 @@ feature 'User as client can view item', %q{
 
       it "displays available amount" do
         subject
-        expect(page).to have_content "Available: #{item.available_amount}"
+        expect(page).to have_content "Available: #{item.stock.storage_amount}"
       end
 
       it "displays rating" do

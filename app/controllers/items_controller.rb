@@ -37,11 +37,6 @@ class ItemsController < ApplicationController
 
   private
 
-  # def load_items
-  #   @items = Item.all.includes([:category, :reviews, :stock])
-  #   @items = @items.where(category: params[:category_id]) if params[:category_id]
-  # end
-
   def load_item
     @item = Item.find(params[:id])
   end
@@ -70,4 +65,13 @@ class ItemsController < ApplicationController
                   }
     } 
   end
+
+  # def item_dict(collection)
+
+  #   {
+  #     "items" =>  {
+  #                   # "available" => 
+  #                 }
+  #   }
+  # end
 end

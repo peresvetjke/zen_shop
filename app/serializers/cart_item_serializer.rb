@@ -7,6 +7,6 @@ class CartItemSerializer < ActiveModel::Serializer
   end
 
   def available
-    object.item.available_amount
+    object.item.stock.storage_amount
   end
 end

@@ -13,6 +13,7 @@ export default class extends Controller {
                   }
 
   connect() {
+    console.log(this.availableValue)
     if (this.changeAmountButtonsTargets.length > 0) { this.updateButtons() }
     this.updateAvailableAmount()
     this.updateAmountValue()

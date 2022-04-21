@@ -30,7 +30,7 @@ feature 'User as customer can post order', %q{
       end
 
       it "displays item available amount" do
-        expect(find("##{dom_id(user_cart_item_1)} .available_amount")).to have_content(user_cart_item_1.item.available_amount)
+        expect(find("##{dom_id(user_cart_item_1)} .available_amount")).to have_content(user_cart_item_1.item.stock.storage_amount)
       end
 
       it "displays total weight" do
@@ -66,7 +66,7 @@ feature 'User as customer can post order', %q{
       
       it "changes item available amount" do
         subject
-        expect(find("##{dom_id(user_cart_item_1)} .available_amount")).to have_content(user_cart_item_1.item.reload.available_amount)
+        expect(find("##{dom_id(user_cart_item_1)} .available_amount")).to have_content(user_cart_item_1.item.stock.reload.storage_amount)
       end
 
       it "does not allow to add an item in cart without available amount" do

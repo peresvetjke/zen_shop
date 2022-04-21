@@ -1,4 +1,4 @@
-div data-carts-target="cartItem" data-controller="cartitems" data-cartitems-item-id-value="#{cart_item.item.id}" data-cartitems-id-value="#{cart_item.id}" data-cartitems-price-value="#{cart_item.item.price}" data-cartitems-weight-value="#{cart_item.item.weight_gross_gr}" data-cartitems-amount-value="#{cart_item.quantity}" data-cartitems-available-value="#{cart_item.item.available_amount}" id="#{dom_id(cart_item)}"
+div data-carts-target="cartItem" data-controller="cartitems" data-cartitems-item-id-value="#{cart_item.item.id}" data-cartitems-id-value="#{cart_item.id}" data-cartitems-price-value="#{cart_item.item.price}" data-cartitems-weight-value="#{cart_item.item.weight_gross_gr}" data-cartitems-amount-value="#{cart_item.quantity}" data-cartitems-available-value="#{cart_item.item.stock.storage_amount}" id="#{dom_id(cart_item)}"
   .level.cart_item
     .level-left
       = cart_item.item.title

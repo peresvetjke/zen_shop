@@ -53,7 +53,7 @@ feature 'User as client can index all items list', %q{
       end
 
       it "displays current availability" do
-        expect(find("##{dom_id(item)}")).to have_content "Available: #{item.available_amount} pc"
+        expect(find("##{dom_id(item)}")).to have_content "Available: #{item.stock.storage_amount} pc"
       end
 
       it "displays rating" do
@@ -96,7 +96,7 @@ feature 'User as client can index all items list', %q{
         it "decreases availability" do
           subject
           within "##{dom_id(item)}" do
-            expect(page).to have_content "Available: #{item.reload.available_amount} pc"
+            expect(page).to have_content "Available: #{item.reload.stock.storage_amount} pc"
           end
         end
       end
@@ -115,15 +115,14 @@ feature 'User as client can index all items list', %q{
 
         it "displays availability" do
           within "##{dom_id(item)}" do
-            expect(page).to have_content "Available: #{item.available_amount} pc"
+            expect(page).to have_content "Available: #{item.stock.storage_amount} pc"
           end
         end
 
         describe "without available units" do
           background { 
             item.stock.update(storage_amount: cart_item.quantity)
-            visit items_path
-            find(:css, "#is_available_checkbox").set(false)    
+            visit items_path 
           }
 
           it "displays change amount buttons", js: true do
@@ -157,7 +156,7 @@ feature 'User as client can index all items list', %q{
         it "updates availability" do
           subject
           within "##{dom_id(item)}" do
-            expect(page).to have_content "Available: #{item.reload.available_amount} pc"
+            expect(page).to have_content "Available: #{item.stock.reload.storage_amount} pc"
           end
         end
       end
@@ -182,7 +181,7 @@ feature 'User as client can index all items list', %q{
         it "updates availability", js: true do
           subject
           within "##{dom_id(item)}" do
-            expect(page).to have_content "Available: #{item.reload.available_amount} pc"
+            expect(page).to have_content "Available: #{item.stock.reload.storage_amount} pc"
           end
         end
 
@@ -203,7 +202,6 @@ feature 'User as client can index all items list', %q{
 
         background {
           visit items_path
-          find(:css, "#is_available_checkbox").set(false)
           sleep(0.5)
         }
 
