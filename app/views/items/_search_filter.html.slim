@@ -24,7 +24,10 @@ div.search_filter.m-4.box
         p.title.is-size-6.mt-5 = "Category"
 
         div.category.form-check
-          - meta["categories"].each do |category|
+          
+          - categories = @items.group_by(&:category).map { |k,v| { 'id' => k.id,'title' => k.title, 'results_count' => v.count } }
+
+          - categories.each do |category|
             label.checkbox for="category_#{category['id']}" 
               input type="checkbox" value="" id="category_#{category['id']}" data-category-id="#{category['id']}" data-action="search#filterSearchResults" = "#{category["title"]} - #{category["results_count"]}"
             br

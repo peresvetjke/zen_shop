@@ -1,12 +1,14 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!, only: :subscribe
   before_action :load_item, only: %i[show subscribe]
+  before_action :load_cart_items, only: %i[index show]
+  before_action :load_subscriptions, only: %i[index show]
   before_action :load_reviews, only: :show
   before_action -> { authorize Item }, except: :index
 
   def index
     skip_policy_scope
-      
+
     if params[:query].present?
       @items = Item.search(params[:query])
       @heading = "Search results"
@@ -16,9 +18,8 @@ class ItemsController < ApplicationController
     else
       @items = Item.all
     end
-    @items = @items.includes([:category, :reviews, :stock])
 
-    @meta = category_dict(@items).merge(price_dict(@items))
+    @items = @items.includes([:category, :reviews, :stock])
   end
   
   def show
@@ -45,33 +46,11 @@ class ItemsController < ApplicationController
     @reviews = @item.reviews
   end
 
-  def search_params
-    params.require(:search).permit(:category, :query, :page)
+  def load_subscriptions
+    @subscribed_item_ids = current_user&.subscriptions&.map(&:item_id)
   end
 
-  def category_dict(collection)
-    { 
-      "categories" => collection.group_by(&:category).map do |k,v| 
-                        { 'id' => k.id,'title' => k.title, 'results_count' => v.count }
-                      end
-    } 
+  def load_cart_items
+    @cart_items = current_user&.cart&.cart_items.as_json
   end
-
-  def price_dict(collection)
-    { 
-      "prices" => {
-                    "min" => collection.map(&:price_cents).min,
-                    "max" => collection.map(&:price_cents).max
-                  }
-    } 
-  end
-
-  # def item_dict(collection)
-
-  #   {
-  #     "items" =>  {
-  #                   # "available" => 
-  #                 }
-  #   }
-  # end
 end

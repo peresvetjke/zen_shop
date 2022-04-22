@@ -1,6 +1,12 @@
 - if user_signed_in?
-  - cart_item = current_user.cart.cart_items.find_by(item_id: item.id)
-  div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item&.id}" data-cartitems-available-value="#{item.stock.storage_amount}" data-cartitems-amount-value="#{cart_item&.quantity}" data-cartitems-is-subscribed-value="#{current_user.subscribed?(item: item)}"
+  
+  - subscribed = @subscribed_item_ids.include?(item.id)
+
+  - cart_item = @cart_items.find { |cart_item| cart_item['item_id'] == item.id }
+  - cart_item_id = cart_item ? cart_item['id'] : nil
+  - cart_item_quantity = cart_item ? cart_item['quantity'] : nil
+
+  div data-controller="cartitems" data-cartitems-item-id-value="#{item.id}" data-cartitems-id-value="#{cart_item_id}" data-cartitems-available-value="#{item.stock.storage_amount}" data-cartitems-amount-value="#{cart_item_quantity}" data-cartitems-is-subscribed-value="#{subscribed}"
 
     p.is-size-7 
       = "Available: "

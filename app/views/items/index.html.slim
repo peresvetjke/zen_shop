@@ -1,4 +1,7 @@
-div data-controller='search' data-search-min-price-value="#{@meta["prices"]["min"]}" data-search-max-price-value="#{@meta["prices"]["max"]}" data-search-price-from-value="#{@meta["prices"]["min"]}" data-search-price-to-value="#{@meta["prices"]["max"]}"
+- min_price = @items.map(&:price_cents).min
+- max_price = @items.map(&:price_cents).max
+
+div data-controller='search' data-search-min-price-value="#{min_price}" data-search-max-price-value="#{max_price}" data-search-price-from-value="#{min_price}" data-search-price-to-value="#{max_price}"
 
   = render partial: "items/search_filter", locals: { meta: @meta }
 
