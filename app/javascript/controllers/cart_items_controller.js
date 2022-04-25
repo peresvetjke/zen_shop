@@ -13,7 +13,6 @@ export default class extends Controller {
                   }
 
   connect() {
-    console.log(this.availableValue)
     if (this.changeAmountButtonsTargets.length > 0) { this.updateButtons() }
     this.updateAvailableAmount()
     this.updateAmountValue()
@@ -41,6 +40,12 @@ export default class extends Controller {
       $(this.changeAmountButtonsTarget).addClass('hide')
       if (this.availableValue > 0) {
         $(this.buyButtonTarget).removeClass('hide')
+      }
+
+      if (this.isSubscribedValue) {
+        this.subscribeButtonTarget.textContent = "Unsubscribe"
+      } else {
+        this.subscribeButtonTarget.textContent = "Subscribe"
       }
 
     } else {
@@ -118,7 +123,6 @@ export default class extends Controller {
         return true
       },
       success(data) {
-        console.log(data)
         self.updateCartItemValues(data.cart_item)
         self.updateAmountValue()
         self.updateAvailableAmount()
@@ -196,6 +200,7 @@ export default class extends Controller {
       type: 'post',
       dataType: 'json',
       success(data) {
+        self.isSubscribedValue = !self.isSubscribedValue
         self.updateButtons()
         alert(data.message)
       },

@@ -68,8 +68,9 @@ div data-controller="carts" data-action="cartItemDeleted@window->carts#cartItemD
         a.button.is-small.is-info.is-rounded.mb-3.mt-3 data-action="carts#displayAddressInput" data-carts-target="displayAddressInputButton"
           = "Change address"
 
+        p.title.is-6.mt-5 = "Payment"
         .row
-          = select_tag(:wallet_id, options_for_select(current_user.wallets.map {|w| [ "#{w.currency} - #{w.available}", w.id ] }))
+          .select.is-small = select_tag(:wallet_id, options_for_select(current_user.wallets.map {|w| [ "#{w.currency} - #{w.available}", w.id ] }))
 
         = render "carts/total", cart: @cart
 

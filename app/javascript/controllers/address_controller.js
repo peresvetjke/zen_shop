@@ -53,7 +53,6 @@ export default class extends Controller {
   }
 
   showAddressFields(displayBoolean) {
-    console.log("showAddressFields")
     if (displayBoolean) {
       $(this.addressFieldsTarget).removeClass("hide")
     } else {

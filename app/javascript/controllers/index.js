@@ -21,6 +21,3 @@ application.register("clipboard", ClipboardController)
 
 import SearchController from "./search_controller"
 application.register("search", SearchController)
-
-import SubscriptionController from "./subscription_controller"
-application.register("subscription", SubscriptionController)
