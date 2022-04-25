@@ -1,6 +1,6 @@
-h2 Orders
+p.title.is-4 Orders
 
 - if @orders.present?
   = render partial: "orders", locals: { orders: @orders }
 - else
-  p No orders at the moment.
+  p = "No orders at the moment."

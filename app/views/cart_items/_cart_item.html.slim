@@ -1,4 +1,6 @@
-div data-carts-target="cartItem" data-controller="cartitems" data-cartitems-item-id-value="#{cart_item.item.id}" data-cartitems-id-value="#{cart_item.id}" data-cartitems-price-value="#{cart_item.item.price}" data-cartitems-weight-value="#{cart_item.item.weight_gross_gr}" data-cartitems-amount-value="#{cart_item.quantity}" data-cartitems-available-value="#{cart_item.item.stock.storage_amount}" id="#{dom_id(cart_item)}"
+- available_amount = cart_item.item.stock.storage_amount
+
+div data-carts-target="cartItem" data-controller="cartitems" data-cartitems-item-id-value="#{cart_item.item.id}" data-cartitems-id-value="#{cart_item.id}" data-cartitems-price-value="#{cart_item.item.price}" data-cartitems-weight-value="#{cart_item.item.weight_gross_gr}" data-cartitems-amount-value="#{cart_item.quantity}" data-cartitems-available-value="#{available_amount}" id="#{dom_id(cart_item)}"
   .level.cart_item
     .level-left
       = cart_item.item.title
@@ -6,8 +8,10 @@ div data-carts-target="cartItem" data-controller="cartitems" data-cartitems-item
     .level-right
       a.delete data-action="cartitems#delete"
 
+  - max_amount = available_amount < 5 ? available_amount : 5
+
   .level
-    = select_tag :quantity, options_for_select(1..10, cart_item.quantity), {class: "select is-small level-left", data: {"cartitems-target": "amountSelect", action: "cartitems#selectAmount"}}
+    = select_tag :quantity, options_for_select(1..max_amount, cart_item.quantity), {class: "select is-small level-left", data: {"cartitems-target": "amountSelect", action: "cartitems#selectAmount"}}
     .level-right 
       div
         span.sum data-cartitems-target="sum"
