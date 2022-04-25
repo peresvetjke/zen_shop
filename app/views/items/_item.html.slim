@@ -1,18 +1,19 @@
 .item.box.column.is-one-quarter.m-5 data-category-id="#{item.category.id}" data-search-target="item" data-item-id="#{item.id}" id="#{dom_id(item)}"
   .row
-    = link_to item.title, item_path(item)
-    
-    - if item.google_image_id.present?
-      img src="#{google_image_src(google_image_id: item.google_image_id, size: 250)}"
-
-    .is-align-content-center
-      span.price = "#{item.price}"
-      span = " #{item.price.currency}"
-
-    div
-      span.icon
-        i.fa-solid.fa-star.fa-xs
-      span.rating.is-size-7 = item.rating || "-"
+    - cache item
       
+      = link_to item.title, item_path(item)
+      
+      - if item.google_image_id.present?
+        img src="#{google_image_src(google_image_id: item.google_image_id, size: 250)}"
 
+      .is-align-content-center
+        span.price = "#{item.price}"
+        span = " #{item.price.currency}"
+
+      div
+        span.icon
+          i.fa-solid.fa-star.fa-xs
+        span.rating.is-size-7 = item.rating || "-"
+      
     = render 'items/add_to_cart', item: item
